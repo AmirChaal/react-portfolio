@@ -1,14 +1,16 @@
 import { useEffect } from "react";
 import { useGlobal } from "../stores/global";
 
-export default function useCursorCoordinates() {
-   const { setCursorCoordinates } = useGlobal();
+export function useCursorCoordinates() {
+   const { update } = useGlobal();
 
    useEffect(() => {
       const handleMouseMove = (event: MouseEvent) => {
-         setCursorCoordinates({
-            x: event.clientX,
-            y: event.clientY,
+         update({
+            cursorCoordinates: {
+               x: event.clientX,
+               y: event.clientY,
+            }
          });
       };
 
@@ -17,5 +19,5 @@ export default function useCursorCoordinates() {
       return () => {
          window.removeEventListener("mousemove", handleMouseMove);
       };
-   }, [setCursorCoordinates]);
+   }, []);
 }

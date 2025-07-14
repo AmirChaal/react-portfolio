@@ -1,13 +1,16 @@
-import { useEffect } from "react";
 import "../css/App.css";
-import { useGlobal } from "../stores/global";
+import { useCursorCoordinates } from "../functions/interactivity";
+import { useCanvasSize } from "../functions/setup";
 import HomeComponent from "./HomeComponent";
-import useCursorCoordinates from "../functions/interactivity";
-
+import { WebGLBehindCanvas } from "./webGLBehindCanvas/WebGLBehindCanvas";
 function App() {
    useCursorCoordinates()
+   useCanvasSize()
 
-   return <HomeComponent />;
+   return <>
+      <WebGLBehindCanvas />
+      <HomeComponent />
+   </>;
 }
 
 export default App;

@@ -5,19 +5,25 @@ type CursorCoordinates = {
    y: number
 }
 
+type CanvasSize = {
+   height: number,
+   width: number,
+}
+
 type Store = {
-   count: number
-   inc: () => void,
    cursorCoordinates: CursorCoordinates,
-   setCursorCoordinates: (cursorCoordinates: CursorCoordinates) => void
+   canvasSize: CanvasSize,
+   update: (partial: Record<string, unknown>) => void
 }
 
 export const useGlobal = create<Store>()((set) => ({
-   count: 1,
-   inc: () => set((state) => ({ count: state.count + 1 })),
    cursorCoordinates: {
       x: 0,
       y: 0,
    },
-   setCursorCoordinates: (value: CursorCoordinates) => set(() => ({ cursorCoordinates: value }))
+   canvasSize: {
+      height: 0,
+      width: 0
+   },
+   update: (partial: Record<string, unknown>) => set(partial)
 }))
