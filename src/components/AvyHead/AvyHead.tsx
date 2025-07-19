@@ -1,32 +1,33 @@
-import { Float, useGLTF } from "@react-three/drei"
+import { Float } from "@react-three/drei"
 import { useFrame } from "@react-three/fiber"
-import { useRef, type RefObject } from "react"
+import { useMemo, useRef, type RefObject } from "react"
 import { useGlobal } from "../../stores/global"
 import { Vector3, type Mesh } from "three"
+import AvyHeadModel from "./AvyHeadModel"
 
 export default function AvyHead() {
-   const robavyModel = useGLTF('robavy.glb')
-
+   const { currentView, cursorCoordinates, canvasSize } = useGlobal()
    const head = useRef({}) as RefObject<Mesh>
    const cursorFollower = useRef({}) as RefObject<Mesh>
 
-   const { cursorCoordinates, canvasSize } = useGlobal()
+
+   const xMultiplier = 10
+   const yMultiplier = 5
+   
+   const headX = useMemo(() => {
+      if (currentView === 'home') return 2.8
+      else if (currentView === 'works') return -2.8
+      else return 0
+   }, [currentView])
 
    useFrame(() => {
-      const followerX = cursorCoordinates.x / canvasSize.width
-      const followerY = cursorCoordinates.y / canvasSize.height
       const followerCoords = new Vector3(
-         followerX - 0.5,
-         -followerY + 0.5,
-         0.5 // edit this variable to ajust rotation intensity
+         ((cursorCoordinates.x / canvasSize.width) - 0.5) * xMultiplier,
+         -((cursorCoordinates.y / canvasSize.height) - 0.5) * yMultiplier,
+         0
       )
 
-
-      console.log([...followerCoords])
       cursorFollower.current.position.copy(followerCoords)
-      // cursorFollower.current.position.x = followerCoords.x
-      // cursorFollower.current.position.y = followerCoords.y
-      // cursorFollower.current.position.z = followerCoords.z
 
       head.current.lookAt(cursorFollower.current.position)
    })
@@ -34,18 +35,14 @@ export default function AvyHead() {
    return (
       <>
          {/* Cursor follower */}
-         <mesh ref={cursorFollower} position={[0, 0, 4.8]}  >
+         <mesh ref={cursorFollower} position={[0, 0, 4.8]} castShadow receiveShadow >
             {/* <dodecahedronGeometry args={[0.1, 1]} />
             <meshStandardMaterial color="blue" /> */}
          </mesh>
 
          {/* Avy head */}
-         <Float speed={2.5} rotationIntensity={0.5} floatIntensity={0.2} floatingRange={[-0.1, 0.1]} >
-            <primitive ref={head} object={robavyModel.scene} />;
-            {/* <mesh ref={head} position={[0, 0, 2]}>
-               <boxGeometry />
-               <meshStandardMaterial color="red" />
-            </mesh> */}
+         <Float speed={5} rotationIntensity={0.1} floatingRange={[-0.1, 0.1]} >
+            <AvyHeadModel ref={head} position={[headX, 0, -6]} scale={1.8} />
          </Float>
       </>
    )

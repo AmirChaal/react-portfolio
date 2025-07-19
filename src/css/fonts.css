@@ -1,0 +1,23 @@
+@font-face {
+   font-family: roboto;
+   src: url(/fonts/roboto.ttf);
+}
+.font-roboto {
+   font-family: roboto;
+}
+
+@font-face {
+   font-family: micro5;
+   src: url(/fonts/micro5.ttf);
+}
+.font-micro5 {
+   font-family: micro5;
+}
+
+@font-face {
+   font-family: gothic;
+   src: url(/fonts/gothic.ttf);
+}
+.font-gothic {
+   font-family: gothic;
+}
