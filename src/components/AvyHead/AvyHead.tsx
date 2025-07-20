@@ -21,13 +21,15 @@ export default function AvyHead() {
    }, [currentView])
 
    useFrame(() => {
-      const followerCoords = new Vector3(
+      const followerPosition = new Vector3(
          ((cursorCoordinates.x / canvasSize.width) - 0.5) * xMultiplier,
          -((cursorCoordinates.y / canvasSize.height) - 0.5) * yMultiplier,
          0
       )
 
-      cursorFollower.current.position.copy(followerCoords)
+      const effectiveFollowerPosition = cursorFollower.current.position.lerp(followerPosition, 0.075)
+
+      cursorFollower.current.position.copy(effectiveFollowerPosition)
 
       head.current.lookAt(cursorFollower.current.position)
    })
