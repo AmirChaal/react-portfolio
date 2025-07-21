@@ -1,5 +1,4 @@
 import HomeText from "./HomeText";
-import ProximityNavigation from "./ProximityNavigation/ProximityNavigation";
 
 export default function HomeComponent() {
    return (

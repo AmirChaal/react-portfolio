@@ -1,5 +1,7 @@
 import AvyHead from "../AvyHead/AvyHead";
 import { Canvas } from '@react-three/fiber'
+import { useRef } from "react";
+import { BoxGeometry, MeshStandardMaterial } from "three";
 
 export function WebGLBehindCanvas() {
    return (
