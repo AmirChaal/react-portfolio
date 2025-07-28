@@ -7,7 +7,7 @@ import { WebGLBehindCanvas } from "./webGLBehindCanvas/WebGLBehindCanvas";
 import WorksComponent from "./worksView/WorksComponent";
 import WebGLFloatiesCanvas from "./webGLFloatiesCanvas/WebGLFloatiesCanvas";
 function App() {
-   const {view} = useParams()
+   const { view } = useParams()
 
    useCursorCoordinates()
    useCanvasSize()
@@ -22,8 +22,8 @@ function App() {
       <WebGLFloatiesCanvas />
 
       <WebGLBehindCanvas />
-      
-      {/* <div className="z-10 absolute top-0 left-0 right-0 h-[4em] px-[2em] flex justify-between items-center font-micro5 text-4xl">
+
+      <div className="z-10 absolute top-0 left-0 right-0 h-[4em] px-[2em] flex justify-between items-center font-micro5 text-4xl">
          <p onClick={homeOnClick}>Home</p>
          <div className="flex items-center gap-[1em]">
             <p>nightmode</p>
@@ -32,7 +32,7 @@ function App() {
       </div>
 
       {view === 'home' && <HomeComponent />}
-      {view === 'works' && <WorksComponent />} */}
+      {view === 'works' && <WorksComponent />}
    </>;
 }
 

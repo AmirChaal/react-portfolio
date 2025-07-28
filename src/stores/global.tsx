@@ -1,3 +1,4 @@
+import { Vector2 } from 'three'
 import { create } from 'zustand'
 
 type CurrentView = 'home' | 'works' | 'about-me'
@@ -16,10 +17,11 @@ type Store = {
    currentView: CurrentView
    cursorCoordinates: CursorCoordinates,
    canvasSize: CanvasSize,
-   update: (partial: Record<string, unknown>) => void
+   update: (partial: Record<string, unknown>) => void,
+   getNDC: () => Vector2
 }
 
-export const useGlobal = create<Store>()((set) => ({
+export const useGlobal = create<Store>()((set, get) => ({
    currentView: 'home',
    cursorCoordinates: {
       x: 0,
@@ -29,5 +31,15 @@ export const useGlobal = create<Store>()((set) => ({
       height: 0,
       width: 0
    },
-   update: (partial: Record<string, unknown>) => set(partial)
+   update: (partial: Record<string, unknown>) => set(partial),
+   getNDC: () => {
+      const { cursorCoordinates, canvasSize } = get()
+      const { x, y } = cursorCoordinates
+      const { width, height } = canvasSize
+
+      return new Vector2(
+         (x / width) * 2 - 1,
+         -((y / height) * 2 - 1)
+      )
+   }
 }))
