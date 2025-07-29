@@ -1,7 +1,7 @@
 import { useFrame, useThree } from "@react-three/fiber";
 import { BallCollider, Physics, RigidBody } from "@react-three/rapier";
 import { useRef, type RefObject } from "react";
-import { BoxGeometry, Mesh, MeshBasicMaterial, Raycaster, SphereGeometry, Vector2, Vector3 } from "three";
+import { BoxGeometry, Mesh, MeshBasicMaterial, Raycaster, SphereGeometry, Vector3 } from "three";
 import { useGlobal } from "../../stores/global";
 
 export default function WebGLFloaties() {
