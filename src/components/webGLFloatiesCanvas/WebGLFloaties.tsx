@@ -3,6 +3,7 @@ import { BallCollider, Physics, RigidBody } from "@react-three/rapier";
 import { useRef, type RefObject } from "react";
 import { BoxGeometry, Mesh, MeshBasicMaterial, Raycaster, SphereGeometry, Vector3 } from "three";
 import { useGlobal } from "../../stores/global";
+import WebGLFloaty from "./WebGLFloaty";
 
 export default function WebGLFloaties() {
    // Debug
@@ -11,7 +12,7 @@ export default function WebGLFloaties() {
    const invisibleMaterialRef = useRef(new MeshBasicMaterial({ transparent: true, opacity: 0 }))
    const sphereGeometryRef = useRef(new SphereGeometry(1, 8, 6))
    const particleMaterialRef = useRef(new MeshBasicMaterial({ color: '#f2f2f2', toneMapped: false }))
-   const stirrerRef = useRef({}) as any
+   const stirrerRef = useRef(null) as any
    const { getNDC } = useGlobal()
 
    const { camera } = useThree()
@@ -32,8 +33,7 @@ export default function WebGLFloaties() {
       pointerIndicatorRef.current.position.copy(new Vector3(cursorPosition.x, cursorPosition.y, 3))
 
 
-      if (intersects.length > 0 && stirrerRef.current?.translation != null) {
-         console.log(stirrerRef.current.translation())
+      if (intersects.length > 0 && stirrerRef.current != null) {
          const stirrerPosition = stirrerRef.current.translation()
          const toCursorVector = new Vector3().subVectors(cursorPosition, stirrerPosition)
          const toCursorForce = toCursorVector.multiplyScalar(700 * delta)
@@ -43,7 +43,7 @@ export default function WebGLFloaties() {
    });
 
    return (
-      <Physics>
+      <Physics debug>
          <RigidBody type="fixed" restitution={1} >
             <mesh geometry={boxGeometryRef.current} material={invisibleMaterialRef.current} scale={[35, 3, 3]} position={[0, -8.5, 0]} />
             <mesh geometry={boxGeometryRef.current} material={invisibleMaterialRef.current} scale={[35, 3, 3]} position={[0, 8.5, 0]} />
@@ -51,17 +51,15 @@ export default function WebGLFloaties() {
             <mesh geometry={boxGeometryRef.current} material={invisibleMaterialRef.current} scale={[3, 18, 3]} position={[16.5, 0, 0]} />
          </RigidBody>
 
-         <RigidBody ref={stirrerRef} gravityScale={0} type="dynamic" enabledTranslations={[true, true, false]} enabledRotations={[false, false, false]}>
+         <RigidBody ref={stirrerRef} canSleep={false} gravityScale={0} type="dynamic" colliders={false} enabledTranslations={[true, true, false]} enabledRotations={[false, false, false]}>
             <BallCollider args={[0.75]} mass={50} restitution={0} />
             <mesh material={new MeshBasicMaterial({ color: '#00b3ff' })} rotation={[Math.PI / 2, 0, 0]} >
                <cylinderGeometry args={[0.75, 0.5, 0.1, 25]} />
             </mesh>
          </RigidBody>
 
-         {[...Array(10)].map((_, i) => {
-            return <RigidBody key={i} restitution={1} linearDamping={8} type="dynamic" colliders="ball" gravityScale={0} enabledTranslations={[true, true, false]} enabledRotations={[false, false, false]}>
-               <mesh key={i} geometry={sphereGeometryRef.current} material={particleMaterialRef.current} position={[0, 0, 0]} scale={0.5} />
-            </RigidBody>
+         {[...Array(2)].map((_, i) => {
+            return <WebGLFloaty key={i} geometry={sphereGeometryRef.current} material={particleMaterialRef.current} />
          })}
 
          <mesh ref={receiverPlaneRef} position={[0, 0, 0]} material={invisibleMaterialRef.current}>

@@ -21,3 +21,11 @@
 .font-gothic {
    font-family: gothic;
 }
+
+@font-face {
+   font-family: jersey10;
+   src: url(/fonts/jersey10.ttf);
+}
+.font-jersey10 {
+   font-family: jersey10;
+}
