@@ -1,7 +1,7 @@
-import { useFrame, useThree } from "@react-three/fiber";
+import { useFrame, useLoader, useThree } from "@react-three/fiber";
 import { BallCollider, Physics, RigidBody } from "@react-three/rapier";
 import { useRef, type RefObject } from "react";
-import { BoxGeometry, Mesh, MeshBasicMaterial, Raycaster, SphereGeometry, Vector3 } from "three";
+import { BoxGeometry, Mesh, MeshBasicMaterial, NearestFilter, Raycaster, SphereGeometry, TextureLoader, Vector3 } from "three";
 import { useGlobal } from "../../stores/global";
 import WebGLFloaty from "./WebGLFloaty";
 
@@ -13,9 +13,21 @@ export default function WebGLFloaties() {
    const sphereGeometryRef = useRef(new SphereGeometry(1, 8, 6))
    const particleMaterialRef = useRef(new MeshBasicMaterial({ color: '#f2f2f2', toneMapped: false }))
    const stirrerRef = useRef(null) as any
-   const { getNDC } = useGlobal()
+   const { getNDC, tonicColor,  } = useGlobal()
 
    const { camera } = useThree()
+
+   // Textures
+   const floatiesTextures = useLoader(TextureLoader, [
+      "/floaties-textures/at.png",
+      // "/floaties-textures/and.png",
+      // "/floaties-textures/dollar.png",
+      // "/floaties-textures/hash.png",
+      // "/floaties-textures/less.png",
+      // "/floaties-textures/percent.png",
+      // "/floaties-textures/question.png",
+   ])
+   floatiesTextures.map(te => te.minFilter = NearestFilter)
 
    // Raycaster
    const receiverPlaneRef = useRef({}) as RefObject<Mesh>
@@ -32,7 +44,6 @@ export default function WebGLFloaties() {
       // Cursor indicator
       pointerIndicatorRef.current.position.copy(new Vector3(cursorPosition.x, cursorPosition.y, 3))
 
-
       if (intersects.length > 0 && stirrerRef.current != null) {
          const stirrerPosition = stirrerRef.current.translation()
          const toCursorVector = new Vector3().subVectors(cursorPosition, stirrerPosition)
@@ -43,23 +54,23 @@ export default function WebGLFloaties() {
    });
 
    return (
-      <Physics debug>
+      <Physics>
          <RigidBody type="fixed" restitution={1} >
-            <mesh geometry={boxGeometryRef.current} material={invisibleMaterialRef.current} scale={[35, 3, 3]} position={[0, -8.5, 0]} />
-            <mesh geometry={boxGeometryRef.current} material={invisibleMaterialRef.current} scale={[35, 3, 3]} position={[0, 8.5, 0]} />
-            <mesh geometry={boxGeometryRef.current} material={invisibleMaterialRef.current} scale={[3, 18, 3]} position={[-16.5, 0, 0]} />
-            <mesh geometry={boxGeometryRef.current} material={invisibleMaterialRef.current} scale={[3, 18, 3]} position={[16.5, 0, 0]} />
+            <mesh geometry={boxGeometryRef.current} material={invisibleMaterialRef.current} scale={[35, 3, 3]} position={[0, -9.1, 0]} />
+            <mesh geometry={boxGeometryRef.current} material={invisibleMaterialRef.current} scale={[35, 3, 3]} position={[0, 9.1, 0]} />
+            <mesh geometry={boxGeometryRef.current} material={invisibleMaterialRef.current} scale={[3, 18, 3]} position={[-17.5, 0, 0]} />
+            <mesh geometry={boxGeometryRef.current} material={invisibleMaterialRef.current} scale={[3, 18, 3]} position={[17.5, 0, 0]} />
          </RigidBody>
 
          <RigidBody ref={stirrerRef} canSleep={false} gravityScale={0} type="dynamic" colliders={false} enabledTranslations={[true, true, false]} enabledRotations={[false, false, false]}>
             <BallCollider args={[0.75]} mass={50} restitution={0} />
-            <mesh material={new MeshBasicMaterial({ color: '#00b3ff' })} rotation={[Math.PI / 2, 0, 0]} >
+            <mesh material={new MeshBasicMaterial({ color: tonicColor })} rotation={[Math.PI / 2, 0, 0]} >
                <cylinderGeometry args={[0.75, 0.5, 0.1, 25]} />
             </mesh>
          </RigidBody>
 
-         {[...Array(2)].map((_, i) => {
-            return <WebGLFloaty key={i} geometry={sphereGeometryRef.current} material={particleMaterialRef.current} />
+         {[...Array(100)].map((_, i) => {
+            return <WebGLFloaty key={i} textures={floatiesTextures} geometry={sphereGeometryRef.current} material={particleMaterialRef.current} />
          })}
 
          <mesh ref={receiverPlaneRef} position={[0, 0, 0]} material={invisibleMaterialRef.current}>

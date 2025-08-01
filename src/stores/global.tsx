@@ -22,6 +22,11 @@ type Store = {
 }
 
 export const useGlobal = create<Store>()((set, get) => ({
+   floatiesColor: "#6f5643",
+   backgroundColor: "#ece6c2",
+   textColor: "#6f5643",
+   tonicColor: "#73bda8",
+
    currentView: 'home',
    cursorCoordinates: {
       x: 0,
@@ -43,3 +48,10 @@ export const useGlobal = create<Store>()((set, get) => ({
       )
    }
 }))
+
+// Palette
+// #6f5643
+// #cc6b49
+// #d2a24c 
+// #ece6c2 
+// #73bda8

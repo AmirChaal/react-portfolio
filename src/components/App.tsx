@@ -8,25 +8,30 @@ import WorksComponent from "./worksView/WorksComponent";
 import WebGLFloatiesCanvas from "./webGLFloatiesCanvas/WebGLFloatiesCanvas";
 import NavigationBar from "./NavigationBar";
 import Background from "./Background";
+import { useGlobal } from "../stores/global";
+
 function App() {
    const { view } = useParams()
+
+   const { backgroundColor, textColor } = useGlobal()
 
    useCursorCoordinates()
    useCanvasSize()
 
-   return <>
+   return (
+      <div className="absolute h-full w-full " style={{ backgroundColor: backgroundColor, color: textColor }}>
+         <WebGLFloatiesCanvas />
 
-      <WebGLFloatiesCanvas />
+         <WebGLBehindCanvas />
 
-      <WebGLBehindCanvas />
+         <Background />
 
-      <Background />
-      
-      {/* <NavigationBar /> */}
+         <NavigationBar />
 
-      {/* {view === 'home' && <HomeComponent />}
-      {view === 'works' && <WorksComponent />} */}
-   </>;
+         {view === 'home' && <HomeComponent />}
+      {view === 'works' && <WorksComponent />}
+      </div>
+   )
 }
 
 export default App;
