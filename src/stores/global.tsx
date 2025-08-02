@@ -14,6 +14,11 @@ type CanvasSize = {
 }
 
 type Store = {
+   floatiesColor: string,
+   backgroundColor: string,
+   textColor: string,
+   tonicColor: string
+
    currentView: CurrentView
    cursorCoordinates: CursorCoordinates,
    canvasSize: CanvasSize,

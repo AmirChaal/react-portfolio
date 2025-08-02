@@ -1,6 +1,6 @@
 import { useFrame, useLoader, useThree } from "@react-three/fiber";
 import { BallCollider, Physics, RigidBody } from "@react-three/rapier";
-import { useRef, type RefObject } from "react";
+import { useEffect, useMemo, useRef, useState, type RefObject } from "react";
 import { BoxGeometry, Mesh, MeshBasicMaterial, NearestFilter, Raycaster, SphereGeometry, TextureLoader, Vector3 } from "three";
 import { useGlobal } from "../../stores/global";
 import WebGLFloaty from "./WebGLFloaty";
@@ -13,7 +13,7 @@ export default function WebGLFloaties() {
    const sphereGeometryRef = useRef(new SphereGeometry(1, 8, 6))
    const particleMaterialRef = useRef(new MeshBasicMaterial({ color: '#f2f2f2', toneMapped: false }))
    const stirrerRef = useRef(null) as any
-   const { getNDC, tonicColor,  } = useGlobal()
+   const { getNDC, tonicColor, } = useGlobal()
 
    const { camera } = useThree()
 
@@ -28,6 +28,28 @@ export default function WebGLFloaties() {
       // "/floaties-textures/question.png",
    ])
    floatiesTextures.map(te => te.minFilter = NearestFilter)
+
+   // Floaties
+   const floatiesCount = 2
+   const [floatiesArray, setFloatiesArray] = useState([])
+   const addFloaty = (floaty: any) => { setFloatiesArray([...floatiesArray, floaty]) }
+
+   useEffect(() => {
+      // if (floatiesArray.length === floatiesCount) { console.log('aborting'); return } else { console.log('continuing') }
+      console.log('computing...')
+      if (floatiesArray.length === floatiesCount) {
+         console.log("complete :", floatiesArray.length, floatiesCount)
+      } else {
+         console.log('nope :', floatiesArray.length, floatiesCount)
+      }
+
+      // floatiesArrayRef.current[0].addForce(new Vector3(1, 0, 0))
+      // setInterval(() => {
+      //    floatiesArrayRef.current.forEach(fl => {
+      //       fl.addForce(new Vector3(1, 0, 0))
+      //    })
+      // }, 1000)
+   }, [floatiesArray, floatiesCount])
 
    // Raycaster
    const receiverPlaneRef = useRef({}) as RefObject<Mesh>
@@ -69,8 +91,8 @@ export default function WebGLFloaties() {
             </mesh>
          </RigidBody>
 
-         {[...Array(100)].map((_, i) => {
-            return <WebGLFloaty key={i} textures={floatiesTextures} geometry={sphereGeometryRef.current} material={particleMaterialRef.current} />
+         {[...Array(floatiesCount)].map((_, i) => {
+            return <WebGLFloaty key={i} addFloaty={addFloaty} textures={floatiesTextures} geometry={sphereGeometryRef.current} material={particleMaterialRef.current} />
          })}
 
          <mesh ref={receiverPlaneRef} position={[0, 0, 0]} material={invisibleMaterialRef.current}>

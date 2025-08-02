@@ -3,7 +3,12 @@ import WebGLFloaties from "./WebGLFloaties";
 
 export default function WebGLFloatiesCanvas() {
    return (
-      <Canvas id="webGL-floaties-canvas" className="h-full w-full absolute!" orthographic camera={{ zoom: 60, position: [0, 0, 10] }}>
+      <Canvas
+         id="webGL-floaties-canvas"
+         className="h-full w-full absolute!"
+         orthographic
+         camera={{ zoom: 60, position: [0, 0, 10] }}
+      >
          <WebGLFloaties />
       </Canvas>
    )

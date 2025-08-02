@@ -1,4 +1,4 @@
-import { useNavigate, useParams } from "react-router";
+import {  useParams } from "react-router";
 import "../css/fonts.css";
 import { useCursorCoordinates } from "../functions/interactivity";
 import { useCanvasSize } from "../functions/setup";
