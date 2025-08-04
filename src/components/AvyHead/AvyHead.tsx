@@ -40,14 +40,14 @@ export default function AvyHead() {
 
    // HEAD ROTATION
    const receiverPlaneRef = useRef({}) as RefObject<Mesh>
-   useFrame(() => {
+   useFrame((state, delta) => {
       const ndc = getNDC()
       const raycaster = new Raycaster()
       raycaster.setFromCamera(new Vector2(ndc.x, ndc.y), camera)
       const intersects = raycaster.intersectObject(receiverPlaneRef.current)
       const currentPlaneIntersect = intersects[0].point
 
-      const effectiveFollowerPosition = cursorFollower.current.position.lerp(currentPlaneIntersect, 0.075)
+      const effectiveFollowerPosition = cursorFollower.current.position.lerp(currentPlaneIntersect, delta * 6)
 
       cursorFollower.current.position.copy(effectiveFollowerPosition)
 

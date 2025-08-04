@@ -1,4 +1,4 @@
-import {  useParams } from "react-router";
+import { useNavigate, useParams } from "react-router";
 import "../css/fonts.css";
 import { useCursorCoordinates } from "../functions/interactivity";
 import { useCanvasSize } from "../functions/setup";
@@ -15,6 +15,11 @@ function App() {
 
    const { backgroundColor, textColor } = useGlobal()
 
+   const navigate = useNavigate()
+   if (!view) {
+      navigate('home')
+   }
+
    useCursorCoordinates()
    useCanvasSize()
 
@@ -29,7 +34,7 @@ function App() {
          <NavigationBar />
 
          {view === 'home' && <HomeComponent />}
-      {view === 'works' && <WorksComponent />}
+         {view === 'works' && <WorksComponent />}
       </div>
    )
 }

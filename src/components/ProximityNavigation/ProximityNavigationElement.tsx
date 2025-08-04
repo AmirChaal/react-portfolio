@@ -1,5 +1,3 @@
-import type { ComponentType, ElementType, SVGProps } from "react"
-
 export default function ProximityNavigationElement({ Icon, label }: {
    readonly Icon: any,
    readonly label: string
