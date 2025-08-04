@@ -1,48 +1,44 @@
 import { useFrame, useLoader, useThree } from "@react-three/fiber";
-import { BallCollider, Physics, RigidBody } from "@react-three/rapier";
+import { BallCollider, Physics, RapierRigidBody, RigidBody, useRapier } from "@react-three/rapier";
 import { useEffect, useMemo, useRef, useState, type RefObject } from "react";
 import { BoxGeometry, Mesh, MeshBasicMaterial, NearestFilter, Raycaster, SphereGeometry, TextureLoader, Vector3 } from "three";
 import { useGlobal } from "../../stores/global";
 import WebGLFloaty from "./WebGLFloaty";
 
 export default function WebGLFloaties() {
-   // Debug
-
+   // Setup
    const boxGeometryRef = useRef(new BoxGeometry())
    const invisibleMaterialRef = useRef(new MeshBasicMaterial({ transparent: true, opacity: 0 }))
    const sphereGeometryRef = useRef(new SphereGeometry(1, 8, 6))
    const particleMaterialRef = useRef(new MeshBasicMaterial({ color: '#f2f2f2', toneMapped: false }))
    const stirrerRef = useRef(null) as any
    const { getNDC, tonicColor, } = useGlobal()
-
+   const { world } = useRapier()
+   const rigidBodiesToRemoveRef = useRef<RapierRigidBody[]>([])
+   const borderBoxesRef = useRef<RapierRigidBody | null>(null)
    const { camera } = useThree()
 
    // Textures
    const floatiesTextures = useLoader(TextureLoader, [
       "/floaties-textures/at.png",
-      // "/floaties-textures/and.png",
-      // "/floaties-textures/dollar.png",
-      // "/floaties-textures/hash.png",
-      // "/floaties-textures/less.png",
-      // "/floaties-textures/percent.png",
-      // "/floaties-textures/question.png",
+      "/floaties-textures/and.png",
+      "/floaties-textures/dollar.png",
+      "/floaties-textures/hash.png",
+      "/floaties-textures/less.png",
    ])
    floatiesTextures.map(te => te.minFilter = NearestFilter)
 
    // Floaties
-   const floatiesCount = 200
-   const [floatiesArray, setFloatiesArray] = useState([])
-   const addFloaty = (floaty) => setFloatiesArray(prev => [...prev, floaty])
-   const removeFloaty = (floaty) => setFloatiesArray(prev => prev.filter(f => f !== floaty))
+   const [floatiesCount, setFloatiesCount] = useState(100)
+   const floatiesSpawnAtRef = useRef<'random' | 'edge'>('random')
+   const onFloatyRemove = () => {
+      console.log('removed')
+      setFloatiesCount(prev => prev + 1)
+   }
    useEffect(() => {
-      if (floatiesArray.length === floatiesCount) {
-         floatiesArray.forEach(fl => {
-            fl.addForce(new Vector3(-5, 0, 0))
-         })
-      }
-   }, [floatiesArray, floatiesCount])
+      floatiesSpawnAtRef.current = 'edge'
+   }, [])
 
-   // Raycaster
    const receiverPlaneRef = useRef({}) as RefObject<Mesh>
    const pointerIndicatorRef = useRef({}) as RefObject<Mesh>
    useFrame((state, delta) => {
@@ -57,6 +53,7 @@ export default function WebGLFloaties() {
       // Cursor indicator
       pointerIndicatorRef.current.position.copy(new Vector3(cursorPosition.x, cursorPosition.y, 3))
 
+      // Make stirrer follow cursor
       if (intersects.length > 0 && stirrerRef.current != null) {
          const stirrerPosition = stirrerRef.current.translation()
          const toCursorVector = new Vector3().subVectors(cursorPosition, stirrerPosition)
@@ -67,12 +64,12 @@ export default function WebGLFloaties() {
    });
 
    return (
-      <Physics>
-         <RigidBody type="fixed" restitution={1} >
-            <mesh geometry={boxGeometryRef.current} material={invisibleMaterialRef.current} scale={[35, 3, 3]} position={[0, -9.1, 0]} />
-            <mesh geometry={boxGeometryRef.current} material={invisibleMaterialRef.current} scale={[35, 3, 3]} position={[0, 9.1, 0]} />
-            <mesh geometry={boxGeometryRef.current} material={invisibleMaterialRef.current} scale={[3, 18, 3]} position={[-17.5, 0, 0]} />
-            <mesh geometry={boxGeometryRef.current} material={invisibleMaterialRef.current} scale={[3, 18, 3]} position={[17.5, 0, 0]} />
+      <>
+         <RigidBody ref={borderBoxesRef} type="fixed" restitution={1} >
+            <mesh geometry={boxGeometryRef.current} material={invisibleMaterialRef.current} scale={[35, 3, 3]} position={[0, -10.1, 0]} />
+            <mesh geometry={boxGeometryRef.current} material={invisibleMaterialRef.current} scale={[35, 3, 3]} position={[0, 10.1, 0]} />
+            <mesh geometry={boxGeometryRef.current} material={invisibleMaterialRef.current} scale={[3, 18, 3]} position={[-18.5, 0, 0]} />
+            <mesh geometry={boxGeometryRef.current} material={invisibleMaterialRef.current} scale={[3, 18, 3]} position={[18.5, 0, 0]} />
          </RigidBody>
 
          <RigidBody ref={stirrerRef} canSleep={false} gravityScale={0} type="dynamic" colliders={false} enabledTranslations={[true, true, false]} enabledRotations={[false, false, false]}>
@@ -82,9 +79,11 @@ export default function WebGLFloaties() {
             </mesh>
          </RigidBody>
 
-         {[...Array(floatiesCount)].map((_, i) => {
-            return <WebGLFloaty key={i} addFloaty={addFloaty} removeFloaty={removeFloaty} textures={floatiesTextures} geometry={sphereGeometryRef.current} material={particleMaterialRef.current} />
-         })}
+         {
+            [...Array(floatiesCount)].map((_, i) => {
+               return <WebGLFloaty key={i} spawnAt={floatiesSpawnAtRef.current} onRemove={onFloatyRemove} edgeBody={borderBoxesRef.current!} textures={floatiesTextures} />
+            })
+         }
 
          <mesh ref={receiverPlaneRef} position={[0, 0, 0]} material={invisibleMaterialRef.current}>
             <planeGeometry args={[150, 75]} />
@@ -95,6 +94,6 @@ export default function WebGLFloaties() {
             <sphereGeometry args={[1, 8, 6]} />
             <meshBasicMaterial color="black" />
          </mesh>
-      </Physics>
+      </>
    )
 }

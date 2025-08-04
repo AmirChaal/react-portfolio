@@ -1,5 +1,5 @@
 import { Canvas } from "@react-three/fiber";
-import WebGLFloaties from "./WebGLFloaties";
+import WebGLFloatiesPhysicsWrapper from "./WebGLFloatiesPhysicsWrapper";
 
 export default function WebGLFloatiesCanvas() {
    return (
@@ -9,7 +9,7 @@ export default function WebGLFloatiesCanvas() {
          orthographic
          camera={{ zoom: 60, position: [0, 0, 10] }}
       >
-         <WebGLFloaties />
+         <WebGLFloatiesPhysicsWrapper />
       </Canvas>
    )
 }
