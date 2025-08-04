@@ -49,5 +49,5 @@ createRoot(document.getElementById('root')!).render(
             <Route path="/:view" element={<App />} />
          </Routes>
       </BrowserRouter>
-   </StrictMode>,
+   </StrictMode>
 )

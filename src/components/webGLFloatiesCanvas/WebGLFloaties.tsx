@@ -30,25 +30,16 @@ export default function WebGLFloaties() {
    floatiesTextures.map(te => te.minFilter = NearestFilter)
 
    // Floaties
-   const floatiesCount = 2
+   const floatiesCount = 200
    const [floatiesArray, setFloatiesArray] = useState([])
-   const addFloaty = (floaty: any) => { setFloatiesArray([...floatiesArray, floaty]) }
-
+   const addFloaty = (floaty) => setFloatiesArray(prev => [...prev, floaty])
+   const removeFloaty = (floaty) => setFloatiesArray(prev => prev.filter(f => f !== floaty))
    useEffect(() => {
-      // if (floatiesArray.length === floatiesCount) { console.log('aborting'); return } else { console.log('continuing') }
-      console.log('computing...')
       if (floatiesArray.length === floatiesCount) {
-         console.log("complete :", floatiesArray.length, floatiesCount)
-      } else {
-         console.log('nope :', floatiesArray.length, floatiesCount)
+         floatiesArray.forEach(fl => {
+            fl.addForce(new Vector3(-5, 0, 0))
+         })
       }
-
-      // floatiesArrayRef.current[0].addForce(new Vector3(1, 0, 0))
-      // setInterval(() => {
-      //    floatiesArrayRef.current.forEach(fl => {
-      //       fl.addForce(new Vector3(1, 0, 0))
-      //    })
-      // }, 1000)
    }, [floatiesArray, floatiesCount])
 
    // Raycaster
@@ -92,7 +83,7 @@ export default function WebGLFloaties() {
          </RigidBody>
 
          {[...Array(floatiesCount)].map((_, i) => {
-            return <WebGLFloaty key={i} addFloaty={addFloaty} textures={floatiesTextures} geometry={sphereGeometryRef.current} material={particleMaterialRef.current} />
+            return <WebGLFloaty key={i} addFloaty={addFloaty} removeFloaty={removeFloaty} textures={floatiesTextures} geometry={sphereGeometryRef.current} material={particleMaterialRef.current} />
          })}
 
          <mesh ref={receiverPlaneRef} position={[0, 0, 0]} material={invisibleMaterialRef.current}>

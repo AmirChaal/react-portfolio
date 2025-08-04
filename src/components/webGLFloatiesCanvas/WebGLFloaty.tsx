@@ -1,10 +1,14 @@
-import { BallCollider, RigidBody } from "@react-three/rapier";
-import { useEffect, useRef, useState } from "react";
-import { SphereGeometry, Texture, Vector3, type Material } from "three";
+import { BallCollider, RapierRigidBody, RigidBody } from "@react-three/rapier";
+import { useEffect, useRef, useState, type RefObject } from "react";
+import { Texture } from "three";
 
-export default function WebGLFloaty({ textures, material, geometry, addFloaty }: { textures: Texture[], material: Material, geometry: SphereGeometry, addFloaty: any }) {
+export default function WebGLFloaty({ textures, addFloaty, removeFloaty }: {
+   readonly textures: Texture[],
+   readonly addFloaty: (rigidBody: RapierRigidBody) => void,
+   readonly removeFloaty: (rigidBody: RapierRigidBody) => void
+}) {
    const [selectedTexture, setSelectedTexture] = useState<Texture | null>(null)
-   const floatyRef = useRef(null)
+   const floatyRef = useRef(null) as RefObject<RapierRigidBody | null>
 
    useEffect(() => {
       const textureIndex = Math.floor(Math.random() * textures.length)
@@ -12,20 +16,22 @@ export default function WebGLFloaty({ textures, material, geometry, addFloaty }:
    }, [textures])
 
    useEffect(() => {
-      if (selectedTexture && floatyRef.current) {
-         addFloaty(floatyRef.current)
+      const floaty = floatyRef.current
+      if (floaty == null) return
+      addFloaty(floaty)
+
+      return () => {
+         if (floaty == null) return
+         removeFloaty(floaty)
       }
    }, [selectedTexture])
-
-   if (!selectedTexture) return null
 
    return (
       <RigidBody ref={floatyRef} scale={0.5} restitution={1} colliders={false} linearDamping={8} angularDamping={8} type="dynamic" gravityScale={0} position={[3, 3, 0]} enabledTranslations={[true, true, false]} enabledRotations={[false, false, true]}>
          <BallCollider args={[1]} />
          <mesh>
             <planeGeometry args={[2, 2]} />
-            <meshBasicMaterial map={selectedTexture} toneMapped={false} transparent={true} />
-            {/* <meshBasicMaterial color={'red'} /> */}
+            {selectedTexture && <meshBasicMaterial map={selectedTexture} toneMapped={false} transparent={true} />}
          </mesh>
       </RigidBody>
    )
