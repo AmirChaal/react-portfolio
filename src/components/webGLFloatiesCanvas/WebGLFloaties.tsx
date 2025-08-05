@@ -6,7 +6,9 @@ import { useGlobal } from "../../stores/global";
 import WebGLFloaty from "./WebGLFloaty";
 
 export default function WebGLFloaties() {
-   // Setup
+   /**
+    * Setup
+    */
    const boxGeometryRef = useRef(new BoxGeometry())
    const invisibleMaterialRef = useRef(new MeshBasicMaterial({ transparent: true, opacity: 0 }))
    const stirrerRef = useRef(null) as any
@@ -16,36 +18,52 @@ export default function WebGLFloaties() {
    const receiverPlaneRef = useRef({}) as RefObject<Mesh>
    const pointerIndicatorRef = useRef({}) as RefObject<Mesh>
 
-   // Textures
-   // Big textures
-   const bigFloatyGeometryRef = useRef(new PlaneGeometry(2, 2))
-   const textures = useLoader(TextureLoader, [
+   /**
+    * Floaties
+    */
+   // Geometries
+   const planeGeometryRef = useRef(new PlaneGeometry(0.75, 0.75))
+
+   // Materials
+   const useMaterials = (paths: string[]) => {
+      const textures = useLoader(TextureLoader, paths)
+      useEffect(() => {
+         textures.forEach(tex => {
+            tex.minFilter = NearestFilter
+            tex.colorSpace = SRGBColorSpace
+         })
+      }, [textures])
+      const materials = useMemo(() => (
+         textures.map(tex => new MeshBasicMaterial({ map: tex, toneMapped: false, transparent: true, }))
+      ), [textures])
+      return materials
+   }
+   const bigFloatyMaterialsRef = useRef(useMaterials([
       "/floaties-textures/at.png",
       "/floaties-textures/and.png",
       "/floaties-textures/dollar.png",
       "/floaties-textures/hash.png",
       "/floaties-textures/less.png",
-   ])
-   useEffect(() => {
-      textures.forEach(tex => {
-         tex.minFilter = NearestFilter
-         tex.colorSpace = SRGBColorSpace
-      })
-   }, [textures])
-   const bigFloatyMaterials = useMemo(() => (
-      textures.map(tex => new MeshBasicMaterial({ map: tex, toneMapped: false, transparent: true, }))
-   ), [textures])
-
-   // Small textures
-   const smallFloatyTextures = useLoader(TextureLoader, [
+   ]))
+   const mediumFloatyMaterialsRef = useRef(useMaterials([
+      "/floaties-textures/n.png",
+      "/floaties-textures/x.png",
+      "/floaties-textures/e.png",
+      "/floaties-textures/s.png",
+      "/floaties-textures/o.png",
+   ]))
+   const smallFloatyMaterialsRef = useRef(useMaterials([
       "/floaties-textures/dot.png",
       "/floaties-textures/comma.png",
-   ])
-   smallFloatyTextures.map(te => te.minFilter = NearestFilter)
-   const smallFloatyMaterials = smallFloatyTextures.map(texture => new MeshBasicMaterial({ map: texture, toneMapped: false, transparent: true }))
+   ]))
+   const floatyMaterials = useMemo(() => ({
+      small: smallFloatyMaterialsRef.current,
+      medium: mediumFloatyMaterialsRef.current,
+      big: bigFloatyMaterialsRef.current
+   }), [smallFloatyMaterialsRef.current, mediumFloatyMaterialsRef.current, bigFloatyMaterialsRef.current])
 
-   // Floaties
-   const initialFloatiesCount = 150
+   // Spawn & Despawn management
+   const initialFloatiesCount = 250
    const [floatyKeys, setFloatyKeys] = useState(Array.from({ length: initialFloatiesCount }, (_, i) => i))
    const floatyKeyCounterRef = useRef(initialFloatiesCount)
 
@@ -60,6 +78,9 @@ export default function WebGLFloaties() {
       )
    }
 
+   /**
+    * useFrame
+    */
    useFrame((state, delta) => {
       const ndc = getNDC()
 
@@ -99,7 +120,7 @@ export default function WebGLFloaties() {
          </RigidBody>
 
          {floatyKeys.map((key) => (
-            <WebGLFloaty key={key} uniqueKey={key} spawnAt={floatiesSpawnAtRef.current} onRemove={onFloatyRemove} edgeBody={borderBoxesRef.current!} bigFloatyMaterials={bigFloatyMaterials} smallFloatyMaterials={smallFloatyMaterials} bigFloatyGeometryRef={bigFloatyGeometryRef.current} />
+            <WebGLFloaty key={key} uniqueKey={key} spawnAt={floatiesSpawnAtRef.current} onRemove={onFloatyRemove} edgeBody={borderBoxesRef.current!} materials={floatyMaterials} planeGeometry={planeGeometryRef.current} />
          ))}
 
          <mesh ref={receiverPlaneRef} position={[0, 0, 0]} material={invisibleMaterialRef.current}>

@@ -7,7 +7,7 @@ export default function Background() {
       setInterval(() => {
          const getRandom = () => Math.random() * -50
          setTranslate({ x: getRandom(), y: getRandom() })
-      }, 80);
+      }, 150);
    }, [])
 
    const backgroundStyle = { transform: `translate(${translate.x}%, ${translate.y}%)` }
