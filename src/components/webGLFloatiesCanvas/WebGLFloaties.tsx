@@ -4,6 +4,7 @@ import { useEffect, useMemo, useRef, useState, type RefObject } from "react";
 import { BoxGeometry, Mesh, MeshBasicMaterial, NearestFilter, PlaneGeometry, Raycaster, SRGBColorSpace, TextureLoader, Vector3 } from "three";
 import { useGlobal } from "../../stores/global";
 import WebGLFloaty from "./WebGLFloaty";
+import { useTexture } from "@react-three/drei";
 
 export default function WebGLFloaties() {
    /**
@@ -26,13 +27,13 @@ export default function WebGLFloaties() {
 
    // Materials
    const useMaterials = (paths: string[]) => {
-      const textures = useLoader(TextureLoader, paths)
-      useEffect(() => {
-         textures.forEach(tex => {
-            tex.minFilter = NearestFilter
-            tex.colorSpace = SRGBColorSpace
-         })
-      }, [textures])
+      const textures = useTexture(paths)
+
+      textures.forEach(tex => {
+         tex.minFilter = NearestFilter
+         tex.colorSpace = SRGBColorSpace
+      })
+      
       const materials = useMemo(() => (
          textures.map(tex => new MeshBasicMaterial({ map: tex, toneMapped: false, transparent: true, }))
       ), [textures])
