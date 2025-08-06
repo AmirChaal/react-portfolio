@@ -12,9 +12,9 @@ export default function HomeText() {
    }
 
    return (
-      <div className="text-5xl font-jersey10">
-         <p className="text-[2em] mb-[-0.2em] tracking-[0.047em]">SALUT, JE SUIS AMIR</p>
-         <p className="mb-[0.4em] tracking-[0.05em]">Développeur full-stack & illustrateur</p>
+      <div className="text-[2.2em] font-jersey10">
+         <p className="text-[2em] mb-[-0.6em] tracking-[0.047em]">SALUT, JE SUIS AMIR</p>
+         <p className="mb-[-0.1em] tracking-[0.05em]">Développeur full-stack & illustrateur</p>
          <div className="flex gap-[4.7em]">
             <p onClick={worksOnClick}>Mes travaux</p>
             <p onClick={aboutMeOnClick}>À propos de moi</p>

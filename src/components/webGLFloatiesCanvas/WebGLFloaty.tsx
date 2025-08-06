@@ -22,9 +22,9 @@ export default function WebGLFloaty({ uniqueKey, edgeBody, onRemove, spawnAt, ma
    useEffect(() => {
       const random = Math.random();
       let size
-      if (random < 0.33) size = 'small'
-      else if (random < 0.66) size = 'medium'
-      else size = 'big'
+      if (random < 0) size = 'small' as const
+      else if (random < 0.5) size = 'medium' as const
+      else size = 'big' as const
       sizeRef.current = size
    }, []);
 
@@ -42,6 +42,13 @@ export default function WebGLFloaty({ uniqueKey, edgeBody, onRemove, spawnAt, ma
       else throw new Error('unexpected spawnAt value')
    }
    const randomPosition = useRef(getFloatyPosition())
+
+   // Rotation
+   const rotationRef = useRef([0, 0, 0] as [number, number, number])
+   useEffect(() => {
+      const z = Math.random() * (Math.PI * 2)
+      rotationRef.current = [0, 0, z] as const
+   }, [])
 
    // Material
    const selectedMaterialRef = useRef<Material | null>(null)
@@ -73,7 +80,7 @@ export default function WebGLFloaty({ uniqueKey, edgeBody, onRemove, spawnAt, ma
    }, [])
 
    return (
-      <RigidBody ref={bodyRef} onCollisionEnter={onCollisionEnter} position={randomPosition.current} restitution={1} colliders={false} linearDamping={8} angularDamping={8} type="dynamic" gravityScale={0} enabledTranslations={[true, true, false]} enabledRotations={[false, false, true]}   >
+      <RigidBody ref={bodyRef} rotation={rotationRef.current} onCollisionEnter={onCollisionEnter} position={randomPosition.current} restitution={1} colliders={false} linearDamping={8} angularDamping={8} type="dynamic" gravityScale={0} enabledTranslations={[true, true, false]} enabledRotations={[false, false, true]}   >
          <BallCollider args={[bodyScaleRef.current]} mass={0.5} />
          {(selectedMaterialRef.current) && <mesh material={selectedMaterialRef.current} geometry={planeGeometry} />}
       </RigidBody>

@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react"
+import noiseImage from '/noise.png'
 
 export default function Background() {
    const [translate, setTranslate] = useState({ x: 0, y: 0 })
@@ -10,11 +11,14 @@ export default function Background() {
       }, 150);
    }, [])
 
-   const backgroundStyle = { transform: `translate(${translate.x}%, ${translate.y}%)` }
+   const backgroundStyle = {
+      transform: `translate(${translate.x}%, ${translate.y}%)`,
+      backgroundImage: `url(${noiseImage})`
+}
 
-   return (
-      <div className="absolute h-full w-full overflow-hidden opacity-[0.125]">
-         <div className="absolute h-[600%] w-[600%] bg-[url('noise.png')] mix-blend-screen" style={backgroundStyle} />
-      </div>
-   )
+return (
+   <div className="absolute h-full w-full overflow-hidden opacity-[0.125]">
+      <div className="absolute h-[600%] w-[600%] mix-blend-screen" style={backgroundStyle} />
+   </div>
+)
 }

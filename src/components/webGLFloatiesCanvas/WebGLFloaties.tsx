@@ -1,7 +1,7 @@
 import { useFrame, useLoader, useThree } from "@react-three/fiber";
-import { BallCollider, Physics, RapierRigidBody, RigidBody, useRapier } from "@react-three/rapier";
+import { BallCollider, RapierRigidBody, RigidBody } from "@react-three/rapier";
 import { useEffect, useMemo, useRef, useState, type RefObject } from "react";
-import { BoxGeometry, Mesh, MeshBasicMaterial, MeshStandardMaterial, NearestFilter, PlaneGeometry, Raycaster, SphereGeometry, SRGBColorSpace, TextureLoader, Vector3 } from "three";
+import { BoxGeometry, Mesh, MeshBasicMaterial, NearestFilter, PlaneGeometry, Raycaster, SRGBColorSpace, TextureLoader, Vector3 } from "three";
 import { useGlobal } from "../../stores/global";
 import WebGLFloaty from "./WebGLFloaty";
 
@@ -63,7 +63,7 @@ export default function WebGLFloaties() {
    }), [smallFloatyMaterialsRef.current, mediumFloatyMaterialsRef.current, bigFloatyMaterialsRef.current])
 
    // Spawn & Despawn management
-   const initialFloatiesCount = 250
+   const initialFloatiesCount = 350 // Good number for build version is 500
    const [floatyKeys, setFloatyKeys] = useState(Array.from({ length: initialFloatiesCount }, (_, i) => i))
    const floatyKeyCounterRef = useRef(initialFloatiesCount)
 
@@ -97,7 +97,8 @@ export default function WebGLFloaties() {
       if (stirrerRef.current != null) {
          const stirrerPosition = stirrerRef.current.translation()
          const toCursorVector = new Vector3().subVectors(cursorPosition, stirrerPosition)
-         const toCursorForce = toCursorVector.multiplyScalar(700 * delta)
+         const cappedDelta = Math.min(1 / 30, delta)
+         const toCursorForce = toCursorVector.multiplyScalar(cappedDelta * 1000)
          toCursorForce.clampLength(0, 30)
          stirrerRef.current.setLinvel(toCursorForce)
       }
@@ -113,7 +114,7 @@ export default function WebGLFloaties() {
          </RigidBody>
 
          <RigidBody ref={stirrerRef} canSleep={false} gravityScale={0} type="dynamic" colliders={false} enabledTranslations={[true, true, false]} enabledRotations={[false, false, false]}>
-            <BallCollider args={[0.75]} mass={50} restitution={0} />
+            <BallCollider args={[0.75]} mass={0} restitution={0} />
             <mesh material={new MeshBasicMaterial({ color: tonicColor })} rotation={[Math.PI / 2, 0, 0]} >
                <cylinderGeometry args={[0.75, 0.5, 0.1, 25]} />
             </mesh>
