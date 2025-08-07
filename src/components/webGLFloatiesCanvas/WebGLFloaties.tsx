@@ -1,5 +1,5 @@
 import { useFrame, useLoader, useThree } from "@react-three/fiber";
-import { BallCollider, RapierRigidBody, RigidBody } from "@react-three/rapier";
+import { BallCollider, CuboidCollider, RapierRigidBody, RigidBody } from "@react-three/rapier";
 import { useEffect, useMemo, useRef, useState, type RefObject } from "react";
 import { BoxGeometry, Mesh, MeshBasicMaterial, NearestFilter, PlaneGeometry, Raycaster, SRGBColorSpace, TextureLoader, Vector3 } from "three";
 import { useGlobal } from "../../stores/global";
@@ -33,7 +33,7 @@ export default function WebGLFloaties() {
          tex.minFilter = NearestFilter
          tex.colorSpace = SRGBColorSpace
       })
-      
+
       const materials = useMemo(() => (
          textures.map(tex => new MeshBasicMaterial({ map: tex, toneMapped: false, transparent: true, }))
       ), [textures])
@@ -108,10 +108,10 @@ export default function WebGLFloaties() {
    return (
       <>
          <RigidBody ref={borderBoxesRef} type="fixed" restitution={1} >
-            <mesh geometry={boxGeometryRef.current} material={invisibleMaterialRef.current} scale={[35, 3, 3]} position={[0, -10.1, 0]} />
-            <mesh geometry={boxGeometryRef.current} material={invisibleMaterialRef.current} scale={[35, 3, 3]} position={[0, 10.1, 0]} />
-            <mesh geometry={boxGeometryRef.current} material={invisibleMaterialRef.current} scale={[3, 18, 3]} position={[-18.5, 0, 0]} />
-            <mesh geometry={boxGeometryRef.current} material={invisibleMaterialRef.current} scale={[3, 18, 3]} position={[18.5, 0, 0]} />
+            <CuboidCollider args={[25, 2, 3]} position={[0, -10.5, 0]} />
+            <CuboidCollider args={[25, 2, 3]} position={[0, 10.5, 0]} />
+            <CuboidCollider args={[2, 25, 3]} position={[21, 0, 0]} />
+            <CuboidCollider args={[2, 25, 3]} position={[-20, 0, 0]} />
          </RigidBody>
 
          <RigidBody ref={stirrerRef} canSleep={false} gravityScale={0} type="dynamic" colliders={false} enabledTranslations={[true, true, false]} enabledRotations={[false, false, false]}>
@@ -122,7 +122,7 @@ export default function WebGLFloaties() {
          </RigidBody>
 
          {floatyKeys.map((key) => (
-            <WebGLFloaty key={key} uniqueKey={key} spawnAt={floatiesSpawnAtRef.current} onRemove={onFloatyRemove} edgeBody={borderBoxesRef.current!} materials={floatyMaterials} planeGeometry={planeGeometryRef.current} />
+            <WebGLFloaty key={key} uniqueKey={key} spawningMode="strips" spawnAt={floatiesSpawnAtRef.current} onRemove={onFloatyRemove} edgeBody={borderBoxesRef.current!} materials={floatyMaterials} planeGeometry={planeGeometryRef.current} />
          ))}
 
          <mesh ref={receiverPlaneRef} position={[0, 0, 0]} material={invisibleMaterialRef.current}>

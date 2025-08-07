@@ -6,7 +6,11 @@ import { getRandomPosition } from "../../functions/3d";
 const floatySizes = ['small', 'medium', 'big'] as const
 type FloatySize = typeof floatySizes[number]
 
-export default function WebGLFloaty({ uniqueKey, edgeBody, onRemove, spawnAt, materials, planeGeometry }: {
+const spawningMods = ['strips', 'everywhere'] as const
+type SpawningMod = typeof spawningMods[number]
+
+export default function WebGLFloaty({ spawningMode, uniqueKey, edgeBody, onRemove, spawnAt, materials, planeGeometry }: {
+   readonly spawningMode: SpawningMod,
    readonly uniqueKey: number,
    readonly edgeBody: RapierRigidBody,
    readonly onRemove: (key: number) => void,
@@ -20,6 +24,11 @@ export default function WebGLFloaty({ uniqueKey, edgeBody, onRemove, spawnAt, ma
    // Collision detection
    const onCollisionEnter = (collision: any) => {
       const otherBody = collision.other.rigidBody
+      // console.log('1. collision') 
+      // console.log('2. otherBody handle :', otherBody.handle)
+      // console.log('3. edgeBody handle :', edgeBody.handle) // for some reason, after this log, react stops logging, i don't understand why, it may be connected to the bug where before moving cursor within viewport this function doesn't run on collision
+      // console.log('4. otherBody and edgeBody :', otherBody.handle, edgeBody.handle)
+      // console.log('5. end test')
       if (otherBody.handle !== edgeBody.handle) return
       removeFloaty()
    }
@@ -37,8 +46,18 @@ export default function WebGLFloaty({ uniqueKey, edgeBody, onRemove, spawnAt, ma
 
    // Position
    const getFloatyPosition = () => {
-      if (spawnAt === 'random') return getRandomPosition(8, 16, -8, -16, 0, 0)
-      else if (spawnAt === 'edge') return getRandomPosition(8, 16, -8, 16, 0, 0)
+      if (spawnAt === 'random' && spawningMode === 'everywhere') return getRandomPosition(8, 18, -8, -17, 0, 0)
+      else if (spawnAt === 'edge' && spawningMode === 'everywhere') return getRandomPosition(8, 18, -8, 17, 0, 0)
+      else if (spawnAt === 'random' && spawningMode === 'strips') {
+         const topPart = Math.random() < 0.5
+         if (topPart) return getRandomPosition(8, 18, 3.5, -17, 0, 0)
+         else return getRandomPosition(-3.5, 18, -8, -17, 0, 0)
+      }
+      else if (spawnAt === 'edge' && spawningMode === 'strips') {
+         const topPart = Math.random() < 0.5
+         if (topPart) return getRandomPosition(8, 18, 3.5, 17, 0, 0)
+         else return getRandomPosition(-3.5, 18, -8, 17, 0, 0)
+      }
       else throw new Error('unexpected spawnAt value')
    }
    const randomPosition = useRef(getFloatyPosition())
@@ -72,7 +91,7 @@ export default function WebGLFloaty({ uniqueKey, edgeBody, onRemove, spawnAt, ma
    }, [])
 
    return (
-      <RigidBody ref={bodyRef} rotation={rotationRef.current} onCollisionEnter={onCollisionEnter} position={randomPosition.current} restitution={1} colliders={false} linearDamping={8} angularDamping={8} type="dynamic" gravityScale={0} enabledTranslations={[true, true, false]} enabledRotations={[false, false, true]}   >
+      <RigidBody ref={bodyRef} canSleep={false} rotation={rotationRef.current} onCollisionEnter={onCollisionEnter} position={randomPosition.current} restitution={1} colliders={false} linearDamping={8} angularDamping={8} type="dynamic" gravityScale={0} enabledTranslations={[true, true, false]} enabledRotations={[false, false, true]}   >
          <BallCollider args={[bodyScale]} mass={0.5} />
          <mesh material={material} geometry={planeGeometry} />
       </RigidBody>
