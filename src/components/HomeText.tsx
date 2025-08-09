@@ -16,12 +16,12 @@ export default function HomeText() {
       <div className="text-[2.2em] font-jersey10">
          <p className="text-[2em] mb-[-0.6em] tracking-[0.047em]">SALUT, JE SUIS AMIR</p>
          <p className="mb-[0.1em] tracking-[0.05em]">Développeur full-stack & illustrateur</p>
-         <div className="flex justify-around w-full">
-            <div className="relative translate-x-[-50%]">
-               <TextButton className="absolute whitespace-nowrap" onClick={worksOnClick} text="Mes travaux" />
+         <div className="flex w-full relative">
+            <div className="absolute left-[2.8em]">
+               <TextButton className="absolute whitespace-nowrap translate-x-[-50%]" onClick={worksOnClick} text="Mes travaux" />
             </div>
-            <div>
-               <TextButton className="absolute" onClick={aboutMeOnClick} text="À propos de moi" />
+            <div className="absolute left-[11.3em]">
+               <TextButton className="absolute whitespace-nowrap translate-x-[-50%]" onClick={aboutMeOnClick} text="À propos de moi" />
             </div>
          </div>
       </div>

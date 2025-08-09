@@ -9,10 +9,14 @@ export default function TextButton({ text, onClick, className = "" }: { text: st
    const onMouseEnter = () => hoveredRef.current = true
    const onMouseLeave = () => hoveredRef.current = false
 
+   let arrowWrapperClasses = 'overflow-hidden transition-all'
+   if (hoveredRef.current === true) arrowWrapperClasses += ' w-[0.8em]'
+   else arrowWrapperClasses = ' w-[0em]'
+
    return (
       <button onClick={onClick} className={"flex gap-[0.3em] items-center cursor-pointer " + className} onMouseEnter={onMouseEnter} onMouseLeave={onMouseLeave}>
-         <div>
-            {hoveredRef.current && <ArrowIcon className="h-full w-[0.8em]" color={textColor} />}
+         <div className={arrowWrapperClasses}>
+            {<ArrowIcon className="h-full w-[0.8em]" color={textColor} />}
          </div>
          <p >{text}</p>
       </button>
