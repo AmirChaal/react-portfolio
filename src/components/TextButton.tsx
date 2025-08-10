@@ -1,21 +1,41 @@
-import { useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useGlobal } from "../stores/global";
 import ArrowIcon from "./icons/ArrowIcon";
+import gsap from "gsap";
 
 export default function TextButton({ text, onClick, className = "" }: { text: string, onClick: () => void, className?: string }) {
    const { textColor } = useGlobal()
+   const arrowWrapperRef = useRef<HTMLDivElement | null>(null)
 
-   const hoveredRef = useRef(false)
-   const onMouseEnter = () => hoveredRef.current = true
-   const onMouseLeave = () => hoveredRef.current = false
+   const [hovered, setHovered] = useState(false)
+   const onMouseEnter = () => setHovered(true)
+   const onMouseLeave = () => setHovered(false)
 
-   let arrowWrapperClasses = 'overflow-hidden transition-all'
-   if (hoveredRef.current === true) arrowWrapperClasses += ' w-[0.8em]'
-   else arrowWrapperClasses = ' w-[0em]'
+   const showArrowRef = useRef<gsap.core.Tween | null>(null)
+   useEffect(() => {
+      showArrowRef.current = gsap.to(arrowWrapperRef.current, { width: '0.9em', duration: 0.85, ease: "elastic.out(1,0.4)", paused: true })
+   }, [])
+
+   const hideArrowRef = useRef<gsap.core.Tween | null>(null)
+   useEffect(() => {
+      hideArrowRef.current = gsap.to(arrowWrapperRef.current, { width: '0em', duration: 0.2, ease: "power2.out", paused: true })
+   }, [])
+
+   useEffect(() => {
+      if (hideArrowRef.current == null || showArrowRef.current == null) return
+      if (hovered === true) {
+         hideArrowRef.current.pause()
+         showArrowRef.current.restart()
+      }
+      else {
+         showArrowRef.current.pause()
+         hideArrowRef.current.restart()
+      }
+   }, [hovered])
 
    return (
       <button onClick={onClick} className={"flex gap-[0.3em] items-center cursor-pointer " + className} onMouseEnter={onMouseEnter} onMouseLeave={onMouseLeave}>
-         <div className={arrowWrapperClasses}>
+         <div ref={arrowWrapperRef} className="overflow-hidden">
             {<ArrowIcon className="h-full w-[0.8em]" color={textColor} />}
          </div>
          <p >{text}</p>

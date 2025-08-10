@@ -91,7 +91,7 @@ export default function WebGLFloaty({ spawningMode, uniqueKey, edgeBody, onRemov
    }, [])
 
    return (
-      <RigidBody ref={bodyRef} canSleep={false} rotation={rotationRef.current} onCollisionEnter={onCollisionEnter} position={randomPosition.current} restitution={1} colliders={false} linearDamping={8} angularDamping={8} type="dynamic" gravityScale={0} enabledTranslations={[true, true, false]} enabledRotations={[false, false, true]}   >
+      <RigidBody ref={bodyRef} canSleep={true} rotation={rotationRef.current} onCollisionEnter={onCollisionEnter} position={randomPosition.current} restitution={1} colliders={false} linearDamping={8} angularDamping={8} type="dynamic" gravityScale={0} enabledTranslations={[true, true, false]} enabledRotations={[false, false, true]}   >
          <BallCollider args={[bodyScale]} mass={0.5} />
          <mesh material={material} geometry={planeGeometry} />
       </RigidBody>

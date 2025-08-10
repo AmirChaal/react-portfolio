@@ -3,7 +3,7 @@ import WebGLFloaties from "./WebGLFloaties";
 
 export default function WebGLFloatiesPhysicsWrapper() {
    return (
-      <Physics >
+      <Physics debug>
          <WebGLFloaties />
       </Physics>
    )

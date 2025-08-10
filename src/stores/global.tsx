@@ -1,4 +1,4 @@
-import { Vector2 } from 'three'
+import { TextureLoader, Vector2 } from 'three'
 import { create } from 'zustand'
 
 type CurrentView = 'home' | 'works' | 'about-me'
@@ -14,6 +14,7 @@ type CanvasSize = {
 }
 
 type Store = {
+   textureLoader: TextureLoader,
    floatiesColor: string,
    backgroundColor: string,
    textColor: string,
@@ -27,6 +28,7 @@ type Store = {
 }
 
 export const useGlobal = create<Store>()((set, get) => ({
+   textureLoader: {} as TextureLoader,
    floatiesColor: "#6f5643",
    backgroundColor: "#ece6c2",
    textColor: "#6f5643",
