@@ -24,11 +24,6 @@ export default function WebGLFloaty({ spawningMode, uniqueKey, edgeBody, onRemov
    // Collision detection
    const onCollisionEnter = (collision: any) => {
       const otherBody = collision.other.rigidBody
-      // console.log('1. collision') 
-      // console.log('2. otherBody handle :', otherBody.handle)
-      // console.log('3. edgeBody handle :', edgeBody.handle) // for some reason, after this log, react stops logging, i don't understand why, it may be connected to the bug where before moving cursor within viewport this function doesn't run on collision
-      // console.log('4. otherBody and edgeBody :', otherBody.handle, edgeBody.handle)
-      // console.log('5. end test')
       if (otherBody.handle !== edgeBody.handle) return
       removeFloaty()
    }

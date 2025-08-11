@@ -1,4 +1,4 @@
-import { TextureLoader, Vector2 } from 'three'
+import { LoadingManager, TextureLoader, Vector2 } from 'three'
 import { create } from 'zustand'
 
 type CurrentView = 'home' | 'works' | 'about-me'
@@ -28,7 +28,7 @@ type Store = {
 }
 
 export const useGlobal = create<Store>()((set, get) => ({
-   textureLoader: {} as TextureLoader,
+   textureLoader: new TextureLoader(new LoadingManager(() => console.log('load'), () => console.log('progress'), () => console.log('error'))),
    floatiesColor: "#6f5643",
    backgroundColor: "#ece6c2",
    textColor: "#6f5643",

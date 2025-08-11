@@ -1,9 +1,3 @@
-// This file is the attempt to make the scene move instead of the floaties
-// The reasoning is to avoid moving floaties unnecessarely to let them sleep
-// The attempt was going great, but eventually showed to be unachievable since rapier's rigidbody updates and not synced with three.js's meshes.
-// This can be fixed by using the rigidbodies as the source of truth, intead of the meshes
-// But this eventually breaks when trying to make the stirrer follow the cursor : the stirrer lags and jitters leftward behind the cursor in a jarring way
-
 import { useFrame, useLoader, useThree } from "@react-three/fiber";
 import { BallCollider, CuboidCollider, RapierRigidBody, RigidBody } from "@react-three/rapier";
 import { useEffect, useMemo, useRef, useState, type RefObject } from "react";
@@ -102,16 +96,13 @@ export default function WebGLFloaties() {
       const raycaster = new Raycaster()
       raycaster.setFromCamera(ndc, camera)
       const intersects = raycaster.intersectObject(receiverPlaneRef.current, true);
-      if (intersects.length > 0) {
-         // Cursor indicator
-         // const cursorPosition = intersects[0].point
-         // pointerIndicatorRef.current.position.copy(new Vector3(cursorPosition.x, cursorPosition.y, 3))
-      }
+      const intersectionOnReceiverPlane = intersects[0].point ? intersects[0].point : null
+
 
       // Stirrer follow
-      // if (stirrerRef.current.translation != null) {
+      // if (stirrerRef.current.translation != null && intersectionOnReceiverPlane != null) {
       //    const stirrerPosition = stirrerRef.current.translation()
-      //    const toCursorVector = new Vector3().subVectors(cursorPosition, stirrerPosition)
+      //    const toCursorVector = new Vector3().subVectors(intersectionOnReceiverPlane, stirrerPosition)
       //    const cappedDelta = Math.min(1 / 30, delta)
       //    const toCursorForce = toCursorVector.multiplyScalar(cappedDelta * 1000)
       //    toCursorForce.clampLength(0, 30)
@@ -137,6 +128,11 @@ export default function WebGLFloaties() {
 
       // Stirrer
       stirrerRef.current.setTranslation(sceneCenterPositionRef.current, true)
+
+      // Cursor indicator
+      if (intersectionOnReceiverPlane != null) {
+         pointerIndicatorRef.current.position.copy(new Vector3(intersectionOnReceiverPlane.x, intersectionOnReceiverPlane.y, 3))
+      }
    });
 
    return (
