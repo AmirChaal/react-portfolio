@@ -30,13 +30,13 @@ type Store = {
 // Create store first so we can access `set` inside LoadingManager callbacks
 export const useGlobal = create<Store>()((set, get) => {
    const loadingManager = new LoadingManager()
-   loadingManager.onStart = (url, itemsLoaded, itemsTotal) => console.log(`Started loading: ${url} (${itemsLoaded} of ${itemsTotal})`)
-   loadingManager.onLoad = () => {
-      console.log('✅ All assets loaded')
-      set({ texturesLoaded: true })
-   }
-   loadingManager.onProgress = (url, itemsLoaded, itemsTotal) => console.log(`Loading file: ${url} (${itemsLoaded} of ${itemsTotal})`)
-   loadingManager.onError = (url) => console.error(`❌ Error loading ${url}`)
+   // loadingManager.onStart = (url, itemsLoaded, itemsTotal) => console.log(`Started loading: ${url} (${itemsLoaded} of ${itemsTotal})`)
+   // loadingManager.onLoad = () => {
+   //    console.log('✅ All assets loaded')
+   //    set({ texturesLoaded: true })
+   // }
+   // loadingManager.onProgress = (url, itemsLoaded, itemsTotal) => console.log(`Loading file: ${url} (${itemsLoaded} of ${itemsTotal})`)
+   // loadingManager.onError = (url) => console.error(`❌ Error loading ${url}`)
 
    const textureLoader = new TextureLoader(loadingManager)
 

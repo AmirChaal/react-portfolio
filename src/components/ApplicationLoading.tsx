@@ -1,13 +1,10 @@
-import { useEffect } from "react"
-import { useGlobal } from "../stores/global"
+import AppearingContent from "./AppearingContent"
 
-export default function ApplicationLoading({ active }: { active: boolean }) {
-
-   useEffect(() => {
-
-   }, [active])
+export default function ApplicationLoading({ visible }: { visible: boolean }) {
 
    return <div className="absolute h-full w-full flex justify-center items-center">
-      <p className="font-jersey10 text-[2em] tracking-[0.1em]">LOADING...</p>
+      <AppearingContent visible={visible} >
+         <p className="font-jersey10 text-[2em] tracking-[0.1em]">LOADING...</p>
+      </AppearingContent>
    </div>
 }

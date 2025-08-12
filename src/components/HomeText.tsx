@@ -1,7 +1,8 @@
 import { useNavigate } from "react-router";
 import TextButton from "./TextButton";
+import AppearingContent from "./AppearingContent";
 
-export default function HomeText() {
+export default function HomeText({ visible }: { visible: boolean }) {
    const navigate = useNavigate()
 
    const worksOnClick = () => {
@@ -14,7 +15,9 @@ export default function HomeText() {
 
    return (
       <div className="text-[2.2em] font-jersey10">
-         <p className="text-[2em] mb-[-0.6em] tracking-[0.047em]">SALUT, JE SUIS AMIR</p>
+         <AppearingContent visible={visible} >
+            <p className="text-[2em] mb-[-0.6em] tracking-[0.047em]">SALUT, JE SUIS AMIR</p>
+         </AppearingContent>
          <p className="tracking-[0.05em]">Développeur full-stack & illustrateur</p>
          <div className="flex h-[1.7em] w-full relative">
             <div className="absolute left-[2.8em] top-[50%]">

@@ -9,7 +9,7 @@ import WebGLFloatiesCanvas from "./webGLFloatiesCanvas/WebGLFloatiesCanvas";
 import NavigationBar from "./NavigationBar";
 import Background from "./Background";
 import { useGlobal } from "../stores/global";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import ApplicationLoading from "./ApplicationLoading";
 import Noise from "./Noise";
 
@@ -65,21 +65,24 @@ function App() {
       }, 1000);
    }, [])
 
+   const homeComponentVisible = useMemo(() => {
+      return view === 'home' && loadingComplete === true
+   }, [loadingComplete, view])
+
    return (
       <div style={{ color: textColor }}>
          <Background />
 
-         <ApplicationLoading active={!loadingComplete} />
+         <ApplicationLoading visible={!loadingComplete} />
 
-         {/* <div className="absolute h-full w-full" >
-            <WebGLFloatiesCanvas />
-            <WebGLBehindCanvas />
+         {/* <WebGLFloatiesCanvas /> */}
+         {/* <WebGLBehindCanvas /> */}
 
+         <div className="absolute h-full w-full" >
             <NavigationBar />
-
-            {view === 'home' && <HomeComponent />}
+            <HomeComponent visible={homeComponentVisible} />
             {view === 'works' && <WorksComponent />}
-         </div> */}
+         </div>
 
          <Noise />
       </div>
