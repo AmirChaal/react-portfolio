@@ -19,9 +19,9 @@ export default function WebGLFloaty({ spawningMode, uniqueKey, edgeBody, onRemov
    readonly planeGeometry: PlaneGeometry
 }) {
    const bodyRef = useRef(null) as RefObject<RapierRigidBody | null>
-   const removeFloaty = () => { onRemove(uniqueKey) }
 
    // Collision detection
+   const removeFloaty = () => { onRemove(uniqueKey) }
    const onCollisionEnter = (collision: any) => {
       const otherBody = collision.other.rigidBody
       if (otherBody.handle !== edgeBody.handle) return

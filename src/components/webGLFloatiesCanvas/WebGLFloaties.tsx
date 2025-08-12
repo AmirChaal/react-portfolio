@@ -6,27 +6,6 @@ import { useGlobal } from "../../stores/global";
 import WebGLFloaty from "./WebGLFloaty";
 import gsap from "gsap";
 
-const BIG_PATHS = [
-   "/floaties-textures/at.png",
-   "/floaties-textures/and.png",
-   "/floaties-textures/dollar.png",
-   "/floaties-textures/hash.png",
-   "/floaties-textures/less.png"
-];
-
-const MEDIUM_PATHS = [
-   "/floaties-textures/n.png",
-   "/floaties-textures/x.png",
-   "/floaties-textures/e.png",
-   "/floaties-textures/s.png",
-   "/floaties-textures/o.png"
-];
-
-const SMALL_PATHS = [
-   "/floaties-textures/dot.png",
-   "/floaties-textures/comma.png"
-];
-
 export default function WebGLFloaties() {
    /**
     * Setup
@@ -34,7 +13,6 @@ export default function WebGLFloaties() {
    const { getNDC, tonicColor } = useGlobal()
    const invisibleMaterialRef = useRef(new MeshBasicMaterial({ transparent: true, opacity: 0 }))
    const receiverPlaneRef = useRef({}) as RefObject<Mesh>
-   const pointerIndicatorRef = useRef({}) as RefObject<Mesh>
    const cursorEnteredViewport = useRef(false)
    const { camera } = useThree()
 
@@ -46,28 +24,29 @@ export default function WebGLFloaties() {
    const planeGeometryRef = useRef(new PlaneGeometry(0.75, 0.75))
 
    // Materials
-   const { textureLoader } = useGlobal()
-   const useMaterials = (paths: string[]) => {
+   const { textures } = useGlobal()
+   const useMaterials = (textureGroup: string) => {
       const materials = useMemo(() => {
-         return paths.map(path => {
-            const tex = textureLoader.load(path)
-            tex.minFilter = NearestFilter
-            tex.colorSpace = SRGBColorSpace
+         return textures[textureGroup].map(texture => {
+            texture.minFilter = NearestFilter
+            texture.colorSpace = SRGBColorSpace
 
-            return new MeshBasicMaterial({ map: tex, toneMapped: false, transparent: true })
+            return new MeshBasicMaterial({ map: texture, toneMapped: false, transparent: true })
          })
-      }, [paths])
+      }, [textureGroup])
 
       return materials
    }
-  const bigFloatyMaterialsRef = useRef(useMaterials(BIG_PATHS));
-  const mediumFloatyMaterialsRef = useRef(useMaterials(MEDIUM_PATHS));
-  const smallFloatyMaterialsRef = useRef(useMaterials(SMALL_PATHS));
+   const bigFloatyMaterialsRef = useRef(useMaterials('bigFloatyTextures'));
+   const mediumFloatyMaterialsRef = useRef(useMaterials('mediumFloatyTextures'));
+   const smallFloatyMaterialsRef = useRef(useMaterials('smallFloatyTextures'));
    const floatyMaterials = useMemo(() => ({
       small: smallFloatyMaterialsRef.current,
       medium: mediumFloatyMaterialsRef.current,
       big: bigFloatyMaterialsRef.current
    }), [])
+
+
 
    // Spawn & Despawn management
    const initialFloatiesCount = 350 // Good number for build version is 350-500
@@ -96,12 +75,27 @@ export default function WebGLFloaties() {
    const stirrerMeshRef = useRef(null as null | Mesh)
    const stirrerFollowVectorMultiplier = useRef(0)
    const spawnStirrer = () => {
-      stirrerVisibleRef.current = true
-      gsap.to(stirrerRadiusRef, { current: 1, duration: 1, ease: "elastic.out(1,0.4)" })
-      gsap.to(stirrerFollowVectorMultiplier, { current: 1, duration: 1, ease: "power2.in" })
+      setTimeout(() => {
+         stirrerVisibleRef.current = true
+         gsap.to(stirrerRadiusRef, { current: 1, duration: 1, ease: "elastic.out(1,0.4)" })
+         gsap.to(stirrerFollowVectorMultiplier, { current: 1, duration: 1, ease: "power2.in" })
+      }, 250);
    }
+
+   // Pointer indicator
+   const pointerIndicatorRef = useRef(null as null | Mesh) as RefObject<Mesh>
+   const pointerIndicatorVisibleRef = useRef(false)
+   const pointerIndicatorMeshRadius = useRef(0)
+   const spawnIndicator = () => {
+      pointerIndicatorVisibleRef.current = true
+      gsap.to(pointerIndicatorMeshRadius, { current: 0.2, duration: 1, ease: "elastic.out(1.5,0.2)" })
+   }
+
    useEffect(() => {
-      if (cursorEnteredViewport.current === true) spawnStirrer()
+      if (cursorEnteredViewport.current === true) {
+         spawnStirrer()
+         spawnIndicator()
+      }
    }, [cursorEnteredViewport.current])
 
    /**
@@ -119,13 +113,20 @@ export default function WebGLFloaties() {
       const cursorPosition = intersects[0].point
 
       // Cursor indicator
-      pointerIndicatorRef.current.position.copy(new Vector3(cursorPosition.x, cursorPosition.y, 3))
+      if (pointerIndicatorRef.current != null) {
+         pointerIndicatorRef.current.position.copy(new Vector3(cursorPosition.x, cursorPosition.y, 3))
+      }
 
       // Stirrer radius
-      if (stirrerRef != null && stirrerMeshRef.current != null) {
-         const v = stirrerRadiusRef.current
-         stirrerMeshRef.current.scale.x = v
-         stirrerMeshRef.current.scale.z = v
+      if (stirrerRef.current != null && stirrerMeshRef.current != null) {
+         stirrerMeshRef.current.scale.x = stirrerRadiusRef.current
+         stirrerMeshRef.current.scale.z = stirrerRadiusRef.current
+      }
+
+      // Pointer indictaor radius
+      if (pointerIndicatorRef.current != null) {
+         pointerIndicatorRef.current.scale.x = pointerIndicatorMeshRadius.current
+         pointerIndicatorRef.current.scale.y = pointerIndicatorMeshRadius.current
       }
 
       // Stirrer follow
@@ -169,10 +170,10 @@ export default function WebGLFloaties() {
             <planeGeometry args={[150, 75]} />
          </mesh>
 
-         <mesh ref={pointerIndicatorRef} scale={0.15} >
+         {pointerIndicatorVisibleRef.current && <mesh ref={pointerIndicatorRef} scale={0.15} >
             <sphereGeometry args={[1, 8, 6]} />
             <meshBasicMaterial color="black" />
-         </mesh>
+         </mesh>}
       </>
    )
 }

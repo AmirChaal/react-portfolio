@@ -1,24 +1,12 @@
-import { useEffect, useState } from "react"
-import noiseImage from '/noise.png'
+import { useGlobal } from "../stores/global"
 
 export default function Background() {
-   const [translate, setTranslate] = useState({ x: 0, y: 0 })
+   const { backgroundColor } = useGlobal()
 
-   useEffect(() => {
-      setInterval(() => {
-         const getRandom = () => Math.random() * -50
-         setTranslate({ x: getRandom(), y: getRandom() })
-      }, 150);
-   }, [])
-
-   const backgroundStyle = {
-      transform: `translate(${translate.x}%, ${translate.y}%)`,
-      backgroundImage: `url(${noiseImage})`
-}
-
-return (
-   <div className="absolute h-full w-full overflow-hidden opacity-[0.125]">
-      <div className="absolute h-[600%] w-[600%] mix-blend-screen" style={backgroundStyle} />
-   </div>
-)
+   return (
+      <>
+         {/* <div className="absolute h-full w-full bg-[linear-gradient(#EBE1BB_0%,#ece6c2_50%,#ece6c2_50%,#EBE1BB_100%)]" style={{ color: textColor }}> */}
+         < div className="absolute h-full w-full" style={{ backgroundColor: backgroundColor }} />
+      </>
+   )
 }

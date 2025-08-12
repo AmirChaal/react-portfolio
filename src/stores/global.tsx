@@ -1,64 +1,74 @@
-import { LoadingManager, TextureLoader, Vector2 } from 'three'
+import { LoadingManager, Texture, TextureLoader, Vector2 } from 'three'
 import { create } from 'zustand'
 
 type CurrentView = 'home' | 'works' | 'about-me'
 
-type CursorCoordinates = {
-   x: number,
-   y: number
-}
-
-type CanvasSize = {
-   height: number,
-   width: number,
-}
-
 type Store = {
+   loadingManager: LoadingManager,
    textureLoader: TextureLoader,
+   texturesLoaded: boolean,
+   textures: Record<string, Texture[]>
+
    floatiesColor: string,
    backgroundColor: string,
    textColor: string,
    tonicColor: string
 
    currentView: CurrentView
-   cursorCoordinates: CursorCoordinates,
-   canvasSize: CanvasSize,
+   cursorCoordinates: {
+      x: number,
+      y: number
+   },
+   canvasSize: {
+      height: number,
+      width: number,
+   },
    update: (partial: Record<string, unknown>) => void,
    getNDC: () => Vector2
 }
 
-export const useGlobal = create<Store>()((set, get) => ({
-   textureLoader: new TextureLoader(new LoadingManager(() => console.log('load'), () => console.log('progress'), () => console.log('error'))),
-   floatiesColor: "#6f5643",
-   backgroundColor: "#ece6c2",
-   textColor: "#6f5643",
-   tonicColor: "#73bda8",
-
-   currentView: 'home',
-   cursorCoordinates: {
-      x: 0,
-      y: 0,
-   },
-   canvasSize: {
-      height: 0,
-      width: 0
-   },
-   update: (partial: Record<string, unknown>) => set(partial),
-   getNDC: () => {
-      const { cursorCoordinates, canvasSize } = get()
-      const { x, y } = cursorCoordinates
-      const { width, height } = canvasSize
-
-      return new Vector2(
-         (x / width) * 2 - 1,
-         -((y / height) * 2 - 1)
-      )
+// Create store first so we can access `set` inside LoadingManager callbacks
+export const useGlobal = create<Store>()((set, get) => {
+   const loadingManager = new LoadingManager()
+   loadingManager.onStart = (url, itemsLoaded, itemsTotal) => console.log(`Started loading: ${url} (${itemsLoaded} of ${itemsTotal})`)
+   loadingManager.onLoad = () => {
+      console.log('✅ All assets loaded')
+      set({ texturesLoaded: true })
    }
-}))
+   loadingManager.onProgress = (url, itemsLoaded, itemsTotal) => console.log(`Loading file: ${url} (${itemsLoaded} of ${itemsTotal})`)
+   loadingManager.onError = (url) => console.error(`❌ Error loading ${url}`)
 
-// Palette
-// #6f5643
-// #cc6b49
-// #d2a24c 
-// #ece6c2 
-// #73bda8
+   const textureLoader = new TextureLoader(loadingManager)
+
+   return {
+      loadingManager,
+      textureLoader,
+      texturesLoaded: false,
+      textures: {
+         smallFloatyTextures: [],
+         mediumFloatyTextures: [],
+         bigFloatyTextures: []
+      },
+
+      floatiesColor: "#6f5643",
+      backgroundColor: "#ece6c2",
+      textColor: "#6f5643",
+      tonicColor: "#73bda8",
+
+      currentView: 'home',
+      cursorCoordinates: { x: 0, y: 0 },
+      canvasSize: { height: 0, width: 0 },
+
+      update: (partial) => set(partial),
+      getNDC: () => {
+         const { cursorCoordinates, canvasSize } = get()
+         const { x, y } = cursorCoordinates
+         const { width, height } = canvasSize
+
+         return new Vector2(
+            (x / width) * 2 - 1,
+            -((y / height) * 2 - 1)
+         )
+      }
+   }
+})

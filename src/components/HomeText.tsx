@@ -15,13 +15,13 @@ export default function HomeText() {
    return (
       <div className="text-[2.2em] font-jersey10">
          <p className="text-[2em] mb-[-0.6em] tracking-[0.047em]">SALUT, JE SUIS AMIR</p>
-         <p className="mb-[0.1em] tracking-[0.05em]">Développeur full-stack & illustrateur</p>
-         <div className="flex w-full relative">
-            <div className="absolute left-[2.8em]">
-               <TextButton className="absolute whitespace-nowrap translate-x-[-50%]" onClick={worksOnClick} text="Mes travaux" />
+         <p className="tracking-[0.05em]">Développeur full-stack & illustrateur</p>
+         <div className="flex h-[1.7em] w-full relative">
+            <div className="absolute left-[2.8em] top-[50%]">
+               <TextButton className="absolute whitespace-nowrap translate-[-50%]" onClick={worksOnClick} text="Mes travaux" />
             </div>
-            <div className="absolute left-[11.3em]">
-               <TextButton className="absolute whitespace-nowrap translate-x-[-50%]" onClick={aboutMeOnClick} text="À propos de moi" />
+            <div className="absolute left-[11.3em] top-[50%]">
+               <TextButton className="absolute whitespace-nowrap translate-[-50%]" onClick={aboutMeOnClick} text="À propos de moi" />
             </div>
          </div>
       </div>

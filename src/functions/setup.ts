@@ -25,3 +25,27 @@ export function useCanvasSize() {
 
    }, [update])
 }
+
+export function useDeviceSize() {
+   const { update } = useGlobal()
+
+   useEffect(() => {
+      const updateFuntion = () => {
+         const height = window.innerHeight
+         const width = window.innerWidth
+
+         update({
+            canvasSize: {
+               height: height,
+               width: width
+            }
+         })
+      }
+
+      updateFuntion()
+
+      window.addEventListener('resize', updateFuntion)
+
+      return () => window.removeEventListener('resize', updateFuntion)
+   }, [update])
+}
