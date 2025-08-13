@@ -5,6 +5,8 @@ import { BoxGeometry, Mesh, MeshBasicMaterial, NearestFilter, PlaneGeometry, Ray
 import { useGlobal } from "../../stores/global";
 import WebGLFloaty from "./WebGLFloaty";
 import gsap from "gsap";
+import WebGLPointerIndicator from "./WebGLPointerIndicator";
+import WebGLFloatiesStirrer from "./WebGLFloatiesStirrer";
 
 export default function WebGLFloaties() {
    /**
@@ -46,8 +48,6 @@ export default function WebGLFloaties() {
       big: bigFloatyMaterialsRef.current
    }), [])
 
-
-
    // Spawn & Despawn management
    const initialFloatiesCount = 350 // Good number for build version is 350-500
    const [floatyKeys, setFloatyKeys] = useState(Array.from({ length: initialFloatiesCount }, (_, i) => i))
@@ -67,34 +67,25 @@ export default function WebGLFloaties() {
    }
 
    /**
-    * Stirrer
+    * Mouse entering detection
     */
-   const stirrerRef = useRef({} as RapierRigidBody)
-   const stirrerRadiusRef = useRef(0)
-   const stirrerVisibleRef = useRef(false)
-   const stirrerMeshRef = useRef(null as null | Mesh)
-   const stirrerFollowVectorMultiplier = useRef(0)
-   const spawnStirrer = () => {
-      setTimeout(() => {
-         stirrerVisibleRef.current = true
-         gsap.to(stirrerRadiusRef, { current: 1, duration: 1, ease: "elastic.out(1,0.4)" })
-         gsap.to(stirrerFollowVectorMultiplier, { current: 1, duration: 1, ease: "power2.in" })
-      }, 250);
-   }
+   useEffect(() => {
+      document.addEventListener('mousemove', () => {
+         if (cursorEnteredViewport.current === false) cursorEnteredViewport.current = true
+      });
+   }, [])
 
-   // Pointer indicator
-   const pointerIndicatorRef = useRef(null as null | Mesh) as RefObject<Mesh>
-   const pointerIndicatorVisibleRef = useRef(false)
-   const pointerIndicatorMeshRadius = useRef(0)
-   const spawnIndicator = () => {
-      pointerIndicatorVisibleRef.current = true
-      gsap.to(pointerIndicatorMeshRadius, { current: 0.2, duration: 1, ease: "elastic.out(1.5,0.2)" })
-   }
-
+   /**
+    * Spawning cursor indicator and stirrer
+    */
+   const [stirrerVisible, setStirrerVisible] = useState(false)
+   const [pointerIndicatorVisible, setPointerIndicatorVisible] = useState(false)
    useEffect(() => {
       if (cursorEnteredViewport.current === true) {
-         spawnStirrer()
-         spawnIndicator()
+         setPointerIndicatorVisible(true)
+         setTimeout(() => {
+            setStirrerVisible(true)
+         }, 250);
       }
    }, [cursorEnteredViewport.current])
 
@@ -102,49 +93,17 @@ export default function WebGLFloaties() {
     * useFrame
     */
    const elapsedTimeRef = useRef(0)
+   const [cursor3DPosition, setCursor3DPosition] = useState(null as null | Vector3)
+   const raycasterRef = useRef(new Raycaster())
    useFrame((state, delta) => {
       elapsedTimeRef.current += delta
       const ndc = getNDC()
 
-      const raycaster = new Raycaster()
-      raycaster.setFromCamera(ndc, camera)
-      const intersects = raycaster.intersectObject(receiverPlaneRef.current, true);
-      if (intersects.length === 0) return
-      const cursorPosition = intersects[0].point
-
-      // Cursor indicator
-      if (pointerIndicatorRef.current != null) {
-         pointerIndicatorRef.current.position.copy(new Vector3(cursorPosition.x, cursorPosition.y, 3))
-      }
-
-      // Stirrer radius
-      if (stirrerRef.current != null && stirrerMeshRef.current != null) {
-         stirrerMeshRef.current.scale.x = stirrerRadiusRef.current
-         stirrerMeshRef.current.scale.z = stirrerRadiusRef.current
-      }
-
-      // Pointer indictaor radius
-      if (pointerIndicatorRef.current != null) {
-         pointerIndicatorRef.current.scale.x = pointerIndicatorMeshRadius.current
-         pointerIndicatorRef.current.scale.y = pointerIndicatorMeshRadius.current
-      }
-
-      // Stirrer follow
-      if (stirrerRef.current?.translation != null) {
-         const stirrerPosition = stirrerRef.current.translation()
-         const toCursorVector = new Vector3().subVectors(cursorPosition, stirrerPosition)
-         const cappedDelta = Math.min(1 / 30, delta)
-         const toCursorForce = toCursorVector.multiplyScalar(cappedDelta * 1000)
-         toCursorForce.clampLength(0, 30 * stirrerFollowVectorMultiplier.current)
-         stirrerRef.current.setLinvel(toCursorForce, false)
-      }
+      raycasterRef.current.setFromCamera(ndc, camera)
+      const intersects = raycasterRef.current.intersectObject(receiverPlaneRef.current, true);
+      if (intersects.length > 0) setCursor3DPosition(intersects[0].point)
+      else setCursor3DPosition(null)
    });
-
-   useEffect(() => {
-      document.addEventListener('mousemove', () => {
-         if (cursorEnteredViewport.current === false) cursorEnteredViewport.current = true
-      });
-   }, [])
 
    return (
       <>
@@ -155,12 +114,7 @@ export default function WebGLFloaties() {
             <CuboidCollider args={[2, 25, 3]} position={[-20, 0, 0]} />
          </RigidBody>
 
-         {cursorEnteredViewport.current && <RigidBody ref={stirrerRef} canSleep={false} gravityScale={0} type="dynamic" colliders={false} enabledTranslations={[true, true, false]} enabledRotations={[false, false, false]}>
-            <BallCollider args={[0.75]} mass={0} restitution={0} />
-            <mesh ref={stirrerMeshRef} material={new MeshBasicMaterial({ color: tonicColor })} rotation={[Math.PI / 2, 0, 0]} >
-               <cylinderGeometry args={[0.75, 0.5, 0.1, 25]} />
-            </mesh>
-         </RigidBody>}
+         <WebGLFloatiesStirrer visible={stirrerVisible} cursor3DPosition={cursor3DPosition} />
 
          {floatyKeys.map((key) => (
             borderBoxes && <WebGLFloaty key={key} uniqueKey={key} spawningMode="strips" spawnAt={floatiesSpawnAtRef.current} onRemove={onFloatyRemove} edgeBody={borderBoxes} materials={floatyMaterials} planeGeometry={planeGeometryRef.current} />
@@ -170,10 +124,7 @@ export default function WebGLFloaties() {
             <planeGeometry args={[150, 75]} />
          </mesh>
 
-         {pointerIndicatorVisibleRef.current && <mesh ref={pointerIndicatorRef} scale={0.15} >
-            <sphereGeometry args={[1, 8, 6]} />
-            <meshBasicMaterial color="black" />
-         </mesh>}
+         <WebGLPointerIndicator visible={pointerIndicatorVisible} cursor3DPosition={cursor3DPosition} />
       </>
    )
 }

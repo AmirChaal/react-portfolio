@@ -1,32 +1,40 @@
 import { useNavigate } from "react-router";
 import TextButton from "./TextButton";
 import AppearingContent from "./AppearingContent";
+import { useEffect, useState } from "react";
+import AppearingList from "./AppearingList";
 
 export default function HomeText({ visible }: { visible: boolean }) {
-   const navigate = useNavigate()
-
-   const worksOnClick = () => {
-      navigate('/works');
-   }
-
-   const aboutMeOnClick = () => {
-      navigate('/about-me');
-   }
+   const navigate = useNavigate();
 
    return (
       <div className="text-[2.2em] font-jersey10">
-         <AppearingContent visible={visible} >
-            <p className="text-[2em] mb-[-0.6em] tracking-[0.047em]">SALUT, JE SUIS AMIR</p>
-         </AppearingContent>
-         <p className="tracking-[0.05em]">Développeur full-stack & illustrateur</p>
-         <div className="flex h-[1.7em] w-full relative">
-            <div className="absolute left-[2.8em] top-[50%]">
-               <TextButton className="absolute whitespace-nowrap translate-[-50%]" onClick={worksOnClick} text="Mes travaux" />
-            </div>
-            <div className="absolute left-[11.3em] top-[50%]">
-               <TextButton className="absolute whitespace-nowrap translate-[-50%]" onClick={aboutMeOnClick} text="À propos de moi" />
-            </div>
-         </div>
+         <AppearingList visible={visible}>
+            <AppearingContent>
+               <p className="text-[2em] mb-[-0.6em] tracking-[0.047em]">SALUT, JE SUIS AMIR</p>
+            </AppearingContent>
+            <AppearingContent>
+               <p className="tracking-[0.05em]">Développeur full-stack & illustrateur</p>
+            </AppearingContent>
+            <AppearingContent>
+               <div className="flex h-[1.7em] w-full relative">
+                  <div className="absolute left-[2.8em] top-[50%]">
+                     <TextButton
+                        className="absolute whitespace-nowrap translate-[-50%]"
+                        onClick={() => navigate("/works")}
+                        text="Mes travaux"
+                     />
+                  </div>
+                  <div className="absolute left-[11.3em] top-[50%]">
+                     <TextButton
+                        className="absolute whitespace-nowrap translate-[-50%]"
+                        onClick={() => navigate("/about-me")}
+                        text="À propos de moi"
+                     />
+                  </div>
+               </div>
+            </AppearingContent>
+         </AppearingList>
       </div>
    );
 }

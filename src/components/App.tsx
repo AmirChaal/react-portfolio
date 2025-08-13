@@ -69,20 +69,22 @@ function App() {
       return view === 'home' && loadingComplete === true
    }, [loadingComplete, view])
 
+   const worksComponentVisible = useMemo(() => {
+      return view === 'works' && loadingComplete === true
+      }, [loadingComplete, view])
+
    return (
       <div style={{ color: textColor }}>
          <Background />
 
          <ApplicationLoading visible={!loadingComplete} />
 
-         {/* <WebGLFloatiesCanvas /> */}
+         <WebGLFloatiesCanvas visible={loadingComplete} />
          {/* <WebGLBehindCanvas /> */}
 
-         <div className="absolute h-full w-full" >
-            <NavigationBar />
-            <HomeComponent visible={homeComponentVisible} />
-            {view === 'works' && <WorksComponent />}
-         </div>
+         <NavigationBar visible={loadingComplete} />
+         <HomeComponent visible={homeComponentVisible} />
+         <WorksComponent visible={worksComponentVisible} />
 
          <Noise />
       </div>

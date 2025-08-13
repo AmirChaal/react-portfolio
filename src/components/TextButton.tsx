@@ -3,7 +3,7 @@ import { useGlobal } from "../stores/global";
 import ArrowIcon from "./icons/ArrowIcon";
 import gsap from "gsap";
 
-export default function TextButton({ text, onClick, className = "" }: { text: string, onClick: () => void, className?: string }) {
+export default function TextButton({ text, onClick = () => {}, className = "" }: { text: string, onClick?: () => void, className?: string }) {
    const { textColor } = useGlobal()
    const arrowWrapperRef = useRef<HTMLDivElement | null>(null)
 
@@ -13,7 +13,7 @@ export default function TextButton({ text, onClick, className = "" }: { text: st
 
    const showArrowRef = useRef<gsap.core.Tween | null>(null)
    useEffect(() => {
-      showArrowRef.current = gsap.to(arrowWrapperRef.current, { width: '0.9em', duration: 0.85, ease: "elastic.out(1,0.4)", paused: true })
+      showArrowRef.current = gsap.to(arrowWrapperRef.current, { width: '0.83em', duration: 0.85, ease: "elastic.out(1,0.4)", paused: true })
    }, [])
 
    const hideArrowRef = useRef<gsap.core.Tween | null>(null)
