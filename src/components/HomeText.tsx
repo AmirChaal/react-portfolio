@@ -1,8 +1,8 @@
-import { useNavigate } from "react-router";
 import TextButton from "./TextButton";
 import AppearingContent from "./AppearingContent";
-import { useEffect, useState } from "react";
 import AppearingList from "./AppearingList";
+import { goToAbout,  goToWorks } from "../functions/navigation";
+import { useNavigate } from "react-router";
 
 export default function HomeText({ visible }: { visible: boolean }) {
    const navigate = useNavigate();
@@ -19,18 +19,10 @@ export default function HomeText({ visible }: { visible: boolean }) {
             <AppearingContent>
                <div className="flex h-[1.7em] w-full relative">
                   <div className="absolute left-[2.8em] top-[50%]">
-                     <TextButton
-                        className="absolute whitespace-nowrap translate-[-50%]"
-                        onClick={() => navigate("/works")}
-                        text="Mes travaux"
-                     />
+                     <TextButton className="absolute whitespace-nowrap translate-[-50%]" onClick={() => goToWorks(navigate)} text="Mes travaux" />
                   </div>
                   <div className="absolute left-[11.3em] top-[50%]">
-                     <TextButton
-                        className="absolute whitespace-nowrap translate-[-50%]"
-                        onClick={() => navigate("/about-me")}
-                        text="À propos de moi"
-                     />
+                     <TextButton className="absolute whitespace-nowrap translate-[-50%]" onClick={() => goToAbout(navigate)} text="À propos de moi" />
                   </div>
                </div>
             </AppearingContent>

@@ -1,7 +1,7 @@
 import { LoadingManager, Texture, TextureLoader, Vector2 } from 'three'
 import { create } from 'zustand'
 
-type CurrentView = 'home' | 'works' | 'about-me'
+type CurrentView = 'home' | 'works' | 'about'
 
 type Store = {
    loadingManager: LoadingManager,
@@ -9,10 +9,11 @@ type Store = {
    texturesLoaded: boolean,
    textures: Record<string, Texture[]>
 
-   floatiesColor: string,
    backgroundColor: string,
+   floatiesColor: string,
    textColor: string,
-   tonicColor: string
+   stirrerColor: string,
+   cursorIndicatorColor: string,
 
    currentView: CurrentView
    cursorCoordinates: {
@@ -50,10 +51,12 @@ export const useGlobal = create<Store>()((set, get) => {
          bigFloatyTextures: []
       },
 
-      floatiesColor: "#6f5643",
+      // Colors
+      floatiesColor: "#E9D4AB",
       backgroundColor: "#ece6c2",
-      textColor: "#6f5643",
-      tonicColor: "#73bda8",
+      textColor: "#43636F",
+      stirrerColor: "#d2a24c",
+      cursorIndicatorColor: "#cc6b49",
 
       currentView: 'home',
       cursorCoordinates: { x: 0, y: 0 },
@@ -72,3 +75,12 @@ export const useGlobal = create<Store>()((set, get) => {
       }
    }
 })
+
+// Palette
+// #43636F dark dlue
+// #6f5643 brown
+// #cc6b49 orange
+// #d2a24c yellow
+// #ece6c2 white
+// #73bda8 tonic blue
+// #E9D4AB beige (old floaties color)

@@ -1,30 +1,51 @@
 import { useEffect, useRef, useState } from "react"
 import { useGlobal } from "../../stores/global"
-import { BallCollider, RigidBody, type RapierRigidBody } from "@react-three/rapier"
+import { BallCollider, RigidBody, useRapier, type RapierRigidBody } from "@react-three/rapier"
 import { MeshBasicMaterial, type Mesh, Vector3 } from "three"
 import { useFrame } from "@react-three/fiber"
 import gsap from "gsap"
 
 export default function WebGLFloatiesStirrer({ visible, cursor3DPosition }: { visible: boolean, cursor3DPosition: Vector3 | null }) {
-   const { tonicColor } = useGlobal()
+   const animationDuration = 1 // Seconds
 
-   const stirrerRef = useRef({} as RapierRigidBody)
+   const { stirrerColor } = useGlobal()
+   const stirrerRef = useRef(null as RapierRigidBody | null)
    const stirrerMeshRef = useRef(null as null | Mesh)
    const [stirrerRadius, setStirrerRadius] = useState(visible ? 1 : 0)
    const [stirrerFollowVectorMultiplier, setStirrerFollowVectorMultiplier] = useState(visible ? 1 : 0)
 
+   // Activate and deactivate rigidbody
+   useEffect(() => {
+      let timeoutId: null | number = null
+
+      if (stirrerRef.current == null) return
+      if (!visible) {
+         timeoutId = setTimeout(() => {
+            if (stirrerRef.current == null) return
+            stirrerRef.current.setEnabled(false)
+         }, animationDuration * 1000)
+      }
+      else {
+         stirrerRef.current.setEnabled(true)
+      }
+
+      return () => {
+         if (timeoutId != null) clearTimeout(timeoutId)
+      }
+   }, [visible])
+
    useEffect(() => {
       gsap.to({ value: stirrerRadius }, {
          value: visible ? 1 : 0,
-         duration: 1,
-         ease: visible ? "elastic.out(1,0.4)" : "power2.in",
+         duration: animationDuration,
+         ease: visible ? "elastic.out(1,0.4)" : "power2.out",
          onUpdate: function () { setStirrerRadius(this.targets()[0].value) }
       })
 
       if (visible === true) setStirrerFollowVectorMultiplier(0)
       gsap.to({ value: stirrerFollowVectorMultiplier }, {
          value: visible ? 1 : 0,
-         duration: 1,
+         duration: animationDuration,
          ease: "power2.in",
          onUpdate: function () { setStirrerFollowVectorMultiplier(this.targets()[0].value) }
       })
@@ -55,11 +76,13 @@ export default function WebGLFloatiesStirrer({ visible, cursor3DPosition }: { vi
    });
 
    return (
-      <RigidBody ref={stirrerRef} canSleep={false} gravityScale={0} type="dynamic" colliders={false} enabledTranslations={[true, true, false]} enabledRotations={[false, false, false]}>
-         <BallCollider args={[0.75]} mass={0} restitution={0} />
-         <mesh ref={stirrerMeshRef} material={new MeshBasicMaterial({ color: tonicColor })} rotation={[Math.PI / 2, 0, 0]} >
-            <cylinderGeometry args={[0.75, 0.5, 0.1, 25]} />
-         </mesh>
-      </RigidBody>
+      <>
+         {<RigidBody ref={stirrerRef} canSleep={false} gravityScale={0} type="dynamic" colliders={false} enabledTranslations={[true, true, false]} enabledRotations={[false, false, false]}>
+            <BallCollider args={[0.75]} mass={0} restitution={0} />
+            <mesh ref={stirrerMeshRef} material={new MeshBasicMaterial({ color: stirrerColor })} rotation={[Math.PI / 2, 0, 0]} >
+               <cylinderGeometry args={[0.75, 0.5, 0.1, 25]} />
+            </mesh>
+         </RigidBody>}
+      </>
    )
 }

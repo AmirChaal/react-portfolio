@@ -1,7 +1,8 @@
 import { BallCollider, RapierRigidBody, RigidBody } from "@react-three/rapier";
 import { useEffect, useMemo, useRef, useState, type RefObject } from "react";
-import { Material, PlaneGeometry, Texture, Vector3 } from "three";
+import { Color, Material, PlaneGeometry, Texture, Vector3 } from "three";
 import { getRandomPosition } from "../../functions/3d";
+import { useGlobal } from "../../stores/global";
 
 const floatySizes = ['small', 'medium', 'big'] as const
 type FloatySize = typeof floatySizes[number]
@@ -18,6 +19,7 @@ export default function WebGLFloaty({ spawningMode, uniqueKey, edgeBody, onRemov
    readonly materials: { small: Material[], medium: Material[], big: Material[] }
    readonly planeGeometry: PlaneGeometry
 }) {
+   const { floatiesColor } = useGlobal()
    const bodyRef = useRef(null) as RefObject<RapierRigidBody | null>
 
    // Collision detection
@@ -65,10 +67,16 @@ export default function WebGLFloaty({ spawningMode, uniqueKey, edgeBody, onRemov
       let materialsArray
       if (sizeRef.current === 'small') materialsArray = materials.small
       else if (sizeRef.current === 'medium') materialsArray = materials.medium
-      else if (sizeRef.current === 'big') materialsArray = materials.big
-      else throw new Error('unexpected floaty size')
+      else materialsArray = materials.big
+
       const materialIndex = Math.floor(Math.random() * materialsArray.length)
-      return materialsArray[materialIndex]
+      const material = materialsArray[materialIndex].clone() // clone so we don’t recolor all floaties
+
+      // Pick a random color
+      const randomColor = new Color().set(floatiesColor)
+      material.color = randomColor
+
+      return material
    }, [materials, sizeRef.current])
 
    // Scales

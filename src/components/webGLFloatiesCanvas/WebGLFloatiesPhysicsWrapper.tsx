@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { useThree } from "@react-three/fiber";
 import gsap from "gsap";
 
-export default function WebGLFloatiesPhysicsWrapper({ visible }: { visible: boolean }) {
+export default function WebGLFloatiesPhysicsWrapper({ visible, focused }: { visible: boolean, focused: boolean }) {
    /**
    * Zoom
    */
@@ -28,7 +28,7 @@ export default function WebGLFloatiesPhysicsWrapper({ visible }: { visible: bool
 
    return (
       <Physics>
-         <WebGLFloaties />
+         <WebGLFloaties focused={focused} />
       </Physics>
    )
 }

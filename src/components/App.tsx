@@ -71,15 +71,19 @@ function App() {
 
    const worksComponentVisible = useMemo(() => {
       return view === 'works' && loadingComplete === true
-      }, [loadingComplete, view])
+   }, [loadingComplete, view])
+
+   const floatiesCanvasFocused = useMemo(() => {
+      return view === 'home' && loadingComplete === true
+   }, [loadingComplete, view])
 
    return (
-      <div style={{ color: textColor }}>
+      <div className="select-none" style={{ color: textColor }}>
          <Background />
 
          <ApplicationLoading visible={!loadingComplete} />
 
-         <WebGLFloatiesCanvas visible={loadingComplete} />
+         <WebGLFloatiesCanvas visible={loadingComplete} focused={floatiesCanvasFocused} />
          {/* <WebGLBehindCanvas /> */}
 
          <NavigationBar visible={loadingComplete} />
