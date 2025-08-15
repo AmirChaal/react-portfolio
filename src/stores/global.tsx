@@ -52,11 +52,11 @@ export const useGlobal = create<Store>()((set, get) => {
       },
 
       // Colors
-      floatiesColor: "#E9D4AB",
       backgroundColor: "#ece6c2",
-      textColor: "#43636F",
-      stirrerColor: "#d2a24c",
-      cursorIndicatorColor: "#cc6b49",
+      floatiesColor: "#E9D4AB",
+      textColor: "#6f5643",
+      stirrerColor: "#73bda8",
+      cursorIndicatorColor: "#6f5643",
 
       currentView: 'home',
       cursorCoordinates: { x: 0, y: 0 },
@@ -81,6 +81,6 @@ export const useGlobal = create<Store>()((set, get) => {
 // #6f5643 brown
 // #cc6b49 orange
 // #d2a24c yellow
-// #ece6c2 white
+// #ece6c2 light beige
 // #73bda8 tonic blue
 // #E9D4AB beige (old floaties color)

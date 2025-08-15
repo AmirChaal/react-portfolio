@@ -73,8 +73,8 @@ export default function WebGLFloaty({ spawningMode, uniqueKey, edgeBody, onRemov
       const material = materialsArray[materialIndex].clone() // clone so we don’t recolor all floaties
 
       // Pick a random color
-      const randomColor = new Color().set(floatiesColor)
-      material.color = randomColor
+      const randomColor = new Color().set(floatiesColor);
+      (material as any).color = randomColor
 
       return material
    }, [materials, sizeRef.current])

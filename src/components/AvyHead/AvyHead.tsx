@@ -1,76 +1,85 @@
-import { Float } from "@react-three/drei"
-import { useFrame, useThree } from "@react-three/fiber"
-import { useEffect, useRef, type RefObject } from "react"
-import { useGlobal } from "../../stores/global"
-import { Raycaster, Vector2, type Mesh } from "three"
-import AvyHeadModel from "./AvyHeadModel"
-import { useParams } from "react-router"
-import gsap from "gsap"
+import { Float } from "@react-three/drei";
+import { useFrame, useThree } from "@react-three/fiber";
+import { useEffect, useRef, type RefObject, forwardRef, useImperativeHandle, } from "react";
+import { useGlobal } from "../../stores/global";
+import { Raycaster, Vector2, Vector3, type Mesh } from "three";
+import AvyHeadModel from "./AvyHeadModel";
+import { useParams } from "react-router";
+import gsap from "gsap";
 
-export default function AvyHead() {
-   const { view } = useParams()
-   const { getNDC } = useGlobal()
-   const headRef = useRef({}) as RefObject<Mesh>
-   const cursorFollower = useRef({}) as RefObject<Mesh>
-   const { camera } = useThree()
+export default forwardRef(function AvyHead({ visible }: { visible: boolean }, ref) {
+   const { getNDC } = useGlobal();
+   const internalHeadRef = useRef<Mesh>(null);
+   const cursorFollower = useRef<Mesh>(null);
+   const receiverPlaneRef = useRef<Mesh>(null);
+   const { camera } = useThree();
+
+   // Expose headRef to parent
+   useImperativeHandle(ref, () => internalHeadRef.current, []);
 
    // HEAD POSITION
-   const prevViewRef = useRef(undefined) as RefObject<undefined | string>;
+   const positionRef = useRef(new Vector3(-2.5, visible ? 0 : 6, -7.5))
    useEffect(() => {
-      if (!headRef.current || prevViewRef.current === view) return;
+      if (!internalHeadRef.current) return;
 
-      const toLeft = gsap.to(headRef.current.position, { x: -2.5, duration: 1.5, paused: true, ease: "elastic.out(1,0.5)" });
-      const toRight = gsap.to(headRef.current.position, { x: 2.5, duration: 1.5, paused: true, ease: "elastic.out(1,0.5)" });
+      const toUp = gsap.to(positionRef.current, {
+         y: 6,
+         duration: 0.5,
+         paused: true,
+         ease: "power2.in",
+      });
+      const toMiddle = gsap.to(positionRef.current, {
+         y: 0,
+         duration: 1,
+         paused: true,
+         ease: "power2.out",
+      });
 
-      if (view === 'home') {
-         console.log('playing toRight')
-         toRight.play();
-      } else if (view === 'works') {
-         console.log('playing toLeft')
-         toLeft.play();
+      if (!visible) {
+         toUp.play();
+      } else {
+         toMiddle.play();
       }
 
-      // Cleanup
       return () => {
-         toLeft.kill();
-         toRight.kill();
+         toUp.kill();
+         toMiddle.kill();
       };
-   }, [view]);
-
+   }, [visible]);
 
    // HEAD ROTATION
-   const receiverPlaneRef = useRef({}) as RefObject<Mesh>
-   useFrame((state, delta) => {
-      const ndc = getNDC()
-      const raycaster = new Raycaster()
-      raycaster.setFromCamera(new Vector2(ndc.x, ndc.y), camera)
-      const intersects = raycaster.intersectObject(receiverPlaneRef.current)
-      const currentPlaneIntersect = intersects[0].point
+   const raycasterRef = useRef(new Raycaster())
+   useFrame((_, delta) => {
+      if (cursorFollower.current == null) return
+      const ndc = getNDC();
+      raycasterRef.current.setFromCamera(new Vector2(ndc.x, ndc.y), camera);
+      const intersects = raycasterRef.current.intersectObject(receiverPlaneRef.current!);
+      const currentPlaneIntersect = intersects[0].point;
 
-      const effectiveFollowerPosition = cursorFollower.current.position.lerp(currentPlaneIntersect, delta * 6)
+      // Rotation
+      const effectiveFollowerPosition = cursorFollower.current!.position.lerp(currentPlaneIntersect, delta * 6);
+      cursorFollower.current.position.copy(effectiveFollowerPosition);
+      internalHeadRef.current!.lookAt(cursorFollower.current!.position);
 
-      cursorFollower.current.position.copy(effectiveFollowerPosition)
-
-      headRef.current.lookAt(cursorFollower.current.position)
-   })
+      // Position
+      internalHeadRef.current!.position.copy(positionRef.current)
+   });
 
    return (
       <>
          {/* Cursor follower */}
-         <mesh ref={cursorFollower} position={[0, 0, 4.8]} castShadow receiveShadow >
-            {/* <dodecahedronGeometry args={[0.1, 1]} />
-            <meshStandardMaterial color="blue" /> */}
+         <mesh ref={cursorFollower} position={[0, 0, 4.8]} castShadow receiveShadow>
+            {/* Debug geometry if needed */}
          </mesh>
 
          <mesh ref={receiverPlaneRef} position={[0, 0, -1]} visible={false}>
             <planeGeometry args={[10, 10]} />
-            <meshBasicMaterial color="blue" transparent opacity={0.5} />
          </mesh>
 
          {/* Avy head */}
-         <Float speed={5} rotationIntensity={0.1} floatingRange={[-0.1, 0.1]} >
-            <AvyHeadModel ref={headRef} position={[0, 0, -6]} scale={1.6} />
+         <Float speed={5} rotationIntensity={0.1} floatingRange={[-0.1, 0.1]}         >
+            <AvyHeadModel ref={internalHeadRef} position={[-2.5, 0, -7.5]} scale={1.6} />
          </Float>
       </>
-   )
-}
+   );
+});

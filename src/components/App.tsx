@@ -3,96 +3,132 @@ import "../css/fonts.css";
 import { useCursorCoordinates } from "../functions/interactivity";
 import { useDeviceSize } from "../functions/setup";
 import HomeComponent from "./HomeComponent";
-import { WebGLBehindCanvas } from "./webGLBehindCanvas/WebGLBehindCanvas";
 import WorksComponent from "./worksView/WorksComponent";
 import WebGLFloatiesCanvas from "./webGLFloatiesCanvas/WebGLFloatiesCanvas";
 import NavigationBar from "./NavigationBar";
 import Background from "./Background";
 import { useGlobal } from "../stores/global";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import ApplicationLoading from "./ApplicationLoading";
 import Noise from "./Noise";
+import { WebGLBehindCanvasWrapper } from "./webGLBehindCanvas/WebGLBehindCanvasWrapper";
 
 const bigFloatyPaths = ["/floaties-textures/at.png", "/floaties-textures/and.png", "/floaties-textures/dollar.png", "/floaties-textures/hash.png", "/floaties-textures/less.png"];
 const mediumFloatyPaths = ["/floaties-textures/n.png", "/floaties-textures/x.png", "/floaties-textures/e.png", "/floaties-textures/s.png", "/floaties-textures/o.png"];
 const smallFloatyPaths = ["/floaties-textures/dot.png", "/floaties-textures/comma.png"];
 
-function App() {
-   const { view } = useParams()
-   const { textColor } = useGlobal()
+export default function App() {
+   const { view } = useParams();
+   const { textColor, textureLoader, textures, update } = useGlobal();
 
-   /**
-    * Setup
-    */
-   useCursorCoordinates()
-   useDeviceSize()
+   useCursorCoordinates();
+   useDeviceSize();
 
-   /**
-    * Routing
-    */
-   const navigate = useNavigate()
+   const navigate = useNavigate();
    if (!view) {
-      navigate('home')
+      navigate("home");
    }
 
-   /**
-    * Load ressources
-    */
-
-   // Textures
-   const { textureLoader, texturesLoaded, update, textures } = useGlobal()
    const provideTextures = (textureGroup: string, paths: string[]) => {
-      const loadedTextures = paths.map(path => textureLoader.load(path))
-      textures[textureGroup] = loadedTextures
-      update({ textures: textures })
-   }
-   useEffect(() => {
-      provideTextures('bigFloatyTextures', bigFloatyPaths)
-      provideTextures('mediumFloatyTextures', mediumFloatyPaths)
-      provideTextures('smallFloatyTextures', smallFloatyPaths)
-   }, [])
+      const loadedTextures = paths.map(path => textureLoader.load(path));
+      textures[textureGroup] = loadedTextures;
+      update({ textures: textures });
+   };
 
-   // Ready application
-   const [loadingComplete, setLoadingComplete] = useState(false)
-   // useEffect(() => {
-   //    if (texturesLoaded === true) {
-   //       setLoadingComplete(true)
-   //    }
-   // }, [texturesLoaded])
+   useEffect(() => {
+      provideTextures("bigFloatyTextures", bigFloatyPaths);
+      provideTextures("mediumFloatyTextures", mediumFloatyPaths);
+      provideTextures("smallFloatyTextures", smallFloatyPaths);
+   }, []);
+
+   const [loadingComplete, setLoadingComplete] = useState(false);
    useEffect(() => {
       setTimeout(() => {
-         setLoadingComplete(true)
+         setLoadingComplete(true);
       }, 1000);
-   }, [])
+   }, []);
 
-   const homeComponentVisible = useMemo(() => {
-      return view === 'home' && loadingComplete === true
-   }, [loadingComplete, view])
+   // --- Delayed show states for components ---
+   const appearanceDelay = 350 // miliseconds
+   const [showNavigation, setShowNavigation] = useState(false);
+   const [showHome, setShowHome] = useState(false);
+   const [showWorks, setShowWorks] = useState(false);
+   const [showFloatiesCanvas, setShowFloatiesCanvas] = useState(false);
+   const [focusFloatiesCanvas, setFocusFloatiesCanvas] = useState(false);
+   const [showBehindCanvas, setShowBehindCanvas] = useState(false);
 
-   const worksComponentVisible = useMemo(() => {
-      return view === 'works' && loadingComplete === true
-   }, [loadingComplete, view])
+   // HOME COMPONENT VISIBILITY
+   useEffect(() => {
+      if (loadingComplete) {
+         const timer = setTimeout(() => setShowNavigation(true), appearanceDelay);
+         return () => clearTimeout(timer);
+      } else {
+         setShowNavigation(false);
+      }
+   }, [view, loadingComplete]);
 
-   const floatiesCanvasFocused = useMemo(() => {
-      return view === 'home' && loadingComplete === true
-   }, [loadingComplete, view])
+   useEffect(() => {
+      if (view === "home" && loadingComplete) {
+         const timer = setTimeout(() => setShowHome(true), appearanceDelay);
+         return () => clearTimeout(timer);
+      } else {
+         setShowHome(false);
+      }
+   }, [view, loadingComplete]);
+
+   // WORKS COMPONENT VISIBILITY
+   useEffect(() => {
+      if (view === "works" && loadingComplete) {
+         const timer = setTimeout(() => setShowWorks(true), appearanceDelay);
+         return () => clearTimeout(timer);
+      } else {
+         setShowWorks(false);
+      }
+   }, [view, loadingComplete]);
+
+   // FLOATIES CANVAS VISIBILITY
+   useEffect(() => {
+      if (loadingComplete) {
+         const timer = setTimeout(() => setShowFloatiesCanvas(true), appearanceDelay);
+         return () => clearTimeout(timer);
+      } else {
+         setShowFloatiesCanvas(false);
+      }
+   }, [view, loadingComplete]);
+
+   // FLOATIES CANVAS FOCUS
+   useEffect(() => {
+      if (view === "home" && loadingComplete) {
+         const timer = setTimeout(() => setFocusFloatiesCanvas(true), appearanceDelay);
+         return () => clearTimeout(timer);
+      } else {
+         setFocusFloatiesCanvas(false);
+      }
+   }, [view, loadingComplete]);
+
+   // BEHIND CANVAS VISIBILITY
+   useEffect(() => {
+      if (view === "works" && loadingComplete) {
+         const timer = setTimeout(() => setShowBehindCanvas(true), appearanceDelay);
+         return () => clearTimeout(timer);
+      } else {
+         setShowBehindCanvas(false);
+      }
+   }, [view, loadingComplete]);
 
    return (
       <div className="select-none" style={{ color: textColor }}>
          <Background />
-
          <ApplicationLoading visible={!loadingComplete} />
 
-         <WebGLFloatiesCanvas visible={loadingComplete} focused={floatiesCanvasFocused} />
-         {/* <WebGLBehindCanvas /> */}
+         <WebGLFloatiesCanvas visible={showFloatiesCanvas} focused={focusFloatiesCanvas} />
+         <WebGLBehindCanvasWrapper visible={showBehindCanvas} />
 
-         <NavigationBar visible={loadingComplete} />
-         <HomeComponent visible={homeComponentVisible} />
-         <WorksComponent visible={worksComponentVisible} />
+         <NavigationBar visible={showNavigation} />
+         <HomeComponent visible={showHome} />
+         <WorksComponent visible={showWorks} />
 
          <Noise />
       </div>
-   )
+   );
 }
-
-export default App;

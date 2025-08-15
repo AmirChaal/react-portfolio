@@ -7,10 +7,10 @@ import { useGlobal } from "../../stores/global"
 export default function WebGLPointerIndicator({ visible, cursor3DPosition }: { visible: boolean, cursor3DPosition: Vector3 | null }) {
    const pointerIndicatorRef = useRef(null) as RefObject<Mesh | null>
    const [pointerIndicatorMeshRadius, setPointerIndicatorMeshRadius] = useState(visible ? 0.2 : 0)
-   const {textColor} = useGlobal()
+   const { cursorIndicatorColor } = useGlobal()
 
    useEffect(() => {
-      gsap.to({ value: pointerIndicatorMeshRadius}, {
+      gsap.to({ value: pointerIndicatorMeshRadius }, {
          value: visible ? 0.2 : 0,
          duration: 1,
          ease: visible ? "elastic.out(1.5,0.2)" : "power2.out",
@@ -41,7 +41,7 @@ export default function WebGLPointerIndicator({ visible, cursor3DPosition }: { v
    return (
       <mesh ref={pointerIndicatorRef} scale={0.15} >
          <torusGeometry args={[1, 0.3, 2, 3]} />
-         <meshBasicMaterial color={textColor} />
+         <meshBasicMaterial color={cursorIndicatorColor} />
       </mesh>
    )
 }

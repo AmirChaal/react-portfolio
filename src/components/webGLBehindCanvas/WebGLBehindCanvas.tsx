@@ -1,12 +1,50 @@
+import { useEffect, useRef, type RefObject } from "react";
+import { useGlobal } from "../../stores/global";
 import AvyHead from "../AvyHead/AvyHead";
-import { Canvas } from '@react-three/fiber'
+import { useFrame, useThree } from '@react-three/fiber'
+import { CameraHelper, Mesh, type DirectionalLight } from "three";
 
-export function WebGLBehindCanvas() {
+export function WebGLBehindCanvas({ visible }: { visible: boolean }) {
+   const { floatiesColor, textColor } = useGlobal()
+   const { scene } = useThree()
+   const lightRef = useRef<DirectionalLight>(null!)
+   const avyHeadRef = useRef(null) as RefObject<null | Mesh>
+
+   // useEffect(() => {
+   //    if (lightRef.current) {
+   //       const helper = new CameraHelper(lightRef.current.shadow.camera)
+   //       scene.add(helper)
+   //       return () => {
+   //          scene.remove(helper)
+   //          helper.dispose()
+   //       }
+   //    }
+   // }, [scene])
+
+   // lightRef.current.shadow.camera
+
+   useFrame(() => {
+      if (avyHeadRef.current == null) return
+      lightRef.current.target = avyHeadRef.current
+   })
+
    return (
-      <Canvas id="webGL-behind-canvas" className="h-full w-full absolute!" camera={{ fov: 30 }}>
-         <ambientLight args={['#ffffff', 0.5]} />
-         <directionalLight args={['#ffffff', 3]} position={[0, 3, 3]} />
-         {/* <AvyHead /> */}
-      </Canvas>
+      <>
+         <ambientLight color={"#FF8700"} intensity={2.25} />
+         <directionalLight
+            ref={lightRef}
+            color={"#ECE6C2"}
+            castShadow
+            position={[0, 1, 1]}
+            shadow-bias={-0.0001}
+            shadow-camera-top={2}
+            shadow-camera-right={2}
+            shadow-camera-bottom={-2}
+            shadow-camera-left={-2}
+            shadow-mapSize-width={1024}
+            shadow-mapSize-height={1024}
+         />
+         <AvyHead ref={avyHeadRef} visible={visible} />
+      </>
    )
 }
