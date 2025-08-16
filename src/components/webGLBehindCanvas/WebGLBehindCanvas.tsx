@@ -5,8 +5,7 @@ import { useFrame, useThree } from '@react-three/fiber'
 import { CameraHelper, Mesh, type DirectionalLight } from "three";
 
 export function WebGLBehindCanvas({ visible }: { visible: boolean }) {
-   const { floatiesColor, textColor } = useGlobal()
-   const { scene } = useThree()
+   const { avyAmbientLight, avyDirectionalLight } = useGlobal()
    const lightRef = useRef<DirectionalLight>(null!)
    const avyHeadRef = useRef(null) as RefObject<null | Mesh>
 
@@ -30,10 +29,10 @@ export function WebGLBehindCanvas({ visible }: { visible: boolean }) {
 
    return (
       <>
-         <ambientLight color={"#FF8700"} intensity={2.25} />
+         <ambientLight color={avyAmbientLight} intensity={2.25} />
          <directionalLight
             ref={lightRef}
-            color={"#ECE6C2"}
+            color={avyDirectionalLight}
             castShadow
             position={[0, 1, 1]}
             shadow-bias={-0.0001}

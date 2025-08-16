@@ -14,6 +14,8 @@ type Store = {
    textColor: string,
    stirrerColor: string,
    cursorIndicatorColor: string,
+   avyAmbientLight: string,
+   avyDirectionalLight: string,
 
    currentView: CurrentView
    cursorCoordinates: {
@@ -51,12 +53,33 @@ export const useGlobal = create<Store>()((set, get) => {
          bigFloatyTextures: []
       },
 
-      // Colors
-      backgroundColor: "#ece6c2",
-      floatiesColor: "#E9D4AB",
-      textColor: "#6f5643",
-      stirrerColor: "#73bda8",
-      cursorIndicatorColor: "#6f5643",
+      // --- Colors ---
+      // Recro dark theme
+      // backgroundColor: "#ffffff",
+      // floatiesColor: "#E6E6E6",
+      // textColor: "#000000",
+      // stirrerColor: "#56C7FF",
+      // cursorIndicatorColor: "#000000",
+      // avyAmbientLight: "",
+      // avyDirectionalLight: "",
+
+      // Recro white theme
+      backgroundColor: "#ffffff",
+      floatiesColor: "#E6E6E6",
+      textColor: "#000000",
+      stirrerColor: "#56C7FF",
+      cursorIndicatorColor: "#000000",
+      avyAmbientLight: "#56C7FF",
+      avyDirectionalLight: "#56C7FF",
+
+      // Original colors
+      // backgroundColor: "#ece6c2",
+      // floatiesColor: "#E9D4AB",
+      // textColor: "#6f5643",
+      // stirrerColor: "#73bda8",
+      // cursorIndicatorColor: "#6f5643",
+      // avyAmbientLight: "#FF8700",
+      // avyDirectionalLight: "#ECE6C2",
 
       currentView: 'home',
       cursorCoordinates: { x: 0, y: 0 },

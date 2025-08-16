@@ -79,7 +79,7 @@ export default function WebGLFloatiesStirrer({ visible, cursor3DPosition }: { vi
       <>
          {<RigidBody ref={stirrerRef} canSleep={false} gravityScale={0} type="dynamic" colliders={false} enabledTranslations={[true, true, false]} enabledRotations={[false, false, false]}>
             <BallCollider args={[0.75]} mass={0} restitution={0} />
-            <mesh ref={stirrerMeshRef} material={new MeshBasicMaterial({ color: stirrerColor })} rotation={[Math.PI / 2, 0, 0]} >
+            <mesh ref={stirrerMeshRef} material={new MeshBasicMaterial({ color: stirrerColor, toneMapped: false })} rotation={[Math.PI / 2, 0, 0]} >
                <cylinderGeometry args={[0.75, 0.5, 0.1, 25]} />
             </mesh>
          </RigidBody>}

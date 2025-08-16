@@ -1,10 +1,9 @@
 import { Float } from "@react-three/drei";
 import { useFrame, useThree } from "@react-three/fiber";
-import { useEffect, useRef, type RefObject, forwardRef, useImperativeHandle, } from "react";
+import { useEffect, useRef, type RefObject, forwardRef, useImperativeHandle } from "react";
 import { useGlobal } from "../../stores/global";
-import { Raycaster, Vector2, Vector3, type Mesh } from "three";
+import { Group, Raycaster, Vector2, Vector3, type Mesh } from "three";
 import AvyHeadModel from "./AvyHeadModel";
-import { useParams } from "react-router";
 import gsap from "gsap";
 
 export default forwardRef(function AvyHead({ visible }: { visible: boolean }, ref) {
@@ -12,6 +11,7 @@ export default forwardRef(function AvyHead({ visible }: { visible: boolean }, re
    const internalHeadRef = useRef<Mesh>(null);
    const cursorFollower = useRef<Mesh>(null);
    const receiverPlaneRef = useRef<Mesh>(null);
+   const screenRef = useRef<Mesh>(null);
    const { camera } = useThree();
 
    // Expose headRef to parent
@@ -76,9 +76,17 @@ export default forwardRef(function AvyHead({ visible }: { visible: boolean }, re
             <planeGeometry args={[10, 10]} />
          </mesh>
 
-         {/* Avy head */}
-         <Float speed={5} rotationIntensity={0.1} floatingRange={[-0.1, 0.1]}         >
-            <AvyHeadModel ref={internalHeadRef} position={[-2.5, 0, -7.5]} scale={1.6} />
+         {/* Avy head with screen */}
+         <Float speed={5} rotationIntensity={0.1} floatingRange={[-0.1, 0.1]}>
+            <group ref={internalHeadRef} position={[-2.5, 0, -7.5]} scale={1.6}>
+               <AvyHeadModel />
+
+               {/* Blue screen plane parented to head */}
+               <mesh ref={screenRef} position={[0, -0.085, 0.64]} receiveShadow>
+                  <planeGeometry args={[1.4, 1.3]} />
+                  <meshStandardMaterial color="white" />
+               </mesh>
+            </group>
          </Float>
       </>
    );
