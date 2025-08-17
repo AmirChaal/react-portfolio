@@ -8,7 +8,7 @@ import WebGLFloatiesCanvas from "./webGLFloatiesCanvas/WebGLFloatiesCanvas";
 import NavigationBar from "./NavigationBar";
 import Background from "./Background";
 import { useGlobal } from "../stores/global";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import ApplicationLoading from "./ApplicationLoading";
 import Noise from "./Noise";
 import { WebGLBehindCanvasWrapper } from "./webGLBehindCanvas/WebGLBehindCanvasWrapper";
@@ -16,6 +16,7 @@ import { WebGLBehindCanvasWrapper } from "./webGLBehindCanvas/WebGLBehindCanvasW
 const bigFloatyPaths = ["/floaties-textures/at.png", "/floaties-textures/and.png", "/floaties-textures/dollar.png", "/floaties-textures/hash.png", "/floaties-textures/less.png"];
 const mediumFloatyPaths = ["/floaties-textures/n.png", "/floaties-textures/x.png", "/floaties-textures/e.png", "/floaties-textures/s.png", "/floaties-textures/o.png"];
 const smallFloatyPaths = ["/floaties-textures/dot.png", "/floaties-textures/comma.png"];
+const avyScreenTextures = ["/avy-screen-textures/a.png", "/avy-screen-textures/b.png", "/avy-screen-textures/c.png", "/avy-screen-textures/d.png", "/avy-screen-textures/e.png", "/avy-screen-textures/noise.png"];
 
 export default function App() {
    const { view } = useParams();
@@ -39,6 +40,7 @@ export default function App() {
       provideTextures("bigFloatyTextures", bigFloatyPaths);
       provideTextures("mediumFloatyTextures", mediumFloatyPaths);
       provideTextures("smallFloatyTextures", smallFloatyPaths);
+      provideTextures("avyScreenTextures", avyScreenTextures)
    }, []);
 
    const [loadingComplete, setLoadingComplete] = useState(false);

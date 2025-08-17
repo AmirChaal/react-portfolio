@@ -1,8 +1,8 @@
-import { useEffect, useRef, type RefObject } from "react";
+import {  useRef, type RefObject } from "react";
 import { useGlobal } from "../../stores/global";
 import AvyHead from "../AvyHead/AvyHead";
-import { useFrame, useThree } from '@react-three/fiber'
-import { CameraHelper, Mesh, type DirectionalLight } from "three";
+import { useFrame} from '@react-three/fiber'
+import {  Mesh, type DirectionalLight } from "three";
 
 export function WebGLBehindCanvas({ visible }: { visible: boolean }) {
    const { avyAmbientLight, avyDirectionalLight } = useGlobal()

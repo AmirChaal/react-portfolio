@@ -1,8 +1,8 @@
 import { Float } from "@react-three/drei";
 import { useFrame, useThree } from "@react-three/fiber";
-import { useEffect, useRef, type RefObject, forwardRef, useImperativeHandle } from "react";
+import { forwardRef, useEffect, useRef, useImperativeHandle } from "react";
 import { useGlobal } from "../../stores/global";
-import { Group, Raycaster, Vector2, Vector3, type Mesh } from "three";
+import {  Raycaster, Vector2, Vector3, type Mesh } from "three";
 import AvyHeadModel from "./AvyHeadModel";
 import gsap from "gsap";
 
