@@ -7,7 +7,11 @@ type Store = {
    loadingManager: LoadingManager,
    textureLoader: TextureLoader,
    texturesLoaded: boolean,
-   textures: Record<string, Texture[]>
+   textures: Record<string, Texture>
+   currentView: CurrentView
+   cursorCoordinates: { x: number, y: number },
+   canvasSize: { height: number, width: number, },
+   avyScreenTexture: null | Texture
 
    backgroundColor: string,
    floatiesColor: string,
@@ -17,15 +21,7 @@ type Store = {
    avyAmbientLight: string,
    avyDirectionalLight: string,
 
-   currentView: CurrentView
-   cursorCoordinates: {
-      x: number,
-      y: number
-   },
-   canvasSize: {
-      height: number,
-      width: number,
-   },
+
    update: (partial: Record<string, unknown>) => void,
    getNDC: () => Vector2
 }
@@ -44,16 +40,21 @@ export const useGlobal = create<Store>()((set, get) => {
    const textureLoader = new TextureLoader(loadingManager)
 
    return {
+      /**
+       * Global variables
+       */
       loadingManager,
       textureLoader,
       texturesLoaded: false,
-      textures: {
-         smallFloatyTextures: [],
-         mediumFloatyTextures: [],
-         bigFloatyTextures: []
-      },
+      textures: {},
+      currentView: 'home',
+      cursorCoordinates: { x: 0, y: 0 },
+      canvasSize: { height: 0, width: 0 },
+      avyScreenTexture: null,
 
-      // --- Colors ---
+      /**
+       * Colors
+       */
       // Recro dark theme
       // backgroundColor: "#ffffff",
       // floatiesColor: "#E6E6E6",
@@ -80,10 +81,6 @@ export const useGlobal = create<Store>()((set, get) => {
       cursorIndicatorColor: "#6f5643",
       avyAmbientLight: "#FF8700",
       avyDirectionalLight: "#ECE6C2",
-
-      currentView: 'home',
-      cursorCoordinates: { x: 0, y: 0 },
-      canvasSize: { height: 0, width: 0 },
 
       update: (partial) => set(partial),
       getNDC: () => {

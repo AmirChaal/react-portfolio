@@ -1,8 +1,15 @@
+import { useGlobal } from "../../stores/global";
 import AppearingContent from "../AppearingContent";
 import AppearingList from "../AppearingList";
 import TextButton from "../TextButton";
 
 export default function WorksComponent({ visible }: { visible: boolean }) {
+   const { textures, update } = useGlobal()
+
+   const onHoverPortfolio = () => {
+      update({ avyScreenTexture: textures.avyScreenA })
+   }
+
    return (
       <div className="absolute top-0 left-0 h-full w-[calc(100%-20em)] flex items-center justify-end mr-[20em] pointer-events-none">
          <div className="text-5xl font-jersey10 w-[10em] pointer-events-auto">
@@ -12,7 +19,7 @@ export default function WorksComponent({ visible }: { visible: boolean }) {
                   <div className="border-b-[3px] border-b-solid mb-[0.3em] mx-[0.1em]" />
                </AppearingContent>
                <AppearingContent>
-                  <TextButton className="py-[0.5em] text-[0.7em] tracking-[0.05em]  w-full" text="Portfolio 2025" />
+                  <TextButton onMouseEnter={onHoverPortfolio} className="py-[0.5em] text-[0.7em] tracking-[0.05em] w-full" text="Portfolio 2025" />
                </AppearingContent>
                <AppearingContent>
                   <TextButton className="py-[0.5em] text-[0.7em] tracking-[0.05em]  w-full" text="TTRPG-Assist" />

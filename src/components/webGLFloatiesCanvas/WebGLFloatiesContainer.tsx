@@ -1,6 +1,6 @@
 import { RapierRigidBody } from "@react-three/rapier";
 import { useEffect, useMemo, useRef, useState } from "react";
-import { MeshBasicMaterial, NearestFilter, PlaneGeometry, SRGBColorSpace } from "three";
+import { MeshBasicMaterial, NearestFilter, PlaneGeometry, SRGBColorSpace, Texture } from "three";
 import { useGlobal } from "../../stores/global";
 import WebGLFloaty from "./WebGLFloaty";
 
@@ -13,21 +13,24 @@ export default function WebGLFloatiesContainer({ borderBoxes }: { borderBoxes: R
 
    // Materials
    const { textures } = useGlobal()
-   const useMaterials = (textureGroup: string) => {
+   const floatiesBigTextures = [textures.floatyAt, textures.floatyAnd, textures.floatyDollar, textures.floatyHash, textures.floatyLess]
+   const floatiesMediumTextures = [textures.floatyN, textures.floatyX, textures.floatyE, textures.floatyS, textures.floatyO]
+   const floatiesSmallTextures = [textures.floatyDot, textures.floatyComma]
+   const useMaterials = (textures: Texture[]) => {
       const materials = useMemo(() => {
-         return textures[textureGroup].map(texture => {
+         return textures.map(texture => {
             texture.minFilter = NearestFilter
             texture.colorSpace = SRGBColorSpace
 
             return new MeshBasicMaterial({ map: texture, toneMapped: false, transparent: true })
          })
-      }, [textureGroup])
+      }, [textures])
 
       return materials
    }
-   const bigFloatyMaterialsRef = useRef(useMaterials('bigFloatyTextures'));
-   const mediumFloatyMaterialsRef = useRef(useMaterials('mediumFloatyTextures'));
-   const smallFloatyMaterialsRef = useRef(useMaterials('smallFloatyTextures'));
+   const bigFloatyMaterialsRef = useRef(useMaterials(floatiesBigTextures));
+   const mediumFloatyMaterialsRef = useRef(useMaterials(floatiesMediumTextures));
+   const smallFloatyMaterialsRef = useRef(useMaterials(floatiesSmallTextures));
    const floatyMaterials = useMemo(() => ({
       small: smallFloatyMaterialsRef.current,
       medium: mediumFloatyMaterialsRef.current,

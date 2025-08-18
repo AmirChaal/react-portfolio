@@ -2,12 +2,12 @@ import { Float } from "@react-three/drei";
 import { useFrame, useThree } from "@react-three/fiber";
 import { forwardRef, useEffect, useRef, useImperativeHandle } from "react";
 import { useGlobal } from "../../stores/global";
-import {  Raycaster, Vector2, Vector3, type Mesh } from "three";
+import { Raycaster, Texture, Vector2, Vector3, type Mesh } from "three";
 import AvyHeadModel from "./AvyHeadModel";
 import gsap from "gsap";
 
 export default forwardRef(function AvyHead({ visible }: { visible: boolean }, ref) {
-   const { getNDC } = useGlobal();
+   const { getNDC, avyScreenTexture } = useGlobal();
    const internalHeadRef = useRef<Mesh>(null);
    const cursorFollower = useRef<Mesh>(null);
    const receiverPlaneRef = useRef<Mesh>(null);
@@ -47,7 +47,9 @@ export default forwardRef(function AvyHead({ visible }: { visible: boolean }, re
       };
    }, [visible]);
 
-   // HEAD ROTATION
+   /**
+    * UseFrame
+    */
    const raycasterRef = useRef(new Raycaster())
    useFrame((_, delta) => {
       if (cursorFollower.current == null) return
@@ -84,7 +86,7 @@ export default forwardRef(function AvyHead({ visible }: { visible: boolean }, re
                {/* Blue screen plane parented to head */}
                <mesh ref={screenRef} position={[0, -0.085, 0.64]} receiveShadow>
                   <planeGeometry args={[1.4, 1.3]} />
-                  <meshStandardMaterial color="white" />
+                  <meshStandardMaterial color="white" map={avyScreenTexture || (new Texture())} />
                </mesh>
             </group>
          </Float>

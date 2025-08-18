@@ -13,11 +13,6 @@ import ApplicationLoading from "./ApplicationLoading";
 import Noise from "./Noise";
 import { WebGLBehindCanvasWrapper } from "./webGLBehindCanvas/WebGLBehindCanvasWrapper";
 
-const bigFloatyPaths = ["/floaties-textures/at.png", "/floaties-textures/and.png", "/floaties-textures/dollar.png", "/floaties-textures/hash.png", "/floaties-textures/less.png"];
-const mediumFloatyPaths = ["/floaties-textures/n.png", "/floaties-textures/x.png", "/floaties-textures/e.png", "/floaties-textures/s.png", "/floaties-textures/o.png"];
-const smallFloatyPaths = ["/floaties-textures/dot.png", "/floaties-textures/comma.png"];
-const avyScreenTextures = ["/avy-screen-textures/a.png", "/avy-screen-textures/b.png", "/avy-screen-textures/c.png", "/avy-screen-textures/d.png", "/avy-screen-textures/e.png", "/avy-screen-textures/noise.png"];
-
 export default function App() {
    const { view } = useParams();
    const { textColor, textureLoader, textures, update } = useGlobal();
@@ -30,17 +25,31 @@ export default function App() {
       navigate("home");
    }
 
-   const provideTextures = (textureGroup: string, paths: string[]) => {
-      const loadedTextures = paths.map(path => textureLoader.load(path));
-      textures[textureGroup] = loadedTextures;
+   const provideTextures = (textureLabel: string, path: string) => {
+      const loadedTexture = textureLoader.load(path)
+      textures[textureLabel] = loadedTexture;
       update({ textures: textures });
    };
 
    useEffect(() => {
-      provideTextures("bigFloatyTextures", bigFloatyPaths);
-      provideTextures("mediumFloatyTextures", mediumFloatyPaths);
-      provideTextures("smallFloatyTextures", smallFloatyPaths);
-      provideTextures("avyScreenTextures", avyScreenTextures)
+      provideTextures("floatyAt", "/floaties-textures/at.png");
+      provideTextures("floatyAnd", "/floaties-textures/and.png");
+      provideTextures("floatyDollar", "/floaties-textures/dollar.png");
+      provideTextures("floatyHash", "/floaties-textures/hash.png");
+      provideTextures("floatyLess", "/floaties-textures/less.png");
+      provideTextures("floatyN", "/floaties-textures/n.png");
+      provideTextures("floatyX", "/floaties-textures/x.png");
+      provideTextures("floatyE", "/floaties-textures/e.png");
+      provideTextures("floatyS", "/floaties-textures/s.png")
+      provideTextures("floatyO", "/floaties-textures/o.png")
+      provideTextures("floatyDot", "/floaties-textures/dot.png")
+      provideTextures("floatyComma", "/floaties-textures/comma.png")
+      provideTextures("avyScreenA", "/avy-screen-textures/a.png")
+      provideTextures("avyScreenB", "/avy-screen-textures/b.png")
+      provideTextures("avyScreenC", "/avy-screen-textures/c.png")
+      provideTextures("avyScreenD", "/avy-screen-textures/d.png")
+      provideTextures("avyScreenE", "/avy-screen-textures/e.png")
+      provideTextures("avyScreenNoise", "/avy-screen-textures/noise.png")
    }, []);
 
    const [loadingComplete, setLoadingComplete] = useState(false);
