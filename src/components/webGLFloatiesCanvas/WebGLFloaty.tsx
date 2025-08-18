@@ -1,6 +1,6 @@
 import { BallCollider, RapierRigidBody, RigidBody } from "@react-three/rapier";
-import { useEffect, useMemo, useRef, useState, type RefObject } from "react";
-import { Color, Material, PlaneGeometry, Texture, Vector3 } from "three";
+import { useEffect, useMemo, useRef, type RefObject } from "react";
+import { Color, Material, PlaneGeometry, Vector3 } from "three";
 import { getRandomPosition } from "../../functions/3d";
 import { useGlobal } from "../../stores/global";
 
