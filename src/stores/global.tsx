@@ -21,6 +21,7 @@ type Store = {
    avyAmbientLight: string,
    avyDirectionalLight: string,
 
+   changeAvyScreenWorkTexture: null | ((texture: Texture | null) => void)
 
    update: (partial: Record<string, unknown>) => void,
    getNDC: () => Vector2
@@ -81,6 +82,9 @@ export const useGlobal = create<Store>()((set, get) => {
       cursorIndicatorColor: "#6f5643",
       avyAmbientLight: "#FF8700",
       avyDirectionalLight: "#ECE6C2",
+
+      // Avy head functions
+      changeAvyScreenWorkTexture: null,
 
       update: (partial) => set(partial),
       getNDC: () => {

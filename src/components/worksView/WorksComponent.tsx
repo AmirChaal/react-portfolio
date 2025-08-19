@@ -1,14 +1,26 @@
+import type { Texture } from "three";
 import { useGlobal } from "../../stores/global";
 import AppearingContent from "../AppearingContent";
 import AppearingList from "../AppearingList";
 import TextButton from "../TextButton";
+import { useEffect, useRef, useState } from "react";
 
 export default function WorksComponent({ visible }: { visible: boolean }) {
-   const { textures, update } = useGlobal()
+   const { textures, changeAvyScreenWorkTexture } = useGlobal()
 
-   const onHoverPortfolio = () => {
-      update({ avyScreenTexture: textures.avyScreenA })
+
+   /**
+    * Work Textures
+    */
+   const localChangeAvyScreen = (texture: Texture | null) => {
+      if (changeAvyScreenWorkTexture == null) return
+      changeAvyScreenWorkTexture(texture)
    }
+   const onLeaveWork = () => localChangeAvyScreen(null)
+   const onHoverPortfolio = () => localChangeAvyScreen(textures.avyScreenA)
+   const onHoverTTRPGAssist = () => localChangeAvyScreen(textures.avyScreenB)
+   const onHoverIllustrations = () => localChangeAvyScreen(textures.avyScreenC)
+   const onHoverVisualNovel = () => localChangeAvyScreen(textures.avyScreenD)
 
    return (
       <div className="absolute top-0 left-0 h-full w-[calc(100%-20em)] flex items-center justify-end mr-[20em] pointer-events-none">
@@ -19,16 +31,16 @@ export default function WorksComponent({ visible }: { visible: boolean }) {
                   <div className="border-b-[3px] border-b-solid mb-[0.3em] mx-[0.1em]" />
                </AppearingContent>
                <AppearingContent>
-                  <TextButton onMouseEnter={onHoverPortfolio} className="py-[0.5em] text-[0.7em] tracking-[0.05em] w-full" text="Portfolio 2025" />
+                  <TextButton onMouseEnter={onHoverPortfolio} onMouseLeave={onLeaveWork} className="py-[0.5em] text-[0.7em] tracking-[0.05em] w-full" text="Portfolio 2025" />
                </AppearingContent>
                <AppearingContent>
-                  <TextButton className="py-[0.5em] text-[0.7em] tracking-[0.05em]  w-full" text="TTRPG-Assist" />
+                  <TextButton onMouseEnter={onHoverTTRPGAssist} onMouseLeave={onLeaveWork} className="py-[0.5em] text-[0.7em] tracking-[0.05em]  w-full" text="TTRPG-Assist" />
                </AppearingContent>
                <AppearingContent>
-                  <TextButton className="py-[0.5em] text-[0.7em] tracking-[0.05em]  w-full" text="Illustrations" />
+                  <TextButton onMouseEnter={onHoverIllustrations} onMouseLeave={onLeaveWork} className="py-[0.5em] text-[0.7em] tracking-[0.05em]  w-full" text="Illustrations" />
                </AppearingContent>
                <AppearingContent>
-                  <TextButton className="py-[0.5em] text-[0.7em] tracking-[0.05em]  w-full" text="Visual Novel Creator" />
+                  <TextButton onMouseEnter={onHoverVisualNovel} onMouseLeave={onLeaveWork} className="py-[0.5em] text-[0.7em] tracking-[0.05em]  w-full" text="Visual Novel Creator" />
                </AppearingContent>
             </AppearingList>
          </div>
