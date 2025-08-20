@@ -6,6 +6,7 @@ import { Material, MeshBasicMaterial, MeshStandardMaterial, Raycaster, RepeatWra
 import AvyHeadModel from "./AvyHeadModel";
 import gsap from "gsap";
 import { color } from "three/tsl";
+import AvyHeadFace from "./AvyHeadFace";
 
 export default forwardRef(function AvyHead({ visible }: { visible: boolean }, ref) {
    const { getNDC, update, textures } = useGlobal();
@@ -41,7 +42,7 @@ export default forwardRef(function AvyHead({ visible }: { visible: boolean }, re
    }
 
    // Avy Screen Material
-   const avyScreenMaterialRef = useRef(new MeshStandardMaterial({ color: 'white' }))
+   const avyScreenMaterialRef = useRef(new MeshStandardMaterial({ map: textures.avyScreenDefault }))
    const timeoutsRef = useRef<ReturnType<typeof setTimeout>[]>([])
    useEffect(() => {
       timeoutsRef.current.forEach(timeout => clearTimeout(timeout))
@@ -51,7 +52,7 @@ export default forwardRef(function AvyHead({ visible }: { visible: boolean }, re
       timeoutsRef.current.push(setTimeout(() => {
          disableNoise()
          if (avyScreenWorkTexture != null) avyScreenMaterialRef.current.map = avyScreenWorkTexture
-         else avyScreenMaterialRef.current.map = new Texture()
+         else avyScreenMaterialRef.current.map = textures.avyScreenDefault
       }, (200)));
    }, [avyScreenWorkTexture])
 
@@ -121,10 +122,10 @@ export default forwardRef(function AvyHead({ visible }: { visible: boolean }, re
             <group ref={internalHeadRef} position={[-2.5, 0, -7.5]} scale={1.6}>
                <AvyHeadModel />
 
-               {/* Blue screen plane parented to head */}
                <mesh ref={screenRef} position={[0, -0.085, 0.64]} material={avyScreenMaterialRef.current} receiveShadow>
                   <planeGeometry args={[1.4, 1.3]} />
                </mesh>
+               <AvyHeadFace />
             </group>
          </Float>
       </>

@@ -50,6 +50,12 @@ export default function App() {
       provideTextures("avyScreenD", "/avy-screen-textures/d.png")
       provideTextures("avyScreenE", "/avy-screen-textures/e.png")
       provideTextures("avyScreenNoise", "/avy-screen-textures/noise.png")
+      provideTextures("avyScreenDefault", "/avy-screen-textures/default.png")
+      provideTextures("avyCuteOpenEye", "/avy-screen-textures/cute_open_eye.png")
+      provideTextures("avyCuteOpenEyeRed", "/avy-screen-textures/cute_open_eye_red.png")
+      provideTextures("avyCuteClosedEye", "/avy-screen-textures/cute_closed_eye.png")
+      provideTextures("avyCuteOpenMouth", "/avy-screen-textures/cute_open_mouth.png")
+      provideTextures("avyCuteClosedMouth", "/avy-screen-textures/cute_closed_mouth.png")
    }, []);
 
    const [loadingComplete, setLoadingComplete] = useState(false);
