@@ -7,11 +7,12 @@ import AvyHeadModel from "./AvyHeadModel";
 import gsap from "gsap";
 import { color } from "three/tsl";
 import AvyHeadFace from "./AvyHeadFace";
+import { getCursor3DPosition, getCursorAngle } from "../../functions/3d";
 
 export default forwardRef(function AvyHead({ visible }: { visible: boolean }, ref) {
    const { getNDC, update, textures } = useGlobal();
    const internalHeadRef = useRef<Mesh>(null);
-   const cursorFollower = useRef<Mesh>(null);
+   const cursorFollowerRef = useRef<Mesh>(null);
    const receiverPlaneRef = useRef<Mesh>(null);
    const screenRef = useRef<Mesh>(null);
    const { camera } = useThree();
@@ -90,26 +91,38 @@ export default forwardRef(function AvyHead({ visible }: { visible: boolean }, re
     * UseFrame
     */
    const raycasterRef = useRef(new Raycaster())
+   const [cursor3DPosition, setCursor3DPosition] = useState<Vector3 | null>(null)
+   const [cursor3DAngle, setCursor3DAngle] = useState<number | null>(null)
    useFrame((_, delta) => {
-      if (cursorFollower.current == null) return
-      const ndc = getNDC();
-      raycasterRef.current.setFromCamera(new Vector2(ndc.x, ndc.y), camera);
-      const intersects = raycasterRef.current.intersectObject(receiverPlaneRef.current!);
-      const currentPlaneIntersect = intersects[0].point;
+      if (receiverPlaneRef.current != null) {
+         setCursor3DPosition(getCursor3DPosition(getNDC, receiverPlaneRef.current, raycasterRef.current, camera))
+      }
+      if (receiverPlaneRef.current != null && cursor3DPosition) {
+         setCursor3DAngle(getCursorAngle(cursor3DPosition, receiverPlaneRef.current))
+      }
 
       // Rotation
-      const effectiveFollowerPosition = cursorFollower.current!.position.lerp(currentPlaneIntersect, delta * 6);
-      cursorFollower.current.position.copy(effectiveFollowerPosition);
-      internalHeadRef.current!.lookAt(cursorFollower.current!.position);
+      if (cursor3DPosition && cursorFollowerRef.current) {
+         const effectiveFollowerPosition = cursorFollowerRef.current!.position.lerp(cursor3DPosition, delta * 6);
+         cursorFollowerRef.current.position.copy(effectiveFollowerPosition);
+         internalHeadRef.current!.lookAt(cursorFollowerRef.current!.position);
+      }
 
       // Position
-      internalHeadRef.current!.position.copy(positionRef.current)
+      if (internalHeadRef.current != null) {
+         internalHeadRef.current.position.copy(positionRef.current)
+      }
    });
 
    return (
       <>
+         <mesh scale={0.1} position={[0, 0, 0]}>
+            <sphereGeometry />
+            <meshBasicMaterial color="black" />
+         </mesh>
+
          {/* Cursor follower */}
-         <mesh ref={cursorFollower} position={[0, 0, 4.8]} castShadow receiveShadow>
+         <mesh ref={cursorFollowerRef} position={[0, 0, 4.8]} castShadow receiveShadow>
             {/* Debug geometry if needed */}
          </mesh>
 
@@ -125,7 +138,7 @@ export default forwardRef(function AvyHead({ visible }: { visible: boolean }, re
                <mesh ref={screenRef} position={[0, -0.085, 0.64]} material={avyScreenMaterialRef.current} receiveShadow>
                   <planeGeometry args={[1.4, 1.3]} />
                </mesh>
-               <AvyHeadFace />
+               <AvyHeadFace cursor3DPosition={cursor3DPosition} />
             </group>
          </Float>
       </>

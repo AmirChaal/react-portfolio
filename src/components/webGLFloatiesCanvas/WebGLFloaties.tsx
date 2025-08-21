@@ -6,6 +6,7 @@ import { useGlobal } from "../../stores/global";
 import WebGLPointerIndicator from "./WebGLPointerIndicator";
 import WebGLFloatiesStirrer from "./WebGLFloatiesStirrer";
 import WebGLFloatiesContainer from "./WebGLFloatiesContainer";
+import { getCursor3DPosition } from "../../functions/3d";
 
 export default function WebGLFloaties({ focused }: { focused: boolean }) {
    /**
@@ -13,7 +14,7 @@ export default function WebGLFloaties({ focused }: { focused: boolean }) {
     */
    const { getNDC } = useGlobal()
    const invisibleMaterialRef = useRef(new MeshBasicMaterial({ transparent: true, opacity: 0 }))
-   const receiverPlaneRef = useRef({}) as RefObject<Mesh>
+   const receiverPlaneRef = useRef<Mesh>(null)
    const cursorEnteredViewport = useRef(false)
    const { camera } = useThree()
 
@@ -54,18 +55,13 @@ export default function WebGLFloaties({ focused }: { focused: boolean }) {
    /**
     * useFrame
     */
-   const elapsedTimeRef = useRef(0)
-   const [cursor3DPosition, setCursor3DPosition] = useState(null as null | Vector3)
+   const [cursor3DPosition, setCursor3DPosition] = useState<Vector3 | null>(null)
    const raycasterRef = useRef(new Raycaster())
    useFrame((state, delta) => {
-      elapsedTimeRef.current += delta
-      const ndc = getNDC()
-
-      raycasterRef.current.setFromCamera(ndc, camera)
-      const intersects = raycasterRef.current.intersectObject(receiverPlaneRef.current, true);
-      if (intersects.length > 0) setCursor3DPosition(intersects[0].point)
-      else setCursor3DPosition(null)
-   });
+      if (receiverPlaneRef.current) {
+         setCursor3DPosition(getCursor3DPosition(getNDC, receiverPlaneRef.current, raycasterRef.current, camera))
+      }
+   })
 
    return (
       <>
