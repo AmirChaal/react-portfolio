@@ -1,4 +1,4 @@
-import { useMemo, useRef, useState, type ComponentPropsWithoutRef } from "react"
+import { useRef, useState, type ComponentPropsWithoutRef } from "react"
 import { useGlobal } from "../../stores/global"
 import { Group, Mesh, NearestFilter, Raycaster, Vector3 } from "three"
 import { useFrame, useThree } from "@react-three/fiber"
