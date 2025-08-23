@@ -1,4 +1,4 @@
-import { Camera, Mesh, Object3D, Raycaster, Vector2, Vector3 } from "three";
+import { Camera, Mesh, Object3D, Plane, Raycaster, Vector2, Vector3 } from "three";
 import { useGlobal } from "../stores/global";
 
 export function getRandomPosition(top: number, right: number, bottom: number, left: number, front: number, back: number) {
@@ -18,9 +18,17 @@ export function getCursor3DPosition(getNDC: () => Vector2, receiverPlane: Mesh, 
    else return null
 }
 
+export function getCursor3DPositionOnPlane(getNDC: () => Vector2, receiverPlane: Plane, raycaster: Raycaster, camera: Camera) {
+   const ndc = getNDC()
+   raycaster.setFromCamera(ndc, camera)
+   const intersect = new Vector3()
+   raycaster.ray.intersectPlane(receiverPlane, intersect);
+   return intersect
+}
+
 export function getCursorAngle(cursorPosition: Vector3, receiverPlane: Mesh) {
-  const localCursor = receiverPlane.worldToLocal(cursorPosition.clone());
-  return Math.atan2(localCursor.y, localCursor.x);
+   const localCursor = receiverPlane.worldToLocal(cursorPosition.clone());
+   return Math.atan2(localCursor.y, localCursor.x);
 }
 
 export function getWorldPosition(object3D: Object3D) {

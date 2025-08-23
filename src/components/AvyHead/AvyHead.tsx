@@ -1,8 +1,8 @@
 import { Float } from "@react-three/drei";
 import { useFrame, useThree } from "@react-three/fiber";
-import { forwardRef, useEffect, useRef, useImperativeHandle, useState } from "react";
+import { forwardRef, useEffect, useRef, useImperativeHandle, useState, useMemo } from "react";
 import { useGlobal } from "../../stores/global";
-import { Material, MeshBasicMaterial, MeshStandardMaterial, Raycaster, RepeatWrapping, Texture, Vector2, Vector3, type Mesh } from "three";
+import { Group, Material, MeshBasicMaterial, MeshStandardMaterial, Raycaster, RepeatWrapping, Texture, Vector2, Vector3, type Mesh } from "three";
 import AvyHeadModel from "./AvyHeadModel";
 import gsap from "gsap";
 import { color } from "three/tsl";
@@ -11,7 +11,7 @@ import { getCursor3DPosition, getCursorAngle } from "../../functions/3d";
 
 export default forwardRef(function AvyHead({ visible }: { visible: boolean }, ref) {
    const { getNDC, update, textures } = useGlobal();
-   const internalHeadRef = useRef<Mesh>(null);
+   const internalHeadRef = useRef<Group>(null);
    const cursorFollowerRef = useRef<Mesh>(null);
    const receiverPlaneRef = useRef<Mesh>(null);
    const screenRef = useRef<Mesh>(null);
@@ -38,8 +38,10 @@ export default forwardRef(function AvyHead({ visible }: { visible: boolean }, re
       }, 25)
    }
    const disableNoise = () => {
-      if (noiseIntervalRef.current != null) clearInterval(noiseIntervalRef.current)
-      noiseIntervalRef.current = null
+      if (noiseIntervalRef.current != null) {
+         clearInterval(noiseIntervalRef.current)
+         noiseIntervalRef.current = null
+      }
    }
 
    // Avy Screen Material
@@ -51,11 +53,19 @@ export default forwardRef(function AvyHead({ visible }: { visible: boolean }, re
       enableNoise()
 
       timeoutsRef.current.push(setTimeout(() => {
-         disableNoise()
          if (avyScreenWorkTexture != null) avyScreenMaterialRef.current.map = avyScreenWorkTexture
          else avyScreenMaterialRef.current.map = textures.avyScreenDefault
+         disableNoise()
       }, (200)));
    }, [avyScreenWorkTexture])
+
+   // Face visibility
+   const [faceVisible, setFaceVisible] = useState(false)
+   useEffect(() => {
+      // console.log(`avyScreenWorkTexture == null : ${avyScreenWorkTexture == null}, noiseActive == false : ${noiseActive}`)
+      if (avyScreenWorkTexture == null && avyScreenMaterialRef.current.map === textures.avyScreenDefault) setFaceVisible(true)
+      else setFaceVisible(false)
+   }, [avyScreenWorkTexture, avyScreenMaterialRef.current.map])
 
    // HEAD POSITION
    const positionRef = useRef(new Vector3(-2.5, visible ? 0 : 6, -7.5))
@@ -116,10 +126,10 @@ export default forwardRef(function AvyHead({ visible }: { visible: boolean }, re
 
    return (
       <>
-         <mesh scale={0.1} position={[0, 0, 0]}>
+         {/* <mesh scale={0.05} position={[0, 0, 0]}>
             <sphereGeometry />
             <meshBasicMaterial color="black" />
-         </mesh>
+         </mesh> */}
 
          {/* Cursor follower */}
          <mesh ref={cursorFollowerRef} position={[0, 0, 4.8]} castShadow receiveShadow>
@@ -138,7 +148,7 @@ export default forwardRef(function AvyHead({ visible }: { visible: boolean }, re
                <mesh ref={screenRef} position={[0, -0.085, 0.64]} material={avyScreenMaterialRef.current} receiveShadow>
                   <planeGeometry args={[1.4, 1.3]} />
                </mesh>
-               <AvyHeadFace cursor3DPosition={cursor3DPosition} />
+               <AvyHeadFace avyHeadGroup={internalHeadRef.current} visible={faceVisible} />
             </group>
          </Float>
       </>
