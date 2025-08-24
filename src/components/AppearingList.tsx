@@ -1,4 +1,4 @@
-import React, { type ReactNode, useEffect, useState } from "react";
+import React, { type ComponentPropsWithoutRef, type ReactNode, useEffect, useState } from "react";
 
 export default function AppearingList({ visible, interval = 75, children, }: { visible: boolean; interval?: number; children: ReactNode[]; }) {
    const [visibilityStates, setVisibilityStates] = useState(

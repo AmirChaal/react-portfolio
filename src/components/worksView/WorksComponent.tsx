@@ -7,8 +7,7 @@ import { useEffect, useRef, useState } from "react";
 
 export default function WorksComponent({ visible }: { visible: boolean }) {
    const { textures, changeAvyScreenWorkTexture } = useGlobal()
-
-
+   
    /**
     * Work Textures
     */

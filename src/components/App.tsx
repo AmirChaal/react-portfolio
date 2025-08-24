@@ -12,6 +12,7 @@ import { useEffect, useState } from "react";
 import ApplicationLoading from "./ApplicationLoading";
 import Noise from "./Noise";
 import { WebGLBehindCanvasWrapper } from "./webGLBehindCanvas/WebGLBehindCanvasWrapper";
+import AboutComponent from "./AboutView/AboutComponent";
 
 export default function App() {
    const { view } = useParams();
@@ -71,6 +72,7 @@ export default function App() {
    const [showNavigation, setShowNavigation] = useState(false);
    const [showHome, setShowHome] = useState(false);
    const [showWorks, setShowWorks] = useState(false);
+   const [showAbout, setShowAbout] = useState(false);
    const [showFloatiesCanvas, setShowFloatiesCanvas] = useState(false);
    const [focusFloatiesCanvas, setFocusFloatiesCanvas] = useState(false);
    const [showBehindCanvas, setShowBehindCanvas] = useState(false);
@@ -101,6 +103,16 @@ export default function App() {
          return () => clearTimeout(timer);
       } else {
          setShowWorks(false);
+      }
+   }, [view, loadingComplete]);
+   
+   // ABOUT COMPONENT VISIBILITY
+   useEffect(() => {
+      if (view === "about" && loadingComplete) {
+         const timer = setTimeout(() => setShowAbout(true), appearanceDelay);
+         return () => clearTimeout(timer);
+      } else {
+         setShowAbout(false);
       }
    }, [view, loadingComplete]);
 
@@ -135,7 +147,7 @@ export default function App() {
    }, [view, loadingComplete]);
 
    return (
-      <div className="select-none" style={{ color: textColor }}>
+      <div className="select-none " style={{ color: textColor }}>
          <Background />
          <ApplicationLoading visible={!loadingComplete} />
 
@@ -145,6 +157,7 @@ export default function App() {
          <NavigationBar visible={showNavigation} />
          <HomeComponent visible={showHome} />
          <WorksComponent visible={showWorks} />
+         <AboutComponent visible={showAbout} />
 
          <Noise />
       </div>

@@ -1,15 +1,15 @@
 import gsap from "gsap";
-import { useEffect, useRef, useState, type ReactNode } from "react";
+import { useEffect, useRef, useState, type ComponentPropsWithoutRef, type ReactNode } from "react";
 
-export default function AppearingContent({ children, visible = false, className = "" }: { children: ReactNode, visible?: boolean, className?: string }) {
+export default function AppearingContent({ children, visible = false, ...wrapperProps }: { children: ReactNode, visible?: boolean } & ComponentPropsWithoutRef<"div">) {
    const outY = 3
    const animationDuration = 0.25
 
    const [wrapperClasses, setWrapperClasses] = useState('')
    useEffect(() => {
-      setWrapperClasses(className)
+      setWrapperClasses(wrapperProps?.className ?? '')
       if (visible === false) setWrapperClasses(prev => prev + ' pointer-events-none')
-   }, [visible, className])
+   }, [visible, wrapperProps.className])
 
    const [opacity, setOpacity] = useState(visible ? 1 : 0); const [y, setY] = useState(visible ? 0 : outY);
    useEffect(() => {
@@ -46,7 +46,7 @@ export default function AppearingContent({ children, visible = false, className 
    }, [visible])
 
    return (
-      <div className={wrapperClasses} style={{ opacity, transform: `translateY(-${y}em)` }}>
+      <div className={wrapperClasses} style={{ opacity, transform: `translateY(-${y}em)` }} {...wrapperProps}>
          {children}
       </div>
    );
