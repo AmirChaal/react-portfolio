@@ -11,3 +11,7 @@ export function goToWorks(navigateFunction: NavigateFunction) {
 export function goToAbout(navigateFunction: NavigateFunction) {
    navigateFunction("/about")
 }
+
+export function goToWorkPortfolio(navigateFunction: NavigateFunction) {
+   navigateFunction("/works/portfolio")
+}

@@ -6,7 +6,7 @@ export default function AboutComponent({ visible }: { visible: boolean }) {
       <>
          <div className="absolute top-0 left-0 h-full w-full flex items-center justify-center gap-[2em] text-[2.2em] font-jersey10 overflow-hidden" style={{ pointerEvents: visible ? 'auto' : 'none' }}>
             <AppearingContent visible={visible} className="h-[110%]" >
-               <img src="avy_about.png" alt="" className="h-full w-full" />
+               <img src="/avy_about.png" alt="" className="h-full w-full" />
             </AppearingContent>
             <div className="w-[20em]">
                <AppearingList visible={visible}>

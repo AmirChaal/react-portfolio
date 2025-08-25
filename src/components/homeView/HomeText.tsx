@@ -1,8 +1,8 @@
-import TextButton from "./TextButton";
-import AppearingContent from "./AppearingContent";
-import AppearingList from "./AppearingList";
-import { goToAbout,  goToWorks } from "../functions/navigation";
 import { useNavigate } from "react-router";
+import AppearingList from "../AppearingList";
+import AppearingContent from "../AppearingContent";
+import TextButton from "../TextButton";
+import { goToAbout, goToWorks } from "../../functions/navigation";
 
 export default function HomeText({ visible }: { visible: boolean }) {
    const navigate = useNavigate();

@@ -1,4 +1,6 @@
+import type { ObjectMap } from '@react-three/fiber'
 import { LoadingManager, Texture, TextureLoader, Vector2 } from 'three'
+import { GLTFLoader, type GLTF } from 'three/examples/jsm/Addons.js'
 import { create } from 'zustand'
 
 type CurrentView = 'home' | 'works' | 'about'
@@ -6,8 +8,10 @@ type CurrentView = 'home' | 'works' | 'about'
 type Store = {
    loadingManager: LoadingManager,
    textureLoader: TextureLoader,
+   gltfLoader: GLTFLoader,
    texturesLoaded: boolean,
    textures: Record<string, Texture>
+   models: Record<string, GLTF & ObjectMap>
    currentView: CurrentView
    cursorCoordinates: { x: number, y: number },
    canvasSize: { height: number, width: number, },
@@ -39,6 +43,8 @@ export const useGlobal = create<Store>()((set, get) => {
    // loadingManager.onError = (url) => console.error(`❌ Error loading ${url}`)
 
    const textureLoader = new TextureLoader(loadingManager)
+   
+   const gltfLoader = new GLTFLoader(loadingManager)
 
    return {
       /**
@@ -46,8 +52,10 @@ export const useGlobal = create<Store>()((set, get) => {
        */
       loadingManager,
       textureLoader,
+      gltfLoader,
       texturesLoaded: false,
       textures: {},
+      models: {},
       currentView: 'home',
       cursorCoordinates: { x: 0, y: 0 },
       canvasSize: { height: 0, width: 0 },

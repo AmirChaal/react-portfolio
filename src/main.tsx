@@ -10,6 +10,7 @@ createRoot(document.getElementById('root')!).render(
          <Routes>
             <Route path="/" element={<App />} />
             <Route path="/:view" element={<App />} />
+            <Route path="/:view/:subView" element={<App />} />
          </Routes>
       </BrowserRouter>
    // </StrictMode>

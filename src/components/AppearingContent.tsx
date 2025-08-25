@@ -46,7 +46,7 @@ export default function AppearingContent({ children, visible = false, ...wrapper
    }, [visible])
 
    return (
-      <div className={wrapperClasses} style={{ opacity, transform: `translateY(-${y}em)` }} {...wrapperProps}>
+      <div className={wrapperClasses} style={{ opacity, transform: `translateY(-${y}em)`, pointerEvents: visible ? 'auto' : 'none' }} {...wrapperProps}>
          {children}
       </div>
    );

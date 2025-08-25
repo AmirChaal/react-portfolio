@@ -2,7 +2,7 @@ import { useNavigate, useParams } from "react-router";
 import "../css/fonts.css";
 import { useCursorCoordinates } from "../functions/interactivity";
 import { useDeviceSize } from "../functions/setup";
-import HomeComponent from "./HomeComponent";
+import HomeComponent from "./homeView/HomeComponent";
 import WorksComponent from "./worksView/WorksComponent";
 import WebGLFloatiesCanvas from "./webGLFloatiesCanvas/WebGLFloatiesCanvas";
 import NavigationBar from "./NavigationBar";
@@ -13,9 +13,10 @@ import ApplicationLoading from "./ApplicationLoading";
 import Noise from "./Noise";
 import { WebGLBehindCanvasWrapper } from "./webGLBehindCanvas/WebGLBehindCanvasWrapper";
 import AboutComponent from "./AboutView/AboutComponent";
+import Article from "./Article/Article";
 
 export default function App() {
-   const { view } = useParams();
+   const { view, subView } = useParams();
    const { textColor, textureLoader, textures, update } = useGlobal();
 
    useCursorCoordinates();
@@ -76,6 +77,7 @@ export default function App() {
    const [showFloatiesCanvas, setShowFloatiesCanvas] = useState(false);
    const [focusFloatiesCanvas, setFocusFloatiesCanvas] = useState(false);
    const [showBehindCanvas, setShowBehindCanvas] = useState(false);
+   const [showWorkPortfolio, setShowWorkPortfolio] = useState(false);
 
    // HOME COMPONENT VISIBILITY
    useEffect(() => {
@@ -85,7 +87,7 @@ export default function App() {
       } else {
          setShowNavigation(false);
       }
-   }, [view, loadingComplete]);
+   }, [view, subView, loadingComplete]);
 
    useEffect(() => {
       if (view === "home" && loadingComplete) {
@@ -94,18 +96,18 @@ export default function App() {
       } else {
          setShowHome(false);
       }
-   }, [view, loadingComplete]);
+   }, [view, subView, loadingComplete]);
 
    // WORKS COMPONENT VISIBILITY
    useEffect(() => {
-      if (view === "works" && loadingComplete) {
+      if (view === "works" && !subView && loadingComplete) {
          const timer = setTimeout(() => setShowWorks(true), appearanceDelay);
          return () => clearTimeout(timer);
       } else {
          setShowWorks(false);
       }
-   }, [view, loadingComplete]);
-   
+   }, [view, subView, loadingComplete]);
+
    // ABOUT COMPONENT VISIBILITY
    useEffect(() => {
       if (view === "about" && loadingComplete) {
@@ -114,7 +116,7 @@ export default function App() {
       } else {
          setShowAbout(false);
       }
-   }, [view, loadingComplete]);
+   }, [view, subView, loadingComplete]);
 
    // FLOATIES CANVAS VISIBILITY
    useEffect(() => {
@@ -124,7 +126,7 @@ export default function App() {
       } else {
          setShowFloatiesCanvas(false);
       }
-   }, [view, loadingComplete]);
+   }, [view, subView, loadingComplete]);
 
    // FLOATIES CANVAS FOCUS
    useEffect(() => {
@@ -134,32 +136,47 @@ export default function App() {
       } else {
          setFocusFloatiesCanvas(false);
       }
-   }, [view, loadingComplete]);
+   }, [view, subView, loadingComplete]);
 
    // BEHIND CANVAS VISIBILITY
    useEffect(() => {
-      if (view === "works" && loadingComplete) {
+      if (view === "works" && !subView && loadingComplete) {
          const timer = setTimeout(() => setShowBehindCanvas(true), appearanceDelay);
          return () => clearTimeout(timer);
       } else {
          setShowBehindCanvas(false);
       }
-   }, [view, loadingComplete]);
+   }, [view, subView, loadingComplete]);
+
+   // PORTFOLIO ARTICLE VISIBILITY
+   useEffect(() => {
+      if (view === "works" && subView === 'portfolio' && loadingComplete) {
+         console.log('AAa')
+         const timer = setTimeout(() => setShowWorkPortfolio(true), appearanceDelay);
+         return () => clearTimeout(timer);
+      } else {
+         setShowWorkPortfolio(false);
+      }
+   }, [view, subView, loadingComplete]);
 
    return (
       <div className="select-none " style={{ color: textColor }}>
          <Background />
          <ApplicationLoading visible={!loadingComplete} />
+         <NavigationBar visible={showNavigation} />
+         <Noise />
 
+         {/* Canvases */}
          <WebGLFloatiesCanvas visible={showFloatiesCanvas} focused={focusFloatiesCanvas} />
          <WebGLBehindCanvasWrapper visible={showBehindCanvas} />
 
-         <NavigationBar visible={showNavigation} />
+         {/* View */}
          <HomeComponent visible={showHome} />
          <WorksComponent visible={showWorks} />
          <AboutComponent visible={showAbout} />
 
-         <Noise />
+         {/* Work articles */}
+         <Article visible={showWorkPortfolio} />
       </div>
    );
 }
