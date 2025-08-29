@@ -5,7 +5,7 @@ import { create } from 'zustand'
 
 type CurrentView = 'home' | 'works' | 'about'
 
-type Store = {
+export type GlobalStore = {
    loadingManager: LoadingManager,
    textureLoader: TextureLoader,
    gltfLoader: GLTFLoader,
@@ -32,7 +32,7 @@ type Store = {
 }
 
 // Create store first so we can access `set` inside LoadingManager callbacks
-export const useGlobal = create<Store>()((set, get) => {
+export const useGlobal = create<GlobalStore>()((set, get) => {
    const loadingManager = new LoadingManager()
    // loadingManager.onStart = (url, itemsLoaded, itemsTotal) => console.log(`Started loading: ${url} (${itemsLoaded} of ${itemsTotal})`)
    // loadingManager.onLoad = () => {

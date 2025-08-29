@@ -14,7 +14,10 @@ export default function AboutComponent({ visible }: { visible: boolean }) {
                      <p className="text-[2em] mb-[-0.2em] tracking-[0.047em]">SALUT, JE SUIS AMIR</p>
                   </AppearingContent>
                   <AppearingContent>
-                     <p className="leading-[1em] text-[0.8em] text-justify">Lorem, ipsum dolor sit amet consectetur adipisicing elit. Reprehenderit quam iusto inventore minus provident tenetur dolor consectetur possimus ab, pariatur libero, commodi eius fugit dignissimos illum corporis culpa maxime nesciunt!s</p>
+                     <p className="leading-[1em] text-[0.8em] text-justify">
+                        Je suis développeur web et illustrateur, passionné par la création de projets uniques qui allient technique et créativité.
+                        Mon objectif est de concevoir des expériences qui racontent une histoire et qui marquent ceux qui les découvrent.
+                     </p>
                   </AppearingContent>
                </AppearingList>
             </div>

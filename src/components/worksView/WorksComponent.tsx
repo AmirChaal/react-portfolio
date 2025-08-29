@@ -4,7 +4,7 @@ import AppearingContent from "../AppearingContent";
 import AppearingList from "../AppearingList";
 import TextButton from "../TextButton";
 import { useEffect, useRef, useState } from "react";
-import { goToWorkPortfolio } from "../../functions/navigation";
+import { goToIllustrations, goToWorkPortfolio } from "../../functions/navigation";
 import { useNavigate } from "react-router";
 
 export default function WorksComponent({ visible }: { visible: boolean }) {
@@ -25,6 +25,7 @@ export default function WorksComponent({ visible }: { visible: boolean }) {
    const onHoverVisualNovel = () => localChangeAvyScreen(textures.avyScreenD)
 
    const showPortfolioArticle = () => {goToWorkPortfolio(navigate)}
+   const showIllustrations = () => {goToIllustrations(navigate)}
 
    return (
       <div className="absolute top-0 left-0 h-full w-[calc(100%-20em)] flex items-center justify-end mr-[20em] pointer-events-none">
@@ -41,7 +42,7 @@ export default function WorksComponent({ visible }: { visible: boolean }) {
                   <TextButton onMouseEnter={onHoverTTRPGAssist} onMouseLeave={onLeaveWork} className="py-[0.5em] text-[0.7em] tracking-[0.05em] w-full" text="TTRPG-Assist" />
                </AppearingContent>
                <AppearingContent>
-                  <TextButton onMouseEnter={onHoverIllustrations} onMouseLeave={onLeaveWork} className="py-[0.5em] text-[0.7em] tracking-[0.05em] w-full" text="Illustrations" />
+                  <TextButton onClick={showIllustrations} onMouseEnter={onHoverIllustrations} onMouseLeave={onLeaveWork} className="py-[0.5em] text-[0.7em] tracking-[0.05em] w-full" text="Illustrations" />
                </AppearingContent>
                <AppearingContent>
                   <TextButton onMouseEnter={onHoverVisualNovel} onMouseLeave={onLeaveWork} className="py-[0.5em] text-[0.7em] tracking-[0.05em] w-full" text="Visual Novel Creator" />

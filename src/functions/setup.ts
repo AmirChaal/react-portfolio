@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { useGlobal } from "../stores/global";
+import { useGlobal, type GlobalStore } from "../stores/global";
 
 export function useCanvasSize() {
    const { update } = useGlobal()
@@ -49,3 +49,46 @@ export function useDeviceSize() {
       return () => window.removeEventListener('resize', updateFuntion)
    }, [update])
 }
+
+export function loadTextures(global: GlobalStore) {
+   const provideTextures = (textureLabel: string, path: string) => {
+      const loadedTexture = global.textureLoader.load(path)
+      global.textures[textureLabel] = loadedTexture;
+      global.update({ textures: global.textures });
+   };
+
+   useEffect(() => {
+      provideTextures("floatyAt", "/floaties-textures/at.png");
+      provideTextures("floatyAnd", "/floaties-textures/and.png");
+      provideTextures("floatyDollar", "/floaties-textures/dollar.png");
+      provideTextures("floatyHash", "/floaties-textures/hash.png");
+      provideTextures("floatyLess", "/floaties-textures/less.png");
+      provideTextures("floatyN", "/floaties-textures/n.png");
+      provideTextures("floatyX", "/floaties-textures/x.png");
+      provideTextures("floatyE", "/floaties-textures/e.png");
+      provideTextures("floatyS", "/floaties-textures/s.png")
+      provideTextures("floatyO", "/floaties-textures/o.png")
+      provideTextures("floatyDot", "/floaties-textures/dot.png")
+      provideTextures("floatyComma", "/floaties-textures/comma.png")
+      provideTextures("avyScreenA", "/avy-screen-textures/a.png")
+      provideTextures("avyScreenB", "/avy-screen-textures/b.png")
+      provideTextures("avyScreenC", "/avy-screen-textures/c.png")
+      provideTextures("avyScreenD", "/avy-screen-textures/d.png")
+      provideTextures("avyScreenE", "/avy-screen-textures/e.png")
+      provideTextures("avyScreenNoise", "/avy-screen-textures/noise.png")
+      provideTextures("avyScreenDefault", "/avy-screen-textures/default.png")
+      provideTextures("avyCuteOpenEye", "/avy-screen-textures/cute_open_eye.png")
+      provideTextures("avyCuteOpenEyeRed", "/avy-screen-textures/cute_open_eye_red.png")
+      provideTextures("avyCuteClosedLeftEye", "/avy-screen-textures/cute_closed_left_eye.png")
+      provideTextures("avyCuteClosedRightEye", "/avy-screen-textures/cute_closed_right_eye.png")
+      provideTextures("avyCuteOpenMouth", "/avy-screen-textures/cute_open_mouth.png")
+      provideTextures("avyCuteClosedMouth", "/avy-screen-textures/cute_closed_mouth.png")
+   }, [])
+}
+
+// export function loadTextures(textureHolder: GlobalStore['textures'], textureLoader: GlobalStore['textureLoader'], updateGlobal: GlobalStore['update']) {
+//    const provideTextures = (textureLabel: string, path: string) => {
+//       const loadedTexture = textureLoader.load(path)
+//       textureHolder[textureLabel] = loadedTexture;
+//       updateGlobal({ textureHolder: textureHolder });
+//    };

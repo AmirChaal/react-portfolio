@@ -8,8 +8,9 @@ createRoot(document.getElementById('root')!).render(
       <BrowserRouter>
          <Routes>
             <Route path="/" element={<App />} />
-            <Route path="/:view" element={<App />} />
-            <Route path="/:view/:subView" element={<App />} />
+            <Route path="/:firstParticle" element={<App />} />
+            <Route path="/:firstParticle/:secondParticle" element={<App />} />
+            <Route path="/:firstParticle/:secondParticle/:thirdParticle" element={<App />} />
          </Routes>
       </BrowserRouter>
    // </StrictMode>
