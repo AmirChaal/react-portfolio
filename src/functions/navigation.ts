@@ -19,3 +19,7 @@ export function goToWorkPortfolio(navigateFunction: NavigateFunction) {
 export function goToIllustrations(navigateFunction: NavigateFunction) {
    navigateFunction("/works/illustrations")
 }
+
+export function goToIllustrationViewer(navigateFunction: NavigateFunction, illustrationId: number) {
+   navigateFunction(`/works/illustrations/${illustrationId}`)
+}

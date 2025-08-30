@@ -16,6 +16,9 @@ import AboutComponent from "./AboutView/AboutComponent";
 import Article from "./Article/Article";
 import Illustrations from "./Illustrations/Illustrations";
 import IllustrationViewer from "./Illustrations/IllustrationViewer";
+import Notifications from "./notifications/Notifications";
+
+export const appViewAppearanceDelay = 350;
 
 function useDelayedVisibility(condition: boolean, delay: number, deps: any[]) {
    const [visible, setVisible] = useState(false);
@@ -51,18 +54,17 @@ export default function App() {
       return () => clearTimeout(timer);
    }, []);
 
-   const appearanceDelay = 350;
    const dependencies = [firstParticle, secondParticle, thirdParticle]
-   const showNavigation = useDelayedVisibility(loadingComplete, appearanceDelay, dependencies);
-   const showHome = useDelayedVisibility(firstParticle === "home" && loadingComplete, appearanceDelay, dependencies);
-   const showWorks = useDelayedVisibility(firstParticle === "works" && !secondParticle && loadingComplete, appearanceDelay, dependencies);
-   const showAbout = useDelayedVisibility(firstParticle === "about" && loadingComplete, appearanceDelay, dependencies);
-   const showFloatiesCanvas = useDelayedVisibility(loadingComplete, appearanceDelay, dependencies);
-   const focusFloatiesCanvas = useDelayedVisibility(firstParticle === "home" && loadingComplete, appearanceDelay, dependencies);
-   const showBehindCanvas = useDelayedVisibility(firstParticle === "works" && !secondParticle && loadingComplete, appearanceDelay, dependencies);
-   const showWorkPortfolio = useDelayedVisibility(firstParticle === "works" && secondParticle === "portfolio" && loadingComplete, appearanceDelay, dependencies);
-   const showIllustrations = useDelayedVisibility(firstParticle === "works" && secondParticle === "illustrations" && loadingComplete, appearanceDelay, dependencies);
-   const showIllustrationViewer = useDelayedVisibility(firstParticle === "works" && secondParticle === "illustrations" && thirdParticle != null && !isNaN(parseInt(thirdParticle)) && loadingComplete, appearanceDelay, dependencies);
+   const showNavigation = useDelayedVisibility(loadingComplete, appViewAppearanceDelay, dependencies);
+   const showHome = useDelayedVisibility(firstParticle === "home" && loadingComplete, appViewAppearanceDelay, dependencies);
+   const showWorks = useDelayedVisibility(firstParticle === "works" && !secondParticle && loadingComplete, appViewAppearanceDelay, dependencies);
+   const showAbout = useDelayedVisibility(firstParticle === "about" && loadingComplete, appViewAppearanceDelay, dependencies);
+   const showFloatiesCanvas = useDelayedVisibility(loadingComplete, appViewAppearanceDelay, dependencies);
+   const focusFloatiesCanvas = useDelayedVisibility(firstParticle === "home" && loadingComplete, appViewAppearanceDelay, dependencies);
+   const showBehindCanvas = useDelayedVisibility(firstParticle === "works" && !secondParticle && loadingComplete, appViewAppearanceDelay, dependencies);
+   const showWorkPortfolio = useDelayedVisibility(firstParticle === "works" && secondParticle === "portfolio" && loadingComplete, appViewAppearanceDelay, dependencies);
+   const showIllustrations = useDelayedVisibility(firstParticle === "works" && secondParticle === "illustrations" && loadingComplete, appViewAppearanceDelay, dependencies);
+   const showIllustrationViewer = useDelayedVisibility(firstParticle === "works" && secondParticle === "illustrations" && thirdParticle != null && !isNaN(parseInt(thirdParticle)) && loadingComplete, appViewAppearanceDelay, dependencies);
 
    return (
       <div className="select-none" style={{ color: textColor }}>
@@ -86,6 +88,9 @@ export default function App() {
          {/* Illustrations */}
          <Illustrations visible={showIllustrations} />
          <IllustrationViewer visible={showIllustrationViewer} />
+
+         {/* Notifications */}
+         <Notifications />
       </div>
    );
 }

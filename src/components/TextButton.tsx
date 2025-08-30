@@ -1,8 +1,8 @@
 import React, { useEffect, useRef, useState, type ComponentPropsWithoutRef, type ReactElement, type ReactNode } from "react";
 import { useGlobal } from "../stores/global";
-import ArrowIcon from "./icons/ArrowIcon";
 import gsap from "gsap";
 import type { IconComponentProps } from "../types/component";
+import PixelArrowIcon from "./icons/PixelArrowIcon";
 
 export default function TextButton({ text, onMouseEnter = () => { }, onMouseLeave = () => { }, endIcon = undefined, ...buttonProps }: { text: string, onMouseEnter?: () => void, onMouseLeave?: () => void, endIcon?: ReactElement<IconComponentProps> } & ComponentPropsWithoutRef<"button">) {
    const { textColor } = useGlobal();
@@ -52,7 +52,7 @@ export default function TextButton({ text, onMouseEnter = () => { }, onMouseLeav
    return (
       <button {...buttonProps} className={"flex items-center cursor-pointer " + buttonProps.className} onMouseEnter={mouseEnter} onMouseLeave={mouseLeave}>
          <div ref={arrowWrapperRef} className="overflow-hidden">
-            <ArrowIcon className="h-full w-[0.8em]" color={textColor} />
+            <PixelArrowIcon className="h-full w-[0.8em]" color={textColor} />
          </div>
          <p className="mr-[0.25em]">{text}</p>
          {endIcon && React.cloneElement(endIcon, { className: "h-full w-[0.6em]", color: textColor })}

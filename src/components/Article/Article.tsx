@@ -1,5 +1,5 @@
 import AppearingContent from "../AppearingContent"
-import OpenInNewIcon from "../icons/openInNewIcon"
+import PixelOpenInNewIcon from "../icons/PixelOpenInNewIcon"
 import TextButton from "../TextButton"
 
 export default function Article({ visible }: { visible: boolean }) {
@@ -14,7 +14,7 @@ export default function Article({ visible }: { visible: boolean }) {
                   </div>
                   <p className="text-[1.75em] leading-[0.9em] mb-[0.1em]">Lorem ipsum dolor sit amet consectetur adipisicing elit. Atque enim praesentium consectetur, eius debitis asperiores qui facere. Ipsum eveniet doloribus, quis quas tempore itaque. Deleniti earum facilis accusamus ex odit!</p>
                   <div className="flex gap-[1em] text-[2em]">
-                     <TextButton text="Site web" endIcon={<OpenInNewIcon />} />
+                     <TextButton text="Site web" endIcon={<PixelOpenInNewIcon />} />
                   </div>
                </div>
             </div>

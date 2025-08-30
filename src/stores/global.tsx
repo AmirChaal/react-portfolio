@@ -1,9 +1,17 @@
 import type { ObjectMap } from '@react-three/fiber'
+import type { ReactElement } from 'react'
 import { LoadingManager, Texture, TextureLoader, Vector2 } from 'three'
 import { GLTFLoader, type GLTF } from 'three/examples/jsm/Addons.js'
 import { create } from 'zustand'
+import type { IconComponentProps } from '../types/component'
 
 type CurrentView = 'home' | 'works' | 'about'
+
+export type Notification = {
+   id: number,
+   icon: ReactElement<IconComponentProps>,
+   text: string
+}
 
 export type GlobalStore = {
    loadingManager: LoadingManager,
@@ -16,6 +24,9 @@ export type GlobalStore = {
    cursorCoordinates: { x: number, y: number },
    canvasSize: { height: number, width: number, },
    avyScreenTexture: null | Texture
+
+   notifications: Notification[]
+   getNotifications: () => Notification[],
 
    backgroundColor: string,
    floatiesColor: string,
@@ -43,7 +54,7 @@ export const useGlobal = create<GlobalStore>()((set, get) => {
    // loadingManager.onError = (url) => console.error(`❌ Error loading ${url}`)
 
    const textureLoader = new TextureLoader(loadingManager)
-   
+
    const gltfLoader = new GLTFLoader(loadingManager)
 
    return {
@@ -60,6 +71,9 @@ export const useGlobal = create<GlobalStore>()((set, get) => {
       cursorCoordinates: { x: 0, y: 0 },
       canvasSize: { height: 0, width: 0 },
       avyScreenTexture: null,
+
+      notifications: [],
+      getNotifications: (() => get().notifications),
 
       /**
        * Colors

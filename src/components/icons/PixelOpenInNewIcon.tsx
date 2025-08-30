@@ -1,6 +1,6 @@
 import type { IconComponentProps } from "../../types/component";
 
-export default function OpenInNewIcon({ color = "#000000", ...wrapperProps }: IconComponentProps) {
+export default function PixelOpenInNewIcon({ color = "#000000", ...wrapperProps }: IconComponentProps) {
    return (
       <div {...wrapperProps}>
          <svg className="h-full w-full" version="1.0" xmlns="http://www.w3.org/2000/svg" width="100.000000pt" height="100.000000pt" viewBox="0 0 100.000000 100.000000" preserveAspectRatio="xMidYMid meet">
