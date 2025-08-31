@@ -1,6 +1,6 @@
 import React, { type ComponentPropsWithoutRef, type ReactNode, useEffect, useState } from "react";
 
-export default function AppearingList({ visible, interval = 75, children, }: { visible: boolean; interval?: number; children: ReactNode[]; }) {
+export default function AppearingList({ visible, interval = 75, children, ...wrapperProps }: { visible: boolean; interval?: number; children: ReactNode[]; } & ComponentPropsWithoutRef<'div'>) {
    const [visibilityStates, setVisibilityStates] = useState(
       Array(children.length).fill(false)
    );
@@ -29,12 +29,14 @@ export default function AppearingList({ visible, interval = 75, children, }: { v
 
    return (
       <>
-         {children.map((child, idx) => (
-            <div key={idx}>
-               {/* @ts-expect-error AppearingContent prop */}
-               {React.cloneElement(child, { visible: visibilityStates[idx] })}
-            </div>
-         ))}
+         <div {...wrapperProps} style={{ pointerEvents: visible ? 'auto' : 'none' }} >
+            {children.map((child, idx) => (
+               <div key={idx}>
+                  {/* @ts-expect-error AppearingContent prop */}
+                  {React.cloneElement(child, { visible: visibilityStates[idx] })}
+               </div>
+            ))}
+         </div>
       </>
    );
 }

@@ -1,7 +1,6 @@
 import AppearingContent from "../AppearingContent";
 import IllustrationButton from "./IllustrationButton";
 import { getIllustrationsData } from "../../functions/illustrations";
-import type { ComponentPropsWithoutRef } from "react";
 
 export default function Illustrations({ visible }: { visible: boolean }) {
    const imageObjects = getIllustrationsData()

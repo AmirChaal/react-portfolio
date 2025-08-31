@@ -1,9 +1,32 @@
-import HomeText from "./HomeText";
+import { useNavigate } from "react-router";
+import AppearingList from "../AppearingList";
+import AppearingContent from "../AppearingContent";
+import TextButton from "../TextButton";
+import { goToAbout, goToWorks } from "../../functions/navigation";
 
 export default function HomeComponent({ visible }: { visible: boolean }) {
+   const navigate = useNavigate();
+
    return (
-      <div className="absolute top-0 left-0 h-full w-[calc(100%-10em)] flex items-center ml-[10em]">
-         <HomeText visible={visible} />
+      <div className="absolute top-0 left-0 h-full w-full flex justify-center items-center pointer-events-none">
+         <AppearingList visible={visible} className="text-[1.3em] min-[500px]:text-[1.7em] min-[800px]:text-[2.2em] font-jersey10 min-[1300px]:w-full min-[1300px]:pl-[10rem]">
+            <AppearingContent>
+               <p className="text-[2em] mb-[-0.6em] tracking-[0.047em]">SALUT, JE SUIS AMIR</p>
+            </AppearingContent>
+            <AppearingContent>
+               <p className="tracking-[0.05em]">Développeur full-stack & illustrateur</p>
+            </AppearingContent>
+            <AppearingContent>
+               <div className="flex h-[1.7em] w-full relative">
+                  <div className="absolute left-[2.8em] top-[50%]">
+                     <TextButton className="absolute whitespace-nowrap translate-[-50%]" onClick={() => goToWorks(navigate)} text="Mes travaux" />
+                  </div>
+                  <div className="absolute left-[11.3em] top-[50%]">
+                     <TextButton className="absolute whitespace-nowrap translate-[-50%]" onClick={() => goToAbout(navigate)} text="À propos de moi" />
+                  </div>
+               </div>
+            </AppearingContent>
+         </AppearingList>
       </div>
    );
 }

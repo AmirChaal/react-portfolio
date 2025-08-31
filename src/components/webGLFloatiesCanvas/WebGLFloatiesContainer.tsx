@@ -38,7 +38,7 @@ export default function WebGLFloatiesContainer({ borderBoxes }: { borderBoxes: R
    }), [])
 
    // Spawn & Despawn management
-   const initialFloatiesCount = 350 // Good number for build version is 350-500
+   const initialFloatiesCount = 100
    const [floatyKeys, setFloatyKeys] = useState(Array.from({ length: initialFloatiesCount }, (_, i) => i))
    const floatyKeyCounterRef = useRef(initialFloatiesCount)
 
@@ -58,7 +58,7 @@ export default function WebGLFloatiesContainer({ borderBoxes }: { borderBoxes: R
    return (
       <>
          {floatyKeys.map((key) => (
-            borderBoxes && <WebGLFloaty key={key} uniqueKey={key} spawningMode="strips" spawnAt={floatiesSpawnAtRef.current} onRemove={onFloatyRemove} edgeBody={borderBoxes} materials={floatyMaterials} planeGeometry={planeGeometryRef.current} />
+            borderBoxes && <WebGLFloaty key={key} globalScale={1.5} uniqueKey={key} spawningMode="strips" spawnAt={floatiesSpawnAtRef.current} onRemove={onFloatyRemove} edgeBody={borderBoxes} materials={floatyMaterials} planeGeometry={planeGeometryRef.current} />
          ))}
       </>
    )

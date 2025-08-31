@@ -35,7 +35,7 @@ export function useDeviceSize() {
          const width = window.innerWidth
 
          update({
-            canvasSize: {
+            deviceSize: {
                height: height,
                width: width
             }

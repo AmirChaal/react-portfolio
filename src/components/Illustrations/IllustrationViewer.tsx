@@ -12,6 +12,8 @@ import DownloadIcon from "../icons/DownloadIcon"
 import CloseIcon from "../icons/CloseIcon"
 import CopyIcon from "../icons/CopyIcon"
 import { addNotification } from "../../functions/notification"
+import { copyImageIntoClipboard } from "../../functions/file"
+import { image } from "motion/react-client"
 
 export default function IllustrationViewer({ visible }: { visible: boolean }) {
    const { thirdParticle: imageId } = useParams()
@@ -61,20 +63,9 @@ export default function IllustrationViewer({ visible }: { visible: boolean }) {
    }
 
    const onClickCopy = async () => {
-      if (imageObject == null) return
-
+      if (!imageObject) return
       try {
-         // Fetch the image as a blob
-         const response = await fetch(imageObject.path)
-         const blob = await response.blob()
-
-         // Create a clipboard item
-         const clipboardItem = new ClipboardItem({ [blob.type]: blob })
-         console.log(clipboardItem)
-
-         // Write it to the clipboard
-         await navigator.clipboard.write([clipboardItem])
-
+         await copyImageIntoClipboard(imageObject.path)
          addNotification(global.getNotifications, global.update, <CopyIcon />, "Image copiée")
       } catch (err) {
          console.error("Failed to copy image:", err)
@@ -88,11 +79,11 @@ export default function IllustrationViewer({ visible }: { visible: boolean }) {
          <AppearingContent visible={visible} className="z-[101] absolute h-full w-full top-0 left-0 flex gap-[1em] justify-center items-center pointer-events-none!">
             {imageObject && <img className="h-[95%] pointer-events-auto shadow-[0_0_25px_0_rgba(0,0,0,0.4)]" src={imageObject.path} alt="" />}
             <div className="flex flex-col items-center gap-[0.5em] h-[95%]">
-               <IconButton onClick={onClickClose} className="pointer-events-auto" iconComponent={<CloseIcon />} />
+               <IconButton onClick={onClickClose} iconComponent={<CloseIcon />} style={{ pointerEvents: visible ? 'auto' : 'none' }} />
                <div className="border-b-[1px] w-[80%] " style={{ borderColor: backgroundColor }} />
-               <IconButton onClick={onClickDownload} className="pointer-events-auto" iconComponent={<DownloadIcon />} />
+               <IconButton onClick={onClickDownload} iconComponent={<DownloadIcon />} style={{ pointerEvents: visible ? 'auto' : 'none' }} />
                <div className="border-b-[1px] w-[80%] " style={{ borderColor: backgroundColor }} />
-               <IconButton onClick={onClickCopy} className="pointer-events-auto" iconComponent={<CopyIcon />} />
+               <IconButton onClick={onClickCopy} iconComponent={<CopyIcon />} style={{ pointerEvents: visible ? 'auto' : 'none' }} />
             </div>
          </AppearingContent>
       </>

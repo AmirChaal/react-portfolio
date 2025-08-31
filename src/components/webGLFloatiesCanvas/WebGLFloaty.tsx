@@ -10,7 +10,7 @@ type FloatySize = typeof floatySizes[number]
 const spawningMods = ['strips', 'everywhere'] as const
 type SpawningMod = typeof spawningMods[number]
 
-export default function WebGLFloaty({ spawningMode, uniqueKey, edgeBody, onRemove, spawnAt, materials, planeGeometry }: {
+export default function WebGLFloaty({ spawningMode, uniqueKey, edgeBody, onRemove, spawnAt, materials, planeGeometry, globalScale = 1 }: {
    readonly spawningMode: SpawningMod,
    readonly uniqueKey: number,
    readonly edgeBody: RapierRigidBody,
@@ -18,6 +18,7 @@ export default function WebGLFloaty({ spawningMode, uniqueKey, edgeBody, onRemov
    readonly spawnAt: 'random' | 'edge'
    readonly materials: { small: Material[], medium: Material[], big: Material[] }
    readonly planeGeometry: PlaneGeometry
+   readonly globalScale?: number
 }) {
    const { floatiesColor } = useGlobal()
    const bodyRef = useRef(null) as RefObject<RapierRigidBody | null>
@@ -32,12 +33,8 @@ export default function WebGLFloaty({ spawningMode, uniqueKey, edgeBody, onRemov
 
    // Size selection
    const getSize = () => {
-      const random = Math.random();
-      let size
-      if (random < 0) size = 'small' as const
-      else if (random < 0.5) size = 'medium' as const
-      else size = 'big' as const
-      return size
+      const r = Math.random()
+      return r < 0.5 ? "medium" : "big"
    }
    const sizeRef = useRef<FloatySize>(getSize())
 
@@ -70,20 +67,18 @@ export default function WebGLFloaty({ spawningMode, uniqueKey, edgeBody, onRemov
       else materialsArray = materials.big
 
       const materialIndex = Math.floor(Math.random() * materialsArray.length)
-      const material = materialsArray[materialIndex].clone() // clone so we don’t recolor all floaties
+      const material = materialsArray[materialIndex] as Material
 
-      // Pick a random color
-      const randomColor = new Color().set(floatiesColor);
-      (material as any).color = randomColor
+      (material as any).color = new Color().set(floatiesColor)
 
       return material
    }, [materials, sizeRef.current])
 
    // Scales
    const bodyScale = useMemo(() => {
-      if (sizeRef.current === 'small') return 0.15;
-      if (sizeRef.current === 'medium') return 0.25;
-      if (sizeRef.current === 'big') return 0.4;
+      if (sizeRef.current === 'small') return 0.15 * globalScale;
+      if (sizeRef.current === 'medium') return 0.25 * globalScale;
+      if (sizeRef.current === 'big') return 0.4 * globalScale;
       throw new Error('unrecognized floaty size');
    }, [sizeRef.current]);
 
@@ -96,7 +91,7 @@ export default function WebGLFloaty({ spawningMode, uniqueKey, edgeBody, onRemov
    return (
       <RigidBody ref={bodyRef} canSleep={true} rotation={rotationRef.current} onCollisionEnter={onCollisionEnter} position={randomPosition.current} restitution={1} colliders={false} linearDamping={8} angularDamping={8} type="dynamic" gravityScale={0} enabledTranslations={[true, true, false]} enabledRotations={[false, false, true]}   >
          <BallCollider args={[bodyScale]} mass={0.5} />
-         <mesh material={material} geometry={planeGeometry} />
+         <mesh material={material} geometry={planeGeometry} scale={globalScale} />
       </RigidBody>
    )
 }

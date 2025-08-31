@@ -34,20 +34,11 @@ export default function AppearingContent({ children, visible = false, ...wrapper
       });
    }, [visible]);
 
-   const [effectiveVisibility, setEffectiveVisibility] = useState(visible ? true : false)
-   useEffect(() => {
-      if (visible === true) {
-         setEffectiveVisibility(true)
-      } else {
-         setTimeout(() => {
-            setEffectiveVisibility(false)
-         }, animationDuration);
-      }
-   }, [visible])
-
    return (
-      <div className={wrapperClasses} style={{ opacity, transform: `translateY(-${y}em)`, pointerEvents: visible ? 'auto' : 'none' }} {...wrapperProps}>
-         {children}
-      </div>
+      <>
+         <div className={wrapperClasses} {...wrapperProps} style={{ ...wrapperProps.style, opacity, transform: `translateY(-${y}em)`, pointerEvents: visible ? 'auto' : 'none' }} >
+            {children}
+         </div>
+      </>
    );
 }

@@ -22,7 +22,7 @@ export type GlobalStore = {
    models: Record<string, GLTF & ObjectMap>
    currentView: CurrentView
    cursorCoordinates: { x: number, y: number },
-   canvasSize: { height: number, width: number, },
+   deviceSize: { height: number, width: number, },
    avyScreenTexture: null | Texture
 
    notifications: Notification[]
@@ -69,7 +69,7 @@ export const useGlobal = create<GlobalStore>()((set, get) => {
       models: {},
       currentView: 'home',
       cursorCoordinates: { x: 0, y: 0 },
-      canvasSize: { height: 0, width: 0 },
+      deviceSize: { height: 0, width: 0 },
       avyScreenTexture: null,
 
       notifications: [],
@@ -110,9 +110,9 @@ export const useGlobal = create<GlobalStore>()((set, get) => {
 
       update: (partial) => set(partial),
       getNDC: () => {
-         const { cursorCoordinates, canvasSize } = get()
+         const { cursorCoordinates, deviceSize } = get()
          const { x, y } = cursorCoordinates
-         const { width, height } = canvasSize
+         const { width, height } = deviceSize
 
          return new Vector2(
             (x / width) * 2 - 1,

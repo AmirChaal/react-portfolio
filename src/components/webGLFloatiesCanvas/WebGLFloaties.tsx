@@ -18,15 +18,19 @@ export default function WebGLFloaties({ focused }: { focused: boolean }) {
    const cursorEnteredViewport = useRef(false)
    const { camera } = useThree()
 
-   const [borderBoxes, setBorderBoxes] = useState<RapierRigidBody | null>(null);
+   const borderBoxesRef = useRef<RapierRigidBody | null>(null)
 
    /**
     * Mouse entering detection
     */
    useEffect(() => {
-      document.addEventListener('mousemove', () => {
+      const mouseMoveFunction = () => {
          if (cursorEnteredViewport.current === false) cursorEnteredViewport.current = true
-      });
+      }
+
+      document.addEventListener('mousemove', mouseMoveFunction);
+
+      return () => document.removeEventListener('mousemove', mouseMoveFunction)
    }, [])
 
    /**
@@ -55,32 +59,32 @@ export default function WebGLFloaties({ focused }: { focused: boolean }) {
    /**
     * useFrame
     */
-   const [cursor3DPosition, setCursor3DPosition] = useState<Vector3 | null>(null)
+   const cursor3DPositionRef = useRef<Vector3 | null>(null)
    const raycasterRef = useRef(new Raycaster())
    useFrame((state, delta) => {
       if (receiverPlaneRef.current) {
-         setCursor3DPosition(getCursor3DPosition(getNDC, receiverPlaneRef.current, raycasterRef.current, camera))
+         cursor3DPositionRef.current = getCursor3DPosition(getNDC, receiverPlaneRef.current, raycasterRef.current, camera)
       }
    })
 
    return (
       <>
-         <RigidBody ref={(newRef => setBorderBoxes(newRef))} canSleep={false} type='fixed' restitution={1} >
+         <RigidBody ref={borderBoxesRef} canSleep={false} type='fixed' restitution={1} >
             <CuboidCollider args={[25, 2, 3]} position={[0, -10.5, 0]} />
             <CuboidCollider args={[25, 2, 3]} position={[0, 10.5, 0]} />
             <CuboidCollider args={[2, 25, 3]} position={[21, 0, 0]} />
             <CuboidCollider args={[2, 25, 3]} position={[-20, 0, 0]} />
          </RigidBody>
 
-         <WebGLFloatiesStirrer visible={stirrerVisible} cursor3DPosition={cursor3DPosition} />
+         <WebGLFloatiesStirrer visible={stirrerVisible} cursor3DPosition={cursor3DPositionRef.current} />
 
-         <WebGLFloatiesContainer borderBoxes={borderBoxes} />
+         <WebGLFloatiesContainer borderBoxes={borderBoxesRef.current} />
 
          <mesh ref={receiverPlaneRef} position={[0, 0, 0]} material={invisibleMaterialRef.current}>
             <planeGeometry args={[150, 75]} />
          </mesh>
 
-         <WebGLPointerIndicator visible={pointerIndicatorVisible} cursor3DPosition={cursor3DPosition} />
+         <WebGLPointerIndicator visible={pointerIndicatorVisible} cursor3DPosition={cursor3DPositionRef.current} />
       </>
    )
 }
