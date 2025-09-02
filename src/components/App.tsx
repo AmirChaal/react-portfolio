@@ -67,7 +67,7 @@ export default function App() {
    const showIllustrationViewer = useDelayedVisibility(firstParticle === "works" && secondParticle === "illustrations" && thirdParticle != null && !isNaN(parseInt(thirdParticle)) && loadingComplete, appViewAppearanceDelay, dependencies);
 
    return (
-      <div className="select-none" style={{ color: textColor }}>
+      <div className="select-none overflow-hidden" style={{ color: textColor }}>
          <Background />
          <ApplicationLoading visible={!loadingComplete} />
          <NavigationBar visible={showNavigation} />

@@ -31,10 +31,10 @@ export default function AppearingList({ visible, interval = 75, children, ...wra
       <>
          <div {...wrapperProps} style={{ pointerEvents: visible ? 'auto' : 'none' }} >
             {children.map((child, idx) => (
-               <div key={idx}>
+               <>
                   {/* @ts-expect-error AppearingContent prop */}
-                  {React.cloneElement(child, { visible: visibilityStates[idx] })}
-               </div>
+                  {React.cloneElement(child, { visible: visibilityStates[idx], key: idx })}
+               </>
             ))}
          </div>
       </>
