@@ -1,6 +1,7 @@
 import { useNavigate, useParams } from "react-router";
 import "../css/fonts.css";
-import { useCursorCoordinates } from "../functions/interactivity";
+import "../css/utilities.css";
+import { useCursorCoordinates, watchInputMethodChange } from "../functions/interactivity";
 import { loadTextures, useDeviceSize } from "../functions/setup";
 import HomeComponent from "./homeView/HomeComponent";
 import WorksComponent from "./worksView/WorksComponent";
@@ -17,6 +18,7 @@ import Article from "./Article/Article";
 import Illustrations from "./Illustrations/Illustrations";
 import IllustrationViewer from "./Illustrations/IllustrationViewer";
 import Notifications from "./notifications/Notifications";
+import getWorksData from "../functions/works";
 
 export const appViewAppearanceDelay = 350;
 
@@ -37,13 +39,17 @@ function useDelayedVisibility(condition: boolean, delay: number, deps: any[]) {
 
 export default function App() {
    const { firstParticle, secondParticle, thirdParticle } = useParams();
-   const { textColor } = useGlobal();
+   const { textColor, update, textures } = useGlobal();
+   const navigate = useNavigate()
+   const worksData = getWorksData(navigate, textures)
 
    useCursorCoordinates();
    useDeviceSize();
    loadTextures(useGlobal());
+   useEffect(() => {
+      watchInputMethodChange((inputMethod) => update({ inputMethod: inputMethod }))
+   }, [])
 
-   const navigate = useNavigate();
    if (!firstParticle) {
       navigate("home");
    }
@@ -62,9 +68,10 @@ export default function App() {
    const showFloatiesCanvas = useDelayedVisibility(loadingComplete, appViewAppearanceDelay, dependencies);
    const focusFloatiesCanvas = useDelayedVisibility(firstParticle === "home" && loadingComplete, appViewAppearanceDelay, dependencies);
    const showBehindCanvas = useDelayedVisibility(firstParticle === "works" && !secondParticle && loadingComplete, appViewAppearanceDelay, dependencies);
-   const showWorkPortfolio = useDelayedVisibility(firstParticle === "works" && secondParticle === "portfolio" && loadingComplete, appViewAppearanceDelay, dependencies);
    const showIllustrations = useDelayedVisibility(firstParticle === "works" && secondParticle === "illustrations" && loadingComplete, appViewAppearanceDelay, dependencies);
    const showIllustrationViewer = useDelayedVisibility(firstParticle === "works" && secondParticle === "illustrations" && thirdParticle != null && !isNaN(parseInt(thirdParticle)) && loadingComplete, appViewAppearanceDelay, dependencies);
+   const showPortfolioWork = useDelayedVisibility(firstParticle === "works" && secondParticle === "portfolio" && loadingComplete, appViewAppearanceDelay, dependencies);
+   const showTTRPGAssistWork = useDelayedVisibility(firstParticle === "works" && secondParticle === "ttrpg-assist" && loadingComplete, appViewAppearanceDelay, dependencies);
 
    return (
       <div className="select-none overflow-hidden" style={{ color: textColor }}>
@@ -83,7 +90,8 @@ export default function App() {
          <AboutComponent visible={showAbout} />
 
          {/* Work articles */}
-         <Article visible={showWorkPortfolio} />
+         <Article key={worksData[0].id} visible={showPortfolioWork} title={worksData[0].title} description={worksData[0].description} buttonClick={worksData[0].articleClick} />
+         <Article key={worksData[1].id} visible={showTTRPGAssistWork} title={worksData[1].title} description={worksData[1].description} buttonClick={worksData[1].articleClick} />
 
          {/* Illustrations */}
          <Illustrations visible={showIllustrations} />

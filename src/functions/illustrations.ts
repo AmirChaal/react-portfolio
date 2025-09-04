@@ -9,6 +9,8 @@ import mysoul from '/illustrations/mysoul.jpg'
 import omori from '/illustrations/omori.jpg'
 import set from '/illustrations/set.jpg'
 import gavroche from '/illustrations/gavroche.png'
+import horizontal from '/illustrations/horizontal.png'
+import vertical from '/illustrations/vertical.png'
 
 export function getIllustrationsData() {
    const illustrations: { id: number, path: string }[] = []
@@ -29,6 +31,8 @@ export function getIllustrationsData() {
    addIllustration(omori)
    addIllustration(set)
    addIllustration(gavroche)
+   // addIllustration(horizontal)
+   // addIllustration(vertical)
 
    return illustrations
 }

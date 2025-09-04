@@ -16,6 +16,10 @@ export function goToWorkPortfolio(navigateFunction: NavigateFunction) {
    navigateFunction("/works/portfolio")
 }
 
+export function goToWorkTTRPGAssist(navigateFunction: NavigateFunction) {
+   navigateFunction("/works/ttrpg-assist")
+}
+
 export function goToIllustrations(navigateFunction: NavigateFunction) {
    navigateFunction("/works/illustrations")
 }

@@ -7,7 +7,7 @@ export default function AboutComponent({ visible }: { visible: boolean }) {
 
    return (
       <>
-         {deviceSize.width < 1100 && <div className="absolute top-0 left-0 h-full w-full flex items-center justify-center flex-col pointer-events-none">
+         {deviceSize.width < 1200 && <div className="absolute top-0 left-0 h-full w-full flex items-center justify-center flex-col pointer-events-none">
             <AppearingList visible={visible} className="font-jersey10 h-full w-full max-w-[40em] px-[1.5em] mt-[6.8em] min-[700px]:mt-[8.5em] mb-[3em] flex flex-col">
                <AppearingContent visible={visible} className="mb-[0.5em] rounded-[1em] overflow-hidden flex-1" style={{ background: textColor }}>
                   <div className="absolute w-[35em] left-[50%] top-[-6rem] translate-x-[-50%]">
@@ -15,7 +15,7 @@ export default function AboutComponent({ visible }: { visible: boolean }) {
                   </div>
                </AppearingContent>
                <AppearingContent className="flex-0">
-                  <p className="text-[3em] mb-[-0.3em] tracking-[0.047em]">SALUT, JE SUIS AMIR</p>
+                  <p className="text-[2.5em] min-[500px]:text-[3em] mb-[-0.3em] min-[500px]:tracking-[0.047em] text-nowrap">SALUT, JE SUIS AMIR</p>
                </AppearingContent>
                <AppearingContent className="flex-0">
                   <p className="leading-[0.9em] text-[1.5em] text-justify">
@@ -25,7 +25,7 @@ export default function AboutComponent({ visible }: { visible: boolean }) {
                </AppearingContent>
             </AppearingList>
          </div>}
-         {deviceSize.width >= 1100 && <div className="absolute top-0 left-0 h-full w-full flex justify-center items-center pointer-events-none">
+         {deviceSize.width >= 1200 && <div className="absolute top-0 left-0 h-full w-full flex justify-center items-center pointer-events-none">
             <AppearingList visible={visible} className="font-jersey10 flex items-center gap-[2em]">
                <AppearingContent visible={visible} className="rounded-[1em] overflow-hidden h-[30em] w-[30em]" style={{ background: textColor }}>
                   <div className="absolute w-[30rem] left-[50%] top-[-6rem] translate-x-[-50%]">

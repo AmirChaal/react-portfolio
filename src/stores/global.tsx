@@ -4,6 +4,7 @@ import { LoadingManager, Texture, TextureLoader, Vector2 } from 'three'
 import { GLTFLoader, type GLTF } from 'three/examples/jsm/Addons.js'
 import { create } from 'zustand'
 import type { IconComponentProps } from '../types/component'
+import type { detectInputMethod } from '../functions/interactivity'
 
 type CurrentView = 'home' | 'works' | 'about'
 
@@ -24,6 +25,7 @@ export type GlobalStore = {
    cursorCoordinates: { x: number, y: number },
    deviceSize: { height: number, width: number, },
    avyScreenTexture: null | Texture
+   inputMethod: ReturnType<typeof detectInputMethod>
 
    notifications: Notification[]
    getNotifications: () => Notification[],
@@ -45,16 +47,7 @@ export type GlobalStore = {
 // Create store first so we can access `set` inside LoadingManager callbacks
 export const useGlobal = create<GlobalStore>()((set, get) => {
    const loadingManager = new LoadingManager()
-   // loadingManager.onStart = (url, itemsLoaded, itemsTotal) => console.log(`Started loading: ${url} (${itemsLoaded} of ${itemsTotal})`)
-   // loadingManager.onLoad = () => {
-   //    console.log('✅ All assets loaded')
-   //    set({ texturesLoaded: true })
-   // }
-   // loadingManager.onProgress = (url, itemsLoaded, itemsTotal) => console.log(`Loading file: ${url} (${itemsLoaded} of ${itemsTotal})`)
-   // loadingManager.onError = (url) => console.error(`❌ Error loading ${url}`)
-
    const textureLoader = new TextureLoader(loadingManager)
-
    const gltfLoader = new GLTFLoader(loadingManager)
 
    return {
@@ -71,6 +64,7 @@ export const useGlobal = create<GlobalStore>()((set, get) => {
       cursorCoordinates: { x: 0, y: 0 },
       deviceSize: { height: 0, width: 0 },
       avyScreenTexture: null,
+      inputMethod: 'cursor',
 
       notifications: [],
       getNotifications: (() => get().notifications),

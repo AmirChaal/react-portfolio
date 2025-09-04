@@ -1,3 +1,24 @@
 .antialiased-none {
    font-smooth: never;
 }
+
+.my-scrollable {
+   overflow-y: auto; /* or overflow: auto; */
+   scrollbar-width: thin; /* Firefox */
+   scrollbar-color: rgba(0, 0, 0, 0.3) transparent; /* Firefox */
+}
+
+/* Chrome, Edge, Safari */
+.my-scrollable::-webkit-scrollbar {
+   width: 6px;
+   height: 6px;
+}
+
+.my-scrollable::-webkit-scrollbar-track {
+   background: transparent; /* or a very light color */
+}
+
+.my-scrollable::-webkit-scrollbar-thumb {
+   background-color: rgba(0, 0, 0, 0.3);
+   border-radius: 3px;
+}
