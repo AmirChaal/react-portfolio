@@ -90,8 +90,10 @@ export default function App() {
          <AboutComponent visible={showAbout} />
 
          {/* Work articles */}
-         <Article key={worksData[0].id} visible={showPortfolioWork} title={worksData[0].title} description={worksData[0].description} buttonClick={worksData[0].articleClick} />
-         <Article key={worksData[1].id} visible={showTTRPGAssistWork} title={worksData[1].title} description={worksData[1].description} buttonClick={worksData[1].articleClick} />
+         {worksData.filter(work => work.article).map(work => {
+            const showWork = work.urlCode === "portfolio" ? showPortfolioWork : work.urlCode === "ttrpg-assist" ? showTTRPGAssistWork : false;
+            return <Article key={work.id} visible={showWork} title={work.title} description={work.description} buttonClick={work.articleClick} />
+         })}
 
          {/* Illustrations */}
          <Illustrations visible={showIllustrations} />
