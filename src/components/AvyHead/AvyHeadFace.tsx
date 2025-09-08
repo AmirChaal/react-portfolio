@@ -61,6 +61,7 @@ export default function AvyHeadFace({ avyHeadGroup, visible, ...wrapperProps }: 
    //  ==== UseFrame ====
    const raycasterRef = useRef(new Raycaster())
    useFrame((state, delta) => {
+      const safeDelta = Math.min(delta, 0.05); // cap at ~50ms (20 FPS)
       let cursor3D
       if (receiverPlaneRef.current) cursor3D = getCursor3DPosition(getNDC, receiverPlaneRef.current, raycasterRef.current, camera)
 
@@ -96,8 +97,8 @@ export default function AvyHeadFace({ avyHeadGroup, visible, ...wrapperProps }: 
          const eyeRotation = getEyeRotation(functionProgress, followingEnabled)
          const smoothing = 0.1; // smaller = smoother/slower
          if (eyesOpen) {
-            leftEyeRef.current.rotation.z += (eyeRotation - leftEyeRef.current.rotation.z) * smoothing * delta * 25;
-            rightEyeRef.current.rotation.z += (eyeRotation - rightEyeRef.current.rotation.z) * smoothing * delta * 25;
+            leftEyeRef.current.rotation.z += (eyeRotation - leftEyeRef.current.rotation.z) * smoothing * safeDelta * 25;
+            rightEyeRef.current.rotation.z += (eyeRotation - rightEyeRef.current.rotation.z) * smoothing * safeDelta * 25;
          } else {
             leftEyeRef.current.rotation.z = 0
             rightEyeRef.current.rotation.z = 0

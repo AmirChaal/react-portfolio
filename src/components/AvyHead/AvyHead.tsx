@@ -1,16 +1,15 @@
 import { Float } from "@react-three/drei";
 import { useFrame, useThree } from "@react-three/fiber";
-import { forwardRef, useEffect, useRef, useImperativeHandle, useState, useMemo } from "react";
+import { forwardRef, useEffect, useRef, useImperativeHandle, useState } from "react";
 import { useGlobal } from "../../stores/global";
-import { Group, Material, MeshBasicMaterial, MeshStandardMaterial, Raycaster, RepeatWrapping, Texture, Vector2, Vector3, type Mesh } from "three";
+import { Group,   MeshStandardMaterial, Raycaster, RepeatWrapping, Texture,  Vector3, type Mesh } from "three";
 import AvyHeadModel from "./AvyHeadModel";
 import gsap from "gsap";
-import { color } from "three/tsl";
 import AvyHeadFace from "./AvyHeadFace";
 import { getCursor3DPosition, getCursorAngle } from "../../functions/3d";
 
 export default forwardRef(function AvyHead({ visible }: { visible: boolean }, ref) {
-   const { getNDC, update, textures } = useGlobal();
+   const { getNDC, update, textures, textColor } = useGlobal();
    const internalHeadRef = useRef<Group>(null);
    const cursorFollowerRef = useRef<Mesh>(null);
    const receiverPlaneRef = useRef<Mesh>(null);
@@ -45,7 +44,7 @@ export default forwardRef(function AvyHead({ visible }: { visible: boolean }, re
    }
 
    // Avy Screen Material
-   const avyScreenMaterialRef = useRef(new MeshStandardMaterial({ map: textures.avyScreenDefault }))
+   const avyScreenMaterialRef = useRef(new MeshStandardMaterial({ map: textures.avyScreenDefault, transparent: true, color: textColor }))
    const timeoutsRef = useRef<ReturnType<typeof setTimeout>[]>([])
    useEffect(() => {
       timeoutsRef.current.forEach(timeout => clearTimeout(timeout))
@@ -102,18 +101,15 @@ export default forwardRef(function AvyHead({ visible }: { visible: boolean }, re
     */
    const raycasterRef = useRef(new Raycaster())
    const [cursor3DPosition, setCursor3DPosition] = useState<Vector3 | null>(null)
-   const [cursor3DAngle, setCursor3DAngle] = useState<number | null>(null)
    useFrame((_, delta) => {
+      const safeDelta = Math.min(delta, 0.05);
       if (receiverPlaneRef.current != null) {
          setCursor3DPosition(getCursor3DPosition(getNDC, receiverPlaneRef.current, raycasterRef.current, camera))
-      }
-      if (receiverPlaneRef.current != null && cursor3DPosition) {
-         setCursor3DAngle(getCursorAngle(cursor3DPosition, receiverPlaneRef.current))
       }
 
       // Rotation
       if (cursor3DPosition && cursorFollowerRef.current) {
-         const effectiveFollowerPosition = cursorFollowerRef.current!.position.lerp(cursor3DPosition, delta * 6);
+         const effectiveFollowerPosition = cursorFollowerRef.current!.position.lerp(cursor3DPosition, safeDelta * 6);
          cursorFollowerRef.current.position.copy(effectiveFollowerPosition);
          internalHeadRef.current!.lookAt(cursorFollowerRef.current!.position);
       }
