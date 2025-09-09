@@ -6,14 +6,11 @@ import AppearingContent from "../AppearingContent"
 import { appViewAppearanceDelay } from "../App"
 import IconButton from "../IconButton"
 import { useGlobal } from "../../stores/global"
-import PixelDownloadIcon from "../icons/PixelDownloadIcon"
-import PixelCloseIcon from "../icons/PixelCloseIcon"
 import DownloadIcon from "../icons/DownloadIcon"
 import CloseIcon from "../icons/CloseIcon"
 import CopyIcon from "../icons/CopyIcon"
 import { addNotification } from "../../functions/notification"
 import { copyImageIntoClipboard } from "../../functions/file"
-import { image } from "motion/react-client"
 
 export default function IllustrationViewer({ visible }: { visible: boolean }) {
    const { thirdParticle: imageId } = useParams()
