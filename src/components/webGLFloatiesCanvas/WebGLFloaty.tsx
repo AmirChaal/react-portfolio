@@ -1,8 +1,10 @@
 import { BallCollider, RapierRigidBody, RigidBody } from "@react-three/rapier";
 import { useEffect, useMemo, useRef, type RefObject } from "react";
-import { Color, Material, PlaneGeometry, Vector3 } from "three";
+import { Color, Material, Mesh, PlaneGeometry, Vector3 } from "three";
 import { getRandomPosition } from "../../functions/3d";
 import { useGlobal } from "../../stores/global";
+import { AudioPlayer } from "../../functions/audio";
+import gsap from "gsap";
 
 const floatySizes = ['small', 'medium', 'big'] as const
 type FloatySize = typeof floatySizes[number]
@@ -10,7 +12,18 @@ type FloatySize = typeof floatySizes[number]
 const spawningMods = ['strips', 'everywhere'] as const
 type SpawningMod = typeof spawningMods[number]
 
-export default function WebGLFloaty({ spawningMode, uniqueKey, edgeBody, onRemove, spawnAt, materials, planeGeometry, globalScale = 1 }: {
+const audioPlayer = new AudioPlayer(20);
+
+export default function WebGLFloaty({
+   spawningMode,
+   uniqueKey,
+   edgeBody,
+   onRemove,
+   spawnAt,
+   materials,
+   planeGeometry,
+   globalScale = 1
+}: {
    readonly spawningMode: SpawningMod,
    readonly uniqueKey: number,
    readonly edgeBody: RapierRigidBody,
@@ -20,16 +33,40 @@ export default function WebGLFloaty({ spawningMode, uniqueKey, edgeBody, onRemov
    readonly planeGeometry: PlaneGeometry
    readonly globalScale?: number
 }) {
-   const { floatiesColor } = useGlobal()
+   const { floatiesColor, globalStirrerBody } = useGlobal()
    const bodyRef = useRef(null) as RefObject<RapierRigidBody | null>
+   const meshRef = useRef<Mesh>(null)
 
    // Collision detection
    const removeFloaty = () => { onRemove(uniqueKey) }
    const onCollisionEnter = (collision: any) => {
       const otherBody = collision.other.rigidBody
-      if (otherBody.handle !== edgeBody.handle) return
-      removeFloaty()
+      if (otherBody.handle === edgeBody.handle) removeFloaty()
+      if (globalStirrerBody != null && otherBody.handle === globalStirrerBody.handle) {
+         audioPlayer.playSound("/audio/short_hit.mp3", [0.05, 0.1], [0.8, 1.5]);
+
+         if (meshRef.current) {
+            const mat = meshRef.current.material as Material & { color: Color }
+
+            // Use the current floaty color as baseline
+            const originalColor = new Color().set(floatiesColor)
+
+            // Make it darker and a bit reddish
+            const hitColor = originalColor.clone().multiplyScalar(0.6).lerp(new Color(0, 1, 1), 0.4) // add some red (40% blend)
+
+            // Cancel ongoing tweens before starting a new one
+            gsap.killTweensOf(mat.color)
+
+            // Apply hit color instantly
+            mat.color.copy(hitColor)
+
+            // Animate back to original
+            gsap.to(mat.color, { r: originalColor.r, g: originalColor.g, b: originalColor.b, duration: 0.8, ease: "power2.out" })
+         }
+      }
    }
+
+
 
    // Size selection
    const getSize = () => {
@@ -67,12 +104,13 @@ export default function WebGLFloaty({ spawningMode, uniqueKey, edgeBody, onRemov
       else materialsArray = materials.big
 
       const materialIndex = Math.floor(Math.random() * materialsArray.length)
-      const material = materialsArray[materialIndex] as Material
+      const baseMaterial = materialsArray[materialIndex] as Material & { color: Color }
 
-      (material as any).color = new Color().set(floatiesColor)
+      const clonedMaterial = baseMaterial.clone() as Material & { color: Color }
+      clonedMaterial.color = new Color().set(floatiesColor)
 
-      return material
-   }, [materials, sizeRef.current])
+      return clonedMaterial
+   }, [materials, sizeRef.current, floatiesColor])
 
    // Scales
    const bodyScale = useMemo(() => {
@@ -89,9 +127,23 @@ export default function WebGLFloaty({ spawningMode, uniqueKey, edgeBody, onRemov
    }, [])
 
    return (
-      <RigidBody ref={bodyRef} canSleep={true} rotation={rotationRef.current} onCollisionEnter={onCollisionEnter} position={randomPosition.current} restitution={1} colliders={false} linearDamping={8} angularDamping={8} type="dynamic" gravityScale={0} enabledTranslations={[true, true, false]} enabledRotations={[false, false, true]}   >
+      <RigidBody
+         ref={bodyRef}
+         canSleep={true}
+         rotation={rotationRef.current}
+         onCollisionEnter={onCollisionEnter}
+         position={randomPosition.current}
+         restitution={0}
+         colliders={false}
+         linearDamping={8}
+         angularDamping={8}
+         type="dynamic"
+         gravityScale={0}
+         enabledTranslations={[true, true, false]}
+         enabledRotations={[false, false, true]}
+      >
          <BallCollider args={[bodyScale]} mass={0.5} />
-         <mesh material={material} geometry={planeGeometry} scale={globalScale} />
+         <mesh ref={meshRef} material={material} geometry={planeGeometry} scale={globalScale} />
       </RigidBody>
    )
 }

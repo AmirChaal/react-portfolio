@@ -1,12 +1,18 @@
-import React, { useEffect, useRef, useState, type ComponentPropsWithoutRef, type ReactElement, type ReactNode } from "react";
+import React, { useEffect, useRef, useState, type ComponentPropsWithoutRef, type ReactElement } from "react";
 import { useGlobal } from "../stores/global";
 import gsap from "gsap";
 import type { IconComponentProps } from "../types/component";
 import PixelArrowIcon from "./icons/PixelArrowIcon";
+import { playAudio } from "../functions/audio";
 
-export default function TextButton({ text, onMouseEnter = () => { }, onMouseLeave = () => { }, endIcon = undefined, ...buttonProps }: { text: string, onMouseEnter?: () => void, onMouseLeave?: () => void, endIcon?: ReactElement<IconComponentProps> } & ComponentPropsWithoutRef<"button">) {
+export default function TextButton({ text, onClick = () => { }, onMouseEnter = () => { }, onMouseLeave = () => { }, endIcon = undefined, ...buttonProps }: { text: string, onClick?: () => void, onMouseEnter?: () => void, onMouseLeave?: () => void, endIcon?: ReactElement<IconComponentProps> } & ComponentPropsWithoutRef<"button">) {
    const { textColor } = useGlobal();
    const arrowWrapperRef = useRef<HTMLDivElement | null>(null);
+
+   const internalOnClick = () => {
+      onClick()
+      // playAudio('/audio/low_rising_bleep.mp3')
+   }
 
    const [hovered, setHovered] = useState(false);
    const mouseEnter = () => {
@@ -50,7 +56,7 @@ export default function TextButton({ text, onMouseEnter = () => { }, onMouseLeav
    }, [hovered]);
 
    return (
-      <button {...buttonProps} className={"flex items-center cursor-pointer " + buttonProps.className} onMouseEnter={mouseEnter} onMouseLeave={mouseLeave}>
+      <button {...buttonProps} onClick={internalOnClick} className={"flex items-center cursor-pointer " + buttonProps.className} onMouseEnter={mouseEnter} onMouseLeave={mouseLeave}>
          <div ref={arrowWrapperRef} className="overflow-hidden">
             <PixelArrowIcon className="h-full w-[0.8em]" color={textColor} />
          </div>

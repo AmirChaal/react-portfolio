@@ -12,7 +12,7 @@ export default function WebGLFloaties({ focused }: { focused: boolean }) {
    /**
     * Setup
     */
-   const { getNDC } = useGlobal()
+   const { getNDC, update } = useGlobal()
    const invisibleMaterialRef = useRef(new MeshBasicMaterial({ transparent: true, opacity: 0 }))
    const receiverPlaneRef = useRef<Mesh>(null)
    const cursorEnteredViewport = useRef(false)
@@ -59,9 +59,16 @@ export default function WebGLFloaties({ focused }: { focused: boolean }) {
    /**
     * useFrame
     */
+
+   const firstFrameDrawn = useRef(false);
    const cursor3DPositionRef = useRef<Vector3 | null>(null)
    const raycasterRef = useRef(new Raycaster())
    useFrame((state, delta) => {
+      if (!firstFrameDrawn.current) {
+         firstFrameDrawn.current = true;
+         update({ floatiesCanvasFirstFrameGenerated: true })
+      }
+
       if (receiverPlaneRef.current) {
          cursor3DPositionRef.current = getCursor3DPosition(getNDC, receiverPlaneRef.current, raycasterRef.current, camera)
       }

@@ -9,7 +9,7 @@ import WebGLFloatiesCanvas from "./webGLFloatiesCanvas/WebGLFloatiesCanvas";
 import NavigationBar from "./NavigationBar";
 import Background from "./Background";
 import { useGlobal } from "../stores/global";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import ApplicationLoading from "./ApplicationLoading";
 import Noise from "./Noise";
 import { WebGLBehindCanvasWrapper } from "./webGLBehindCanvas/WebGLBehindCanvasWrapper";
@@ -19,6 +19,9 @@ import Illustrations from "./Illustrations/Illustrations";
 import IllustrationViewer from "./Illustrations/IllustrationViewer";
 import Notifications from "./notifications/Notifications";
 import getWorksData from "../functions/works";
+import { usePersistentGlobal } from "../stores/persistentGlobal";
+import ExtraControls from "./ExtraControls";
+import gsap from "gsap";
 
 export const appViewAppearanceDelay = 350;
 
@@ -39,7 +42,8 @@ function useDelayedVisibility(condition: boolean, delay: number, deps: any[]) {
 
 export default function App() {
    const { firstParticle, secondParticle, thirdParticle } = useParams();
-   const { textColor, update, textures } = useGlobal();
+   const { textColor, update, textures, texturesLoaded, modelsLoaded, floatiesCanvasFirstFrameGenerated, behindCanvasFirstFrameGenerated } = useGlobal();
+   const { playMusic } = usePersistentGlobal()
    const navigate = useNavigate()
    const worksData = getWorksData(navigate, textures)
 
@@ -56,12 +60,33 @@ export default function App() {
 
    const [loadingComplete, setLoadingComplete] = useState(false);
    useEffect(() => {
-      const timer = setTimeout(() => setLoadingComplete(true), 1000);
-      return () => clearTimeout(timer);
-   }, []);
+      if (texturesLoaded && modelsLoaded && floatiesCanvasFirstFrameGenerated && behindCanvasFirstFrameGenerated) setLoadingComplete(true)
+   }, [texturesLoaded, modelsLoaded, floatiesCanvasFirstFrameGenerated, behindCanvasFirstFrameGenerated]);
+
+   const backgroundMusicRef = useRef(new Audio('/lofi_music.mp3'))
+   useEffect(() => {
+      if (loadingComplete) {
+         backgroundMusicRef.current.loop = true
+         backgroundMusicRef.current.play().catch(err => {
+            const playOnClick = () => {
+               backgroundMusicRef.current.play();
+               window.removeEventListener("click", playOnClick);
+            };
+            window.addEventListener("click", playOnClick);
+         });
+      }
+   }, [loadingComplete]);
+   useEffect(() => {
+      gsap.to(backgroundMusicRef.current, {
+         volume: playMusic ? 0.25 : 0,
+         duration: 0.5, // fade time in seconds
+         ease: "power2.out"
+      });
+   }, [playMusic])
 
    const dependencies = [firstParticle, secondParticle, thirdParticle]
    const showNavigation = useDelayedVisibility(loadingComplete, appViewAppearanceDelay, dependencies);
+   const showExtraControls = useDelayedVisibility(loadingComplete, appViewAppearanceDelay, dependencies);
    const showHome = useDelayedVisibility(firstParticle === "home" && loadingComplete, appViewAppearanceDelay, dependencies);
    const showWorks = useDelayedVisibility(firstParticle === "works" && !secondParticle && loadingComplete, appViewAppearanceDelay, dependencies);
    const showAbout = useDelayedVisibility(firstParticle === "about" && loadingComplete, appViewAppearanceDelay, dependencies);
@@ -101,6 +126,9 @@ export default function App() {
 
          {/* Notifications */}
          <Notifications />
+
+         {/* Extra controls */}
+         <ExtraControls visible={showExtraControls} />
       </div>
    );
 }

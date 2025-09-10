@@ -38,7 +38,7 @@ export default function WebGLFloatiesContainer({ borderBoxes }: { borderBoxes: R
    }), [])
 
    // Spawn & Despawn management
-   const initialFloatiesCount = 100
+   const initialFloatiesCount = 150
    const [floatyKeys, setFloatyKeys] = useState(Array.from({ length: initialFloatiesCount }, (_, i) => i))
    const floatyKeyCounterRef = useRef(initialFloatiesCount)
 

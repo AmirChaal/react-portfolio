@@ -5,7 +5,7 @@ import { useFrame } from '@react-three/fiber'
 import { Mesh, type DirectionalLight } from "three";
 
 export function WebGLBehindCanvas({ visible }: { visible: boolean }) {
-   const { avyAmbientLight, avyDirectionalLight, inputMethod, deviceSize } = useGlobal()
+   const { avyAmbientLight, avyDirectionalLight, inputMethod, deviceSize, update } = useGlobal()
    const lightRef = useRef<DirectionalLight>(null!)
    const avyHeadRef = useRef(null) as RefObject<null | Mesh>
 
@@ -26,7 +26,13 @@ export function WebGLBehindCanvas({ visible }: { visible: boolean }) {
       return (visible && inputMethod === "cursor" && deviceSize.width > 1100)
    }, [visible, inputMethod, deviceSize.width])
 
+   const firstFrameDrawn = useRef(false);
    useFrame(() => {
+      if (!firstFrameDrawn.current) {
+         firstFrameDrawn.current = true;
+         update({ behindCanvasFirstFrameGenerated: true })
+      }
+
       if (avyHeadRef.current == null) return
       lightRef.current.target = avyHeadRef.current
    })

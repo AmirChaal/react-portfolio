@@ -81,7 +81,6 @@ export function loadTextures(global: GlobalStore) {
       provideTextures("avyScreenNoise", "/avy-screen-textures/noise.png")
       provideTextures("avyScreenDefault", "/avy-screen-textures/default.png")
       provideTextures("avyCuteOpenEye", "/avy-screen-textures/cute_open_eye.png")
-      provideTextures("avyCuteOpenEyeRed", "/avy-screen-textures/cute_open_eye_red.png")
       provideTextures("avyCuteClosedLeftEye", "/avy-screen-textures/cute_closed_left_eye.png")
       provideTextures("avyCuteClosedRightEye", "/avy-screen-textures/cute_closed_right_eye.png")
       provideTextures("avyCuteOpenMouth", "/avy-screen-textures/cute_open_mouth.png")

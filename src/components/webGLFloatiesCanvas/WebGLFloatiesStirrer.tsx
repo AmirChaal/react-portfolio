@@ -9,11 +9,16 @@ export default function WebGLFloatiesStirrer({ visible, cursor3DPosition }: { vi
    const animationDuration = 1 // Seconds
    const stirrerMaxRadius = 1.75
 
-   const { stirrerColor } = useGlobal()
+   const { stirrerColor, update } = useGlobal()
    const stirrerRef = useRef(null as RapierRigidBody | null)
    const stirrerMeshRef = useRef(null as null | Mesh)
    const [stirrerRadius, setStirrerRadius] = useState(visible ? stirrerMaxRadius : 0)
    const [stirrerFollowVectorMultiplier, setStirrerFollowVectorMultiplier] = useState(visible ? 1 : 0)
+
+   // Provide stirrerRef
+   useEffect(() => {
+      if (stirrerRef.current != null) update({ globalStirrerBody: stirrerRef.current })
+   }, [stirrerRef.current])
 
    // Activate and deactivate rigidbody
    useEffect(() => {
@@ -86,7 +91,7 @@ export default function WebGLFloatiesStirrer({ visible, cursor3DPosition }: { vi
    return (
       <>
          {<RigidBody ref={stirrerRef} canSleep={false} gravityScale={0} type="dynamic" colliders={false} enabledTranslations={[true, true, false]} enabledRotations={[false, false, false]}>
-            <BallCollider args={[stirrerMaxRadius*0.75]} mass={0} restitution={0} />
+            <BallCollider args={[stirrerMaxRadius * 0.75]} mass={0} restitution={0} />
             <mesh ref={stirrerMeshRef} material={new MeshBasicMaterial({ color: stirrerColor, toneMapped: false })} rotation={[Math.PI / 2, 0, 0]} >
                <cylinderGeometry args={[0.75, 0.5, 0.1, 30]} />
             </mesh>

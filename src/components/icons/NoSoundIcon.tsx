@@ -1,0 +1,13 @@
+import type { IconComponentProps } from "../../types/component";
+
+export default function NoSoundIcon({ color = "#000000", ...wrapperProps }: IconComponentProps) {
+   return (
+      <div {...wrapperProps}>
+         <svg className="h-full w-full" xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill={color}>
+            <path d="m616-320-56-56 104-104-104-104 56-56 104 104 104-104 56 56-104 104 104 104-56 56-104-104-104 104Zm-496-40v-240h160l200-200v640L280-360H120Zm280-246-86 86H200v80h114l86 86v-252ZM300-480Z" />
+         </svg>
+      </div>
+   )
+}
+
+

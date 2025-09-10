@@ -1,7 +1,9 @@
 import { useGLTF } from "@react-three/drei"
+import { useGlobal } from "../../stores/global"
 
 export default function AvyHeadModel(props: Record<string, unknown>) {
-   const robavyModel = useGLTF('/robavy.glb')
+   const { loadingManager } = useGlobal()
+   const robavyModel = useGLTF("/robavy.glb", false, false, (loader) => loader.manager = loadingManager)
 
    robavyModel.scene.traverse((model) => {
       model.castShadow = true

@@ -1,10 +1,11 @@
 import type { ObjectMap } from '@react-three/fiber'
-import type { ReactElement } from 'react'
+import { useRef, type ReactElement, type RefObject } from 'react'
 import { LoadingManager, Texture, TextureLoader, Vector2 } from 'three'
 import { GLTFLoader, type GLTF } from 'three/examples/jsm/Addons.js'
 import { create } from 'zustand'
 import type { IconComponentProps } from '../types/component'
 import type { detectInputMethod } from '../functions/interactivity'
+import type { RapierRigidBody } from '@react-three/rapier'
 
 type CurrentView = 'home' | 'works' | 'about'
 
@@ -18,18 +19,19 @@ export type GlobalStore = {
    loadingManager: LoadingManager,
    textureLoader: TextureLoader,
    gltfLoader: GLTFLoader,
-   texturesLoaded: boolean,
    textures: Record<string, Texture>
    models: Record<string, GLTF & ObjectMap>
+   texturesLoaded: boolean,
+   modelsLoaded: boolean,
+   floatiesCanvasFirstFrameGenerated: boolean
+   behindCanvasFirstFrameGenerated: boolean
    currentView: CurrentView
    cursorCoordinates: { x: number, y: number },
    deviceSize: { height: number, width: number, },
    avyScreenTexture: null | Texture
    inputMethod: ReturnType<typeof detectInputMethod>
-
    notifications: Notification[]
    getNotifications: () => Notification[],
-
    backgroundColor: string,
    floatiesColor: string,
    textColor: string,
@@ -37,60 +39,56 @@ export type GlobalStore = {
    cursorIndicatorColor: string,
    avyAmbientLight: string,
    avyDirectionalLight: string,
-
    changeAvyScreenWorkTexture: null | ((texture: Texture | null) => void)
-
    update: (partial: Record<string, unknown>) => void,
    getNDC: () => Vector2
+   globalStirrerBody: null | RapierRigidBody
 }
 
-// Create store first so we can access `set` inside LoadingManager callbacks
 export const useGlobal = create<GlobalStore>()((set, get) => {
-   const loadingManager = new LoadingManager()
+   const loadingManager = new LoadingManager(
+      () => {
+         const store = get()
+         if (!store.texturesLoaded) set({ texturesLoaded: true })
+         else set({ modelsLoaded: true })
+      },
+      (loa) => { },
+      (err) => { }
+   )
    const textureLoader = new TextureLoader(loadingManager)
    const gltfLoader = new GLTFLoader(loadingManager)
 
    return {
       /**
-       * Global variables
+       * Loaded content
        */
       loadingManager,
       textureLoader,
       gltfLoader,
-      texturesLoaded: false,
       textures: {},
       models: {},
+
+      // Loading flags
+      texturesLoaded: false,
+      modelsLoaded: false,
+      floatiesCanvasFirstFrameGenerated: false,
+      behindCanvasFirstFrameGenerated: false,
+
+      // Audio control
+      playMusic: false,
+      playSoundEffects: true,
+
+      // Global variables
       currentView: 'home',
       cursorCoordinates: { x: 0, y: 0 },
       deviceSize: { height: 0, width: 0 },
       avyScreenTexture: null,
       inputMethod: 'cursor',
-
       notifications: [],
+      changeAvyScreenWorkTexture: null,
       getNotifications: (() => get().notifications),
 
-      /**
-       * Colors
-       */
-      // Recro dark theme
-      // backgroundColor: "#ffffff",
-      // floatiesColor: "#E6E6E6",
-      // textColor: "#000000",
-      // stirrerColor: "#56C7FF",
-      // cursorIndicatorColor: "#000000",
-      // avyAmbientLight: "",
-      // avyDirectionalLight: "",
-
-      // Recro white theme
-      // backgroundColor: "#ffffff",
-      // floatiesColor: "#E6E6E6",
-      // textColor: "#000000",
-      // stirrerColor: "#56C7FF",
-      // cursorIndicatorColor: "#000000",
-      // avyAmbientLight: "#56C7FF",
-      // avyDirectionalLight: "#56C7FF",
-
-      // Original colors
+      // Colors
       backgroundColor: "#ece6c2",
       floatiesColor: "#E9D4AB",
       textColor: "#6f5643",
@@ -99,8 +97,8 @@ export const useGlobal = create<GlobalStore>()((set, get) => {
       avyAmbientLight: "#FF8700",
       avyDirectionalLight: "#ECE6C2",
 
-      // Avy head functions
-      changeAvyScreenWorkTexture: null,
+      // Physics
+      globalStirrerBody: null,
 
       update: (partial) => set(partial),
       getNDC: () => {
@@ -124,3 +122,25 @@ export const useGlobal = create<GlobalStore>()((set, get) => {
 // #ece6c2 light beige
 // #73bda8 tonic blue
 // #E9D4AB beige (old floaties color)
+
+
+/**
+ * Colors
+ */
+// Recro dark theme
+// backgroundColor: "#ffffff",
+// floatiesColor: "#E6E6E6",
+// textColor: "#000000",
+// stirrerColor: "#56C7FF",
+// cursorIndicatorColor: "#000000",
+// avyAmbientLight: "",
+// avyDirectionalLight: "",
+
+// Recro white theme
+// backgroundColor: "#ffffff",
+// floatiesColor: "#E6E6E6",
+// textColor: "#000000",
+// stirrerColor: "#56C7FF",
+// cursorIndicatorColor: "#000000",
+// avyAmbientLight: "#56C7FF",
+// avyDirectionalLight: "#56C7FF",
