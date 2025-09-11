@@ -8,7 +8,7 @@ export default function AboutComponent({ visible }: { visible: boolean }) {
    return (
       <>
          {deviceSize.width < 1200 && <div className="absolute top-0 left-0 h-full w-full flex items-center justify-center flex-col pointer-events-none">
-            <AppearingList visible={visible} className="font-jersey10 h-full w-full max-w-[40em] px-[1.5em] mt-[6.8em] min-[700px]:mt-[8.5em] mb-[3em] flex flex-col">
+            <AppearingList visible={visible} className="font-jersey10 h-full w-full max-w-[40em] px-[1.5em] mt-[6.8em] min-[700px]:mt-[8.5em] mb-[4em] flex flex-col">
                <AppearingContent visible={visible} className="mb-[0.5em] rounded-[1em] overflow-hidden flex-1" style={{ background: textColor }}>
                   <div className="absolute w-[35em] left-[50%] top-[-6rem] translate-x-[-50%]">
                      <img src="/avy_about.png" alt="" className="h-full w-full" />

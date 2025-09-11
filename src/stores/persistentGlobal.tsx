@@ -9,7 +9,7 @@ export type PersistentGlobal = {
 
 export const usePersistentGlobal = create<PersistentGlobal>()(persist(
    (set, get) => ({
-      playMusic: false,
+      playMusic: true,
       playSoundEffects: true,
       updatePersistent: (partial: Partial<PersistentGlobal>) => set(partial),
    }),

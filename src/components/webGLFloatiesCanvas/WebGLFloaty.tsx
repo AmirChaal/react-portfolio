@@ -5,6 +5,7 @@ import { getRandomPosition } from "../../functions/3d";
 import { useGlobal } from "../../stores/global";
 import { AudioPlayer } from "../../functions/audio";
 import gsap from "gsap";
+import { usePersistentGlobal } from "../../stores/persistentGlobal";
 
 const floatySizes = ['small', 'medium', 'big'] as const
 type FloatySize = typeof floatySizes[number]
@@ -33,7 +34,8 @@ export default function WebGLFloaty({
    readonly planeGeometry: PlaneGeometry
    readonly globalScale?: number
 }) {
-   const { floatiesColor, globalStirrerBody } = useGlobal()
+   const { floatiesColor, globalStirrerBody, enteredApplication } = useGlobal()
+   const { playSoundEffects } = usePersistentGlobal()
    const bodyRef = useRef(null) as RefObject<RapierRigidBody | null>
    const meshRef = useRef<Mesh>(null)
 
@@ -43,30 +45,23 @@ export default function WebGLFloaty({
       const otherBody = collision.other.rigidBody
       if (otherBody.handle === edgeBody.handle) removeFloaty()
       if (globalStirrerBody != null && otherBody.handle === globalStirrerBody.handle) {
-         audioPlayer.playSound("/audio/short_hit.mp3", [0.05, 0.1], [0.8, 1.5]);
+         if (enteredApplication && playSoundEffects) audioPlayer.playSound("/audio/short_hit.mp3", [0.05, 0.1], [0.8, 1.5]);
 
          if (meshRef.current) {
             const mat = meshRef.current.material as Material & { color: Color }
-
             // Use the current floaty color as baseline
             const originalColor = new Color().set(floatiesColor)
-
             // Make it darker and a bit reddish
-            const hitColor = originalColor.clone().multiplyScalar(0.6).lerp(new Color(0, 1, 1), 0.4) // add some red (40% blend)
-
+            const hitColor = originalColor.clone().multiplyScalar(0.5).lerp(new Color(0, 1, 0.8), 0.4) // add some red (40% blend)
             // Cancel ongoing tweens before starting a new one
             gsap.killTweensOf(mat.color)
-
             // Apply hit color instantly
             mat.color.copy(hitColor)
-
             // Animate back to original
             gsap.to(mat.color, { r: originalColor.r, g: originalColor.g, b: originalColor.b, duration: 0.8, ease: "power2.out" })
          }
       }
    }
-
-
 
    // Size selection
    const getSize = () => {

@@ -15,7 +15,7 @@ export default function ExtraControls({ visible }: { visible: boolean }) {
 
    return (
       <div className="absolute h-full w-full top-0 left-0 pointer-events-none">
-         <AppearingContent className="absolute right-0 bottom-0 flex gap-[1em] p-[2em]" visible={visible} >
+         <AppearingContent className="absolute right-0 bottom-0 flex gap-[0] min-[1000px]:gap-[1em] p-[0.5em] min-[1000px]:p-[2em]" visible={visible} >
             <button className="cursor-pointer p-[0.5em] h-[3em] w-[3em]" onClick={soundEffectsButtonClick}>
                {playSoundEffects && <SoundIcon className="h-full" color={textColor} />}
                {!playSoundEffects && <NoSoundIcon className="h-full" color={textColor} />}

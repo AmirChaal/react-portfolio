@@ -8,7 +8,7 @@ export default function IllustrationButton({ imagePath, imageId }: { imagePath: 
 
    return (
       <>
-         <div onClick={onClick} className="cursor-pointer w-full min-[950px]:w-[15em] aspect-[1.5] rounded-[0.5em] bg-cover bg-center" style={{ background: `url("${imagePath}"`, backgroundSize: 'cover', backgroundPosition: "center" }} />
+         <div onClick={onClick} className="cursor-pointer w-full min-[1000px]:w-[15em] aspect-[1.5] rounded-[0.5em] bg-cover bg-center" style={{ background: `url("${imagePath}"`, backgroundSize: 'cover', backgroundPosition: "center" }} />
       </>
    )
 }

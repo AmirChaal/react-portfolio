@@ -16,7 +16,6 @@ export type Notification = {
 }
 
 export type GlobalStore = {
-   loadingManager: LoadingManager,
    textureLoader: TextureLoader,
    gltfLoader: GLTFLoader,
    textures: Record<string, Texture>
@@ -43,26 +42,21 @@ export type GlobalStore = {
    update: (partial: Record<string, unknown>) => void,
    getNDC: () => Vector2
    globalStirrerBody: null | RapierRigidBody
+   enteredApplication: boolean
 }
 
 export const useGlobal = create<GlobalStore>()((set, get) => {
-   const loadingManager = new LoadingManager(
-      () => {
-         const store = get()
-         if (!store.texturesLoaded) set({ texturesLoaded: true })
-         else set({ modelsLoaded: true })
-      },
-      (loa) => { },
-      (err) => { }
-   )
-   const textureLoader = new TextureLoader(loadingManager)
-   const gltfLoader = new GLTFLoader(loadingManager)
+   const textureLoadingManager = new LoadingManager(() => set({ texturesLoaded: true }),);
+
+   const modelLoadingManager = new LoadingManager(() => set({ modelsLoaded: true }),);
+
+   const textureLoader = new TextureLoader(textureLoadingManager);
+   const gltfLoader = new GLTFLoader(modelLoadingManager);
 
    return {
       /**
        * Loaded content
        */
-      loadingManager,
       textureLoader,
       gltfLoader,
       textures: {},
@@ -79,6 +73,7 @@ export const useGlobal = create<GlobalStore>()((set, get) => {
       playSoundEffects: true,
 
       // Global variables
+      enteredApplication: false,
       currentView: 'home',
       cursorCoordinates: { x: 0, y: 0 },
       deviceSize: { height: 0, width: 0 },

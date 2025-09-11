@@ -2,14 +2,17 @@ import { Float } from "@react-three/drei";
 import { useFrame, useThree } from "@react-three/fiber";
 import { forwardRef, useEffect, useRef, useImperativeHandle, useState } from "react";
 import { useGlobal } from "../../stores/global";
-import { Group,   MeshStandardMaterial, Raycaster, RepeatWrapping, Texture,  Vector3, type Mesh } from "three";
+import { Group, MeshStandardMaterial, Raycaster, RepeatWrapping, Texture, Vector3, type Mesh } from "three";
 import AvyHeadModel from "./AvyHeadModel";
 import gsap from "gsap";
 import AvyHeadFace from "./AvyHeadFace";
 import { getCursor3DPosition, getCursorAngle } from "../../functions/3d";
+import { playAudio } from "../../functions/audio";
+import { usePersistentGlobal } from "../../stores/persistentGlobal";
 
 export default forwardRef(function AvyHead({ visible }: { visible: boolean }, ref) {
    const { getNDC, update, textures, textColor } = useGlobal();
+   const { playSoundEffects } = usePersistentGlobal()
    const internalHeadRef = useRef<Group>(null);
    const cursorFollowerRef = useRef<Mesh>(null);
    const receiverPlaneRef = useRef<Mesh>(null);
@@ -23,10 +26,27 @@ export default forwardRef(function AvyHead({ visible }: { visible: boolean }, re
    const [avyScreenWorkTexture, setAvyScreenWorkTexture] = useState<Texture | null>(null)
    useEffect(() => update({ changeAvyScreenWorkTexture: setAvyScreenWorkTexture }), [])
 
+   // Start noise audio
+   const staticAudioRef = useRef<HTMLAudioElement | null>(null)
+   useEffect(() => {
+      staticAudioRef.current = new Audio('/audio/tv_static.mp3')
+      staticAudioRef.current.loop = true
+      staticAudioRef.current.volume = 0
+      staticAudioRef.current.play().catch(err => {
+         const playOnClick = () => {
+            if (staticAudioRef.current == null) return
+            staticAudioRef.current.play();
+            window.removeEventListener("click", playOnClick);
+         };
+         window.addEventListener("click", playOnClick);
+      });
+   }, [])
+
    // Screen Noise
    const noiseIntervalRef = useRef<ReturnType<typeof setInterval>>(null)
    const enableNoise = () => {
       if (noiseIntervalRef.current != null) return
+      if (playSoundEffects && visible) gsap.to(staticAudioRef.current, { volume: 0.2, duration: 0.05, ease: "power2.out" })
       avyScreenMaterialRef.current.map = textures.avyScreenNoise
       avyScreenMaterialRef.current.map.wrapS = RepeatWrapping
       avyScreenMaterialRef.current.map.wrapT = RepeatWrapping
@@ -38,6 +58,7 @@ export default forwardRef(function AvyHead({ visible }: { visible: boolean }, re
    }
    const disableNoise = () => {
       if (noiseIntervalRef.current != null) {
+         gsap.to(staticAudioRef.current, { volume: 0, duration: 0.05, ease: "power2.in" })
          clearInterval(noiseIntervalRef.current)
          noiseIntervalRef.current = null
       }

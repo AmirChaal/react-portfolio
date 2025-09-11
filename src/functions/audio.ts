@@ -1,17 +1,33 @@
-export function playAudio(path: string) {
+export function playAudio(path: string, volume: number = 0.5) {
    const audio = new Audio(path);
-   audio.volume = 0.5
+   audio.volume = volume
    audio.play();
+   return audio
 }
 
 export class AudioPlayer {
    private audioContext: AudioContext;
    private lastPlayTimes: number[] = [];
    private maxPlaysPerSecond: number;
+   private bufferCache: Map<string, AudioBuffer>; // cache for decoded buffers
 
    constructor(maxPlaysPerSecond = 20) {
       this.audioContext = new AudioContext();
       this.maxPlaysPerSecond = maxPlaysPerSecond;
+      this.bufferCache = new Map();
+   }
+
+   private async loadBuffer(filePath: string): Promise<AudioBuffer> {
+      if (this.bufferCache.has(filePath)) {
+         return this.bufferCache.get(filePath)!;
+      }
+
+      const response = await fetch(filePath);
+      const arrayBuffer = await response.arrayBuffer();
+      const audioBuffer = await this.audioContext.decodeAudioData(arrayBuffer);
+
+      this.bufferCache.set(filePath, audioBuffer);
+      return audioBuffer;
    }
 
    async playSound(
@@ -27,18 +43,15 @@ export class AudioPlayer {
       );
 
       if (this.lastPlayTimes.length >= this.maxPlaysPerSecond) {
-         // Too many plays in the last second
-         return;
+         return; // too many plays in the last second
       }
 
       this.lastPlayTimes.push(now);
 
-      // Fetch and decode the audio
-      const response = await fetch(filePath);
-      const arrayBuffer = await response.arrayBuffer();
-      const audioBuffer = await this.audioContext.decodeAudioData(arrayBuffer);
+      // Load buffer (from cache if available)
+      const audioBuffer = await this.loadBuffer(filePath);
 
-      // Create a source node
+      // Create source node (each playback needs its own source)
       const source = this.audioContext.createBufferSource();
       source.buffer = audioBuffer;
 

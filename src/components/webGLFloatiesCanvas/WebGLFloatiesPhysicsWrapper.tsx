@@ -1,7 +1,7 @@
 import { Physics } from "@react-three/rapier";
 import WebGLFloaties from "./WebGLFloaties";
 import { useEffect, useState } from "react";
-import { useThree } from "@react-three/fiber";
+import { useFrame, useThree } from "@react-three/fiber";
 import gsap from "gsap";
 
 export default function WebGLFloatiesPhysicsWrapper({ visible, focused }: { visible: boolean, focused: boolean }) {
@@ -20,11 +20,16 @@ export default function WebGLFloatiesPhysicsWrapper({ visible, focused }: { visi
       })
    }, [visible])
 
-   const {camera} = useThree()
+   const { camera } = useThree()
    useEffect(() => {
       camera.zoom = zoom;
       camera.updateProjectionMatrix();
    }, [zoom, camera]);
+
+   useFrame((state) => {
+      state.camera.zoom = 60
+      state.camera.updateProjectionMatrix()
+   })
 
    return (
       <Physics>

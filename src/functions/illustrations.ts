@@ -31,6 +31,7 @@ export function getIllustrationsData() {
    addIllustration(omori)
    addIllustration(set)
    addIllustration(gavroche)
+
    // addIllustration(horizontal)
    // addIllustration(vertical)
 

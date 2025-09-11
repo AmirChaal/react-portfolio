@@ -1,4 +1,4 @@
-import { Canvas, useThree } from "@react-three/fiber";
+import { Canvas, useFrame, useThree } from "@react-three/fiber";
 import WebGLFloatiesPhysicsWrapper from "./WebGLFloatiesPhysicsWrapper";
 import { useEffect, useState } from "react";
 import gsap from "gsap";
