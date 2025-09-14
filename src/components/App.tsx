@@ -24,6 +24,7 @@ import ExtraControls from "./ExtraControls";
 import gsap from "gsap";
 import EnterApplication from "./EnterApplication";
 import { getIllustrationsData } from "../functions/illustrations";
+import Copyright from "./Copyright";
 
 export const appViewAppearanceDelay = 350;
 
@@ -164,6 +165,9 @@ export default function App() {
 
          {/* Extra controls */}
          <ExtraControls visible={showExtraControls} />
+
+         {/* Copyright */}
+         <Copyright />
       </div>
    );
 }

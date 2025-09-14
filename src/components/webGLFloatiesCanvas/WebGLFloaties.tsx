@@ -1,5 +1,5 @@
 import { useFrame, useThree } from "@react-three/fiber";
-import { CuboidCollider, RapierRigidBody, RigidBody } from "@react-three/rapier";
+import { CuboidCollider, RapierRigidBody, RigidBody, type CuboidArgs } from "@react-three/rapier";
 import { useEffect, useRef, useState, type RefObject } from "react";
 import { Mesh, MeshBasicMaterial, Raycaster, Vector3 } from "three";
 import { useGlobal } from "../../stores/global";
@@ -12,12 +12,11 @@ export default function WebGLFloaties({ focused }: { focused: boolean }) {
    /**
     * Setup
     */
-   const { getNDC, update } = useGlobal()
+   const { getNDC, update, deviceSize, biggestFloatySize } = useGlobal()
    const invisibleMaterialRef = useRef(new MeshBasicMaterial({ transparent: true, opacity: 0 }))
    const receiverPlaneRef = useRef<Mesh>(null)
    const cursorEnteredViewport = useRef(false)
    const { camera } = useThree()
-
    const borderBoxesRef = useRef<RapierRigidBody | null>(null)
 
    /**
@@ -59,7 +58,6 @@ export default function WebGLFloaties({ focused }: { focused: boolean }) {
    /**
     * useFrame
     */
-
    const firstFrameDrawn = useRef(false);
    const cursor3DPositionRef = useRef<Vector3 | null>(null)
    const raycasterRef = useRef(new Raycaster())
@@ -74,18 +72,37 @@ export default function WebGLFloaties({ focused }: { focused: boolean }) {
       }
    })
 
+   // Border boxes dimensions
+   const deviceTo3DWorldRatio = 0.00832
+   const xScreenLimit = deviceSize.width * deviceTo3DWorldRatio
+   const yScreenLimit = deviceSize.height * deviceTo3DWorldRatio
+   const spaceForBiggestFloaty = (biggestFloatySize ?? 0) * 2
+   const floatySpawningSpace = (biggestFloatySize ?? 0) * 4
+
+   const borderBoxTopDimensions = [xScreenLimit / 2 + 10, 3, 3] as CuboidArgs
+   const borderBoxTopPosition = [0, yScreenLimit + borderBoxTopDimensions[1] + spaceForBiggestFloaty, 0] as any
+
+   const borderBoxRightDimensions = [3, yScreenLimit / 2 + 10, 3] as CuboidArgs
+   const borderBoxRightPosition = [xScreenLimit + borderBoxRightDimensions[0] + spaceForBiggestFloaty + floatySpawningSpace, 0, 0] as any
+
+   const borderBoxBottomDimensions = [xScreenLimit / 2 + 10, 3, 3] as CuboidArgs
+   const borderBoxBottomPosition = [0, -(yScreenLimit + borderBoxTopDimensions[1] + spaceForBiggestFloaty), 0] as any
+
+   const borderBoxLeftDimensions = [3, yScreenLimit / 2 + 10, 3] as CuboidArgs
+   const borderBoxLeftPosition = [-(xScreenLimit + borderBoxRightDimensions[0] + spaceForBiggestFloaty), 0, 0] as any
+
    return (
       <>
-         <RigidBody ref={borderBoxesRef} canSleep={false} type='fixed' restitution={1} >
-            <CuboidCollider args={[25, 2, 3]} position={[0, -10.5, 0]} />
-            <CuboidCollider args={[25, 2, 3]} position={[0, 10.5, 0]} />
-            <CuboidCollider args={[2, 25, 3]} position={[21, 0, 0]} />
-            <CuboidCollider args={[2, 25, 3]} position={[-20, 0, 0]} />
+         <RigidBody ref={borderBoxesRef} canSleep={false} type="fixed" restitution={1}>
+            <CuboidCollider args={borderBoxTopDimensions} position={borderBoxTopPosition} />
+            <CuboidCollider args={borderBoxRightDimensions} position={borderBoxRightPosition} />
+            <CuboidCollider args={borderBoxBottomDimensions} position={borderBoxBottomPosition} />
+            <CuboidCollider args={borderBoxLeftDimensions} position={borderBoxLeftPosition} />
          </RigidBody>
 
          <WebGLFloatiesStirrer visible={stirrerVisible} cursor3DPosition={cursor3DPositionRef.current} />
 
-         <WebGLFloatiesContainer borderBoxes={borderBoxesRef.current} />
+         <WebGLFloatiesContainer xScreenLimit={xScreenLimit} yScreenLimit={yScreenLimit} floatySpawningSpace={floatySpawningSpace} borderBoxes={borderBoxesRef.current} />
 
          <mesh ref={receiverPlaneRef} position={[0, 0, 0]} material={invisibleMaterialRef.current}>
             <planeGeometry args={[150, 75]} />
@@ -95,6 +112,4 @@ export default function WebGLFloaties({ focused }: { focused: boolean }) {
       </>
    )
 }
-
-
 

@@ -32,7 +32,7 @@ export default function WebGLFloatiesPhysicsWrapper({ visible, focused }: { visi
    })
 
    return (
-      <Physics>
+      <Physics debug>
          <WebGLFloaties focused={focused} />
       </Physics>
    )

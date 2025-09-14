@@ -23,7 +23,10 @@ export default function WebGLFloaty({
    spawnAt,
    materials,
    planeGeometry,
-   globalScale = 1
+   globalScale = 1,
+   xScreenLimit,
+   yScreenLimit,
+   floatySpawningSpace
 }: {
    readonly spawningMode: SpawningMod,
    readonly uniqueKey: number,
@@ -33,8 +36,11 @@ export default function WebGLFloaty({
    readonly materials: { small: Material[], medium: Material[], big: Material[] }
    readonly planeGeometry: PlaneGeometry
    readonly globalScale?: number
+   readonly xScreenLimit: number
+   readonly yScreenLimit: number
+   readonly floatySpawningSpace: number
 }) {
-   const { floatiesColor, globalStirrerBody, enteredApplication } = useGlobal()
+   const { floatiesColor, globalStirrerBody, enteredApplication, update } = useGlobal()
    const { playSoundEffects } = usePersistentGlobal()
    const bodyRef = useRef(null) as RefObject<RapierRigidBody | null>
    const meshRef = useRef<Mesh>(null)
@@ -70,24 +76,6 @@ export default function WebGLFloaty({
    }
    const sizeRef = useRef<FloatySize>(getSize())
 
-   // Position
-   const getFloatyPosition = () => {
-      if (spawnAt === 'random' && spawningMode === 'everywhere') return getRandomPosition(8, 18, -8, -17, 0, 0)
-      else if (spawnAt === 'edge' && spawningMode === 'everywhere') return getRandomPosition(8, 18, -8, 17, 0, 0)
-      else if (spawnAt === 'random' && spawningMode === 'strips') {
-         const topPart = Math.random() < 0.5
-         if (topPart) return getRandomPosition(8, 18, 3.5, -17, 0, 0)
-         else return getRandomPosition(-3.5, 18, -8, -17, 0, 0)
-      }
-      else if (spawnAt === 'edge' && spawningMode === 'strips') {
-         const topPart = Math.random() < 0.5
-         if (topPart) return getRandomPosition(8, 18, 3.5, 17, 0, 0)
-         else return getRandomPosition(-3.5, 18, -8, 17, 0, 0)
-      }
-      else throw new Error('unexpected spawnAt value')
-   }
-   const randomPosition = useRef(getFloatyPosition())
-
    // Rotation
    const rotationRef = useRef<[number, number, number]>([0, 0, Math.random() * Math.PI * 2])
 
@@ -108,12 +96,34 @@ export default function WebGLFloaty({
    }, [materials, sizeRef.current, floatiesColor])
 
    // Scales
+   const biggestFloatySizeRef = useRef(0.4 * globalScale)
    const bodyScale = useMemo(() => {
-      if (sizeRef.current === 'small') return 0.15 * globalScale;
-      if (sizeRef.current === 'medium') return 0.25 * globalScale;
-      if (sizeRef.current === 'big') return 0.4 * globalScale;
-      throw new Error('unrecognized floaty size');
+      let toReturn
+      if (sizeRef.current === 'small') toReturn = 0.15 * globalScale;
+      else if (sizeRef.current === 'medium') toReturn = 0.25 * globalScale;
+      else if (sizeRef.current === 'big') toReturn = biggestFloatySizeRef.current;
+      else throw new Error('unrecognized floaty size');
+      update({ biggestFloatySize: biggestFloatySizeRef.current })
+      return toReturn
    }, [sizeRef.current]);
+
+   // Position
+   const getFloatyPosition = () => {
+      if (spawnAt === 'random' && spawningMode === 'everywhere') return getRandomPosition(yScreenLimit, xScreenLimit + floatySpawningSpace, -yScreenLimit, -xScreenLimit, 0, 0)
+      else if (spawnAt === 'edge' && spawningMode === 'everywhere') return getRandomPosition(yScreenLimit, xScreenLimit + floatySpawningSpace, -yScreenLimit, xScreenLimit + biggestFloatySizeRef.current, 0, 0)
+      else if (spawnAt === 'random' && spawningMode === 'strips') {
+         const topPart = Math.random() < 0.5
+         if (topPart) return getRandomPosition(8, 18, 3.5, -17, 0, 0)
+         else return getRandomPosition(-3.5, 18, -8, -17, 0, 0)
+      }
+      else if (spawnAt === 'edge' && spawningMode === 'strips') {
+         const topPart = Math.random() < 0.5
+         if (topPart) return getRandomPosition(8, 18, 3.5, 17, 0, 0)
+         else return getRandomPosition(-3.5, 18, -8, 17, 0, 0)
+      }
+      else throw new Error('unexpected spawnAt value')
+   }
+   const randomPosition = useRef(getFloatyPosition())
 
    // Force
    useEffect(() => {

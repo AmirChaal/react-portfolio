@@ -4,7 +4,7 @@ import { MeshBasicMaterial, NearestFilter, PlaneGeometry, SRGBColorSpace, Textur
 import { useGlobal } from "../../stores/global";
 import WebGLFloaty from "./WebGLFloaty";
 
-export default function WebGLFloatiesContainer({ borderBoxes }: { borderBoxes: RapierRigidBody | null }) {
+export default function WebGLFloatiesContainer({ xScreenLimit, yScreenLimit, borderBoxes, floatySpawningSpace }: { borderBoxes: RapierRigidBody | null, xScreenLimit: number, yScreenLimit: number, floatySpawningSpace: number }) {
    /**
     * Floaties
     */
@@ -58,7 +58,7 @@ export default function WebGLFloatiesContainer({ borderBoxes }: { borderBoxes: R
    return (
       <>
          {floatyKeys.map((key) => (
-            borderBoxes && <WebGLFloaty key={key} globalScale={1.5} uniqueKey={key} spawningMode="everywhere" spawnAt={floatiesSpawnAtRef.current} onRemove={onFloatyRemove} edgeBody={borderBoxes} materials={floatyMaterials} planeGeometry={planeGeometryRef.current} />
+            borderBoxes && <WebGLFloaty xScreenLimit={xScreenLimit} yScreenLimit={yScreenLimit} floatySpawningSpace={floatySpawningSpace} key={key} globalScale={1.5} uniqueKey={key} spawningMode="everywhere" spawnAt={floatiesSpawnAtRef.current} onRemove={onFloatyRemove} edgeBody={borderBoxes} materials={floatyMaterials} planeGeometry={planeGeometryRef.current} />
          ))}
       </>
    )

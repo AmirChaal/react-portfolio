@@ -43,6 +43,7 @@ export type GlobalStore = {
    getNDC: () => Vector2
    globalStirrerBody: null | RapierRigidBody
    enteredApplication: boolean
+   biggestFloatySize: null | number
 }
 
 export const useGlobal = create<GlobalStore>()((set, get) => {
@@ -94,6 +95,7 @@ export const useGlobal = create<GlobalStore>()((set, get) => {
 
       // Physics
       globalStirrerBody: null,
+      biggestFloatySize: null,
 
       update: (partial) => set(partial),
       getNDC: () => {
