@@ -12,7 +12,7 @@ export default function WebGLFloaties({ focused }: { focused: boolean }) {
    /**
     * Setup
     */
-   const { getNDC, update, deviceSize, biggestFloatySize } = useGlobal()
+   const { getNDC, update, deviceSize } = useGlobal()
    const invisibleMaterialRef = useRef(new MeshBasicMaterial({ transparent: true, opacity: 0 }))
    const receiverPlaneRef = useRef<Mesh>(null)
    const cursorEnteredViewport = useRef(false)
@@ -72,12 +72,20 @@ export default function WebGLFloaties({ focused }: { focused: boolean }) {
       }
    })
 
+   // Lifted floaty state
+   const globalFloatyScale = 1.5
+   const floatyScales = {
+      small: 0.15 * globalFloatyScale,
+      medium: 0.25 * globalFloatyScale,
+      big: 0.4 * globalFloatyScale,
+   }
+
    // Border boxes dimensions
    const deviceTo3DWorldRatio = 0.00832
    const xScreenLimit = deviceSize.width * deviceTo3DWorldRatio
    const yScreenLimit = deviceSize.height * deviceTo3DWorldRatio
-   const spaceForBiggestFloaty = (biggestFloatySize ?? 0) * 2
-   const floatySpawningSpace = (biggestFloatySize ?? 0) * 4
+   const spaceForBiggestFloaty = floatyScales.big * 2
+   const floatySpawningSpace = floatyScales.big * 4
 
    const borderBoxTopDimensions = [xScreenLimit / 2 + 10, 3, 3] as CuboidArgs
    const borderBoxTopPosition = [0, yScreenLimit + borderBoxTopDimensions[1] + spaceForBiggestFloaty, 0] as any
@@ -102,7 +110,7 @@ export default function WebGLFloaties({ focused }: { focused: boolean }) {
 
          <WebGLFloatiesStirrer visible={stirrerVisible} cursor3DPosition={cursor3DPositionRef.current} />
 
-         <WebGLFloatiesContainer xScreenLimit={xScreenLimit} yScreenLimit={yScreenLimit} floatySpawningSpace={floatySpawningSpace} borderBoxes={borderBoxesRef.current} />
+         <WebGLFloatiesContainer xScreenLimit={xScreenLimit} yScreenLimit={yScreenLimit} floatySpawningSpace={floatySpawningSpace} borderBoxes={borderBoxesRef.current} globalFloatyScale={globalFloatyScale} floatyScales={floatyScales} />
 
          <mesh ref={receiverPlaneRef} position={[0, 0, 0]} material={invisibleMaterialRef.current}>
             <planeGeometry args={[150, 75]} />

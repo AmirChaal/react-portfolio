@@ -26,7 +26,9 @@ export default function WebGLFloaty({
    globalScale = 1,
    xScreenLimit,
    yScreenLimit,
-   floatySpawningSpace
+   floatySpawningSpace,
+   globalFloatyScale,
+   floatyScales
 }: {
    readonly spawningMode: SpawningMod,
    readonly uniqueKey: number,
@@ -39,6 +41,8 @@ export default function WebGLFloaty({
    readonly xScreenLimit: number
    readonly yScreenLimit: number
    readonly floatySpawningSpace: number
+   readonly globalFloatyScale: number
+   readonly floatyScales: Record<string, number>
 }) {
    const { floatiesColor, globalStirrerBody, enteredApplication, update } = useGlobal()
    const { playSoundEffects } = usePersistentGlobal()
@@ -96,21 +100,17 @@ export default function WebGLFloaty({
    }, [materials, sizeRef.current, floatiesColor])
 
    // Scales
-   const biggestFloatySizeRef = useRef(0.4 * globalScale)
    const bodyScale = useMemo(() => {
-      let toReturn
-      if (sizeRef.current === 'small') toReturn = 0.15 * globalScale;
-      else if (sizeRef.current === 'medium') toReturn = 0.25 * globalScale;
-      else if (sizeRef.current === 'big') toReturn = biggestFloatySizeRef.current;
-      else throw new Error('unrecognized floaty size');
-      update({ biggestFloatySize: biggestFloatySizeRef.current })
-      return toReturn
-   }, [sizeRef.current]);
+      if (sizeRef.current === 'small') return floatyScales.small
+      if (sizeRef.current === 'medium') return floatyScales.medium
+      if (sizeRef.current === 'big') return floatyScales.big
+      throw new Error('unrecognized floaty size')
+   }, [sizeRef.current, globalScale])
 
    // Position
    const getFloatyPosition = () => {
-      if (spawnAt === 'random' && spawningMode === 'everywhere') return getRandomPosition(yScreenLimit, xScreenLimit + floatySpawningSpace, -yScreenLimit, -xScreenLimit, 0, 0)
-      else if (spawnAt === 'edge' && spawningMode === 'everywhere') return getRandomPosition(yScreenLimit, xScreenLimit + floatySpawningSpace, -yScreenLimit, xScreenLimit + biggestFloatySizeRef.current, 0, 0)
+      if (spawnAt === 'random' && spawningMode === 'everywhere') return getRandomPosition(yScreenLimit, xScreenLimit + floatySpawningSpace + floatyScales.big, -yScreenLimit, -xScreenLimit + floatyScales.big, 0, 0)
+      else if (spawnAt === 'edge' && spawningMode === 'everywhere') return getRandomPosition(yScreenLimit, xScreenLimit + floatySpawningSpace, -yScreenLimit, xScreenLimit + floatySpawningSpace, 0, 0)
       else if (spawnAt === 'random' && spawningMode === 'strips') {
          const topPart = Math.random() < 0.5
          if (topPart) return getRandomPosition(8, 18, 3.5, -17, 0, 0)

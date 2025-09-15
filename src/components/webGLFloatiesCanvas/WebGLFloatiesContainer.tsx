@@ -4,7 +4,7 @@ import { MeshBasicMaterial, NearestFilter, PlaneGeometry, SRGBColorSpace, Textur
 import { useGlobal } from "../../stores/global";
 import WebGLFloaty from "./WebGLFloaty";
 
-export default function WebGLFloatiesContainer({ xScreenLimit, yScreenLimit, borderBoxes, floatySpawningSpace }: { borderBoxes: RapierRigidBody | null, xScreenLimit: number, yScreenLimit: number, floatySpawningSpace: number }) {
+export default function WebGLFloatiesContainer({ xScreenLimit, yScreenLimit, borderBoxes, floatySpawningSpace, globalFloatyScale, floatyScales }: { borderBoxes: RapierRigidBody | null, xScreenLimit: number, yScreenLimit: number, floatySpawningSpace: number, globalFloatyScale: number, floatyScales: Record<string, number> }) {
    /**
     * Floaties
     */
@@ -12,7 +12,7 @@ export default function WebGLFloatiesContainer({ xScreenLimit, yScreenLimit, bor
    const planeGeometryRef = useRef(new PlaneGeometry(0.75, 0.75))
 
    // Materials
-   const { textures } = useGlobal()
+   const { textures, deviceSize } = useGlobal()
    const floatiesBigTextures = [textures.floatyAt, textures.floatyAnd, textures.floatyDollar, textures.floatyHash, textures.floatyLess]
    const floatiesMediumTextures = [textures.floatyN, textures.floatyX, textures.floatyE, textures.floatyS, textures.floatyO]
    const floatiesSmallTextures = [textures.floatyDot, textures.floatyComma]
@@ -38,9 +38,31 @@ export default function WebGLFloatiesContainer({ xScreenLimit, yScreenLimit, bor
    }), [])
 
    // Spawn & Despawn management
-   const initialFloatiesCount = 150
-   const [floatyKeys, setFloatyKeys] = useState(Array.from({ length: initialFloatiesCount }, (_, i) => i))
-   const floatyKeyCounterRef = useRef(initialFloatiesCount)
+   const FLOATY_DENSITY = 0.0001;
+
+   // State
+   const [floatyKeys, setFloatyKeys] = useState<number[]>([]);
+   const floatyKeyCounterRef = useRef(0);
+
+   // Recalculate floaties whenever device size changes
+   useEffect(() => {
+      const desiredCount = Math.round(deviceSize.width * deviceSize.height * FLOATY_DENSITY);
+
+      setFloatyKeys(prevKeys => {
+         if (desiredCount > prevKeys.length) {
+            // Add new floaties
+            const newKeys = Array.from(
+               { length: desiredCount - prevKeys.length },
+               () => floatyKeyCounterRef.current++
+            );
+            return [...prevKeys, ...newKeys];
+         } else if (desiredCount < prevKeys.length) {
+            // Remove excess floaties
+            return prevKeys.slice(0, desiredCount);
+         }
+         return prevKeys;
+      });
+   }, [deviceSize.width, deviceSize.height]);
 
    const floatiesSpawnAtRef = useRef<'random' | 'edge'>('random')
    useEffect(() => {
@@ -58,7 +80,7 @@ export default function WebGLFloatiesContainer({ xScreenLimit, yScreenLimit, bor
    return (
       <>
          {floatyKeys.map((key) => (
-            borderBoxes && <WebGLFloaty xScreenLimit={xScreenLimit} yScreenLimit={yScreenLimit} floatySpawningSpace={floatySpawningSpace} key={key} globalScale={1.5} uniqueKey={key} spawningMode="everywhere" spawnAt={floatiesSpawnAtRef.current} onRemove={onFloatyRemove} edgeBody={borderBoxes} materials={floatyMaterials} planeGeometry={planeGeometryRef.current} />
+            borderBoxes != null && <WebGLFloaty xScreenLimit={xScreenLimit} yScreenLimit={yScreenLimit} floatySpawningSpace={floatySpawningSpace} key={key} globalScale={1.5} uniqueKey={key} spawningMode="everywhere" spawnAt={floatiesSpawnAtRef.current} onRemove={onFloatyRemove} edgeBody={borderBoxes} materials={floatyMaterials} planeGeometry={planeGeometryRef.current} globalFloatyScale={globalFloatyScale} floatyScales={floatyScales} />
          ))}
       </>
    )
