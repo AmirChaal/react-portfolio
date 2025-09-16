@@ -38,7 +38,7 @@ export default function WebGLFloatiesContainer({ xScreenLimit, yScreenLimit, bor
    }), [])
 
    // Spawn & Despawn management
-   const FLOATY_DENSITY = 0.0001;
+   const floatyDensity = 0.0001;
 
    // State
    const [floatyKeys, setFloatyKeys] = useState<number[]>([]);
@@ -46,7 +46,10 @@ export default function WebGLFloatiesContainer({ xScreenLimit, yScreenLimit, bor
 
    // Recalculate floaties whenever device size changes
    useEffect(() => {
-      const desiredCount = Math.round(deviceSize.width * deviceSize.height * FLOATY_DENSITY);
+      let desiredCount = Math.round(deviceSize.width * deviceSize.height * floatyDensity);
+
+      // Cap the max number of floaties
+      desiredCount = Math.min(desiredCount, 200);
 
       setFloatyKeys(prevKeys => {
          if (desiredCount > prevKeys.length) {
@@ -63,6 +66,7 @@ export default function WebGLFloatiesContainer({ xScreenLimit, yScreenLimit, bor
          return prevKeys;
       });
    }, [deviceSize.width, deviceSize.height]);
+
 
    const floatiesSpawnAtRef = useRef<'random' | 'edge'>('random')
    useEffect(() => {

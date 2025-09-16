@@ -12,7 +12,7 @@ export default function WebGLFloaties({ focused }: { focused: boolean }) {
    /**
     * Setup
     */
-   const { getNDC, update, deviceSize } = useGlobal()
+   const { getNDC, update, deviceSize, inputMethod } = useGlobal()
    const invisibleMaterialRef = useRef(new MeshBasicMaterial({ transparent: true, opacity: 0 }))
    const receiverPlaneRef = useRef<Mesh>(null)
    const cursorEnteredViewport = useRef(false)

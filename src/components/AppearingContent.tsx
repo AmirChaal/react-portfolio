@@ -1,44 +1,54 @@
 import gsap from "gsap";
-import { useEffect, useRef, useState, type ComponentPropsWithoutRef, type ReactNode } from "react";
+import {
+   useEffect,
+   useRef,
+   type ComponentPropsWithoutRef,
+   type ReactNode,
+} from "react";
 
-export default function AppearingContent({ children, visible = false, ...wrapperProps }: { children: ReactNode, visible?: boolean } & ComponentPropsWithoutRef<"div">) {
-   const outY = 3
-   const animationDuration = 0.25
+export default function AppearingContent({
+   children,
+   visible = false,
+   ...wrapperProps
+}: { children: ReactNode; visible?: boolean } & ComponentPropsWithoutRef<"div">) {
+   const ref = useRef<HTMLDivElement>(null);
+   const outY = 3; // in em
+   const animationDuration = 0.25;
 
-   const [wrapperClasses, setWrapperClasses] = useState('')
    useEffect(() => {
-      setWrapperClasses(wrapperProps?.className ?? '')
-      if (visible === false) setWrapperClasses(prev => prev + ' pointer-events-none')
-   }, [visible, wrapperProps.className])
+      if (ref.current == null) return;
 
-   const [opacity, setOpacity] = useState(visible ? 1 : 0); const [y, setY] = useState(visible ? 0 : outY);
-   useEffect(() => {
-      gsap.to({ value: opacity }, {
-         value: visible ? 1 : 0,
+      gsap.to(ref.current, {
+         opacity: visible ? 1 : 0,
+         y: visible ? 0 : `-${outY}em`,
          duration: animationDuration,
          ease: visible ? "power2.out" : "power2.in",
-         onUpdate: function () {
-            setOpacity(this.targets()[0].value);
+         onStart: () => {
+            if (visible && ref.current != null) {
+               ref.current.style.pointerEvents = "auto";
+            }
          },
-      });
-   }, [visible]);
-
-   useEffect(() => {
-      gsap.to({ value: y }, {
-         value: visible ? 0 : outY,
-         duration: animationDuration,
-         ease: visible ? "power2.out" : "power2.in",
-         onUpdate: function () {
-            setY(this.targets()[0].value);
+         onComplete: () => {
+            if (!visible && ref.current != null) {
+               ref.current.style.pointerEvents = "none";
+            }
          },
       });
    }, [visible]);
 
    return (
-      <>
-         <div className={wrapperClasses} {...wrapperProps} style={{ ...wrapperProps.style, opacity, transform: `translateY(-${y}em)`, pointerEvents: visible ? 'auto' : 'none' }} >
-            {children}
-         </div>
-      </>
+      <div
+         ref={ref}
+         {...wrapperProps}
+         style={{
+            ...wrapperProps.style,
+            opacity: 0, // start hidden, GSAP animates to 1
+            transform: `translateY(-${outY}em)`,
+            willChange: "opacity, transform",
+            pointerEvents: "none",
+         }}
+      >
+         {children}
+      </div>
    );
 }

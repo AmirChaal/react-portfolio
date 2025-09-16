@@ -18,10 +18,10 @@ export default function HomeComponent({ visible }: { visible: boolean }) {
             </AppearingContent>
             <AppearingContent>
                <div className="flex h-[1.7em] w-full relative">
-                  <div className="absolute left-[2.8em] top-[50%]">
+                  <div className="absolute left-[2.95em] top-[50%]">
                      <TextButton className="absolute whitespace-nowrap translate-[-50%]" onClick={() => goToWorks(navigate)} text="Mes travaux" />
                   </div>
-                  <div className="absolute left-[11.3em] top-[50%]">
+                  <div className="absolute left-[11.45em] top-[50%]">
                      <TextButton className="absolute whitespace-nowrap translate-[-50%]" onClick={() => goToAbout(navigate)} text="À propos de moi" />
                   </div>
                </div>

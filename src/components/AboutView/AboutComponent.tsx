@@ -1,17 +1,25 @@
+import { useNavigate } from "react-router";
 import { useGlobal } from "../../stores/global";
 import AppearingContent from "../AppearingContent";
 import AppearingList from "../AppearingList";
+import PreviousButton from "../PreviousButton";
 
 export default function AboutComponent({ visible }: { visible: boolean }) {
    const { textColor, deviceSize } = useGlobal()
+   const navigate = useNavigate()
+
+   const previousOnClick = () => navigate('/home')
 
    return (
       <>
          {deviceSize.width < 1200 && <div className="absolute top-0 left-0 h-full w-full flex items-center justify-center flex-col pointer-events-none">
             <AppearingList visible={visible} className="font-jersey10 h-full w-full max-w-[40em] px-[1.5em] mt-[6.8em] min-[700px]:mt-[8.5em] mb-[4em] flex flex-col">
+               <AppearingContent>
+                  <PreviousButton className="text-[1.7em] mb-[0.5em] w-fit" onClick={previousOnClick} />
+               </AppearingContent>
                <AppearingContent visible={visible} className="mb-[0.5em] rounded-[1em] overflow-hidden flex-1" style={{ background: textColor }}>
-                  <div className="absolute w-[35em] left-[50%] top-[-6rem] translate-x-[-50%]">
-                     <img src="/avy_about.png" alt="" className="h-full w-full" />
+                  <div className="absolute w-[150%] left-[50%] top-[-6rem] translate-x-[-50%]">
+                     <img src="/avy_about.png" alt="" className="h-full w-full" draggable={false} />
                   </div>
                </AppearingContent>
                <AppearingContent className="flex-0">
@@ -26,18 +34,23 @@ export default function AboutComponent({ visible }: { visible: boolean }) {
             </AppearingList>
          </div>}
          {deviceSize.width >= 1200 && <div className="absolute top-0 left-0 h-full w-full flex justify-center items-center pointer-events-none">
-            <AppearingList visible={visible} className="font-jersey10 flex items-center gap-[2em]">
-               <AppearingContent visible={visible} className="rounded-[1em] overflow-hidden h-[30em] w-[30em]" style={{ background: textColor }}>
-                  <div className="absolute w-[30rem] left-[50%] top-[-6rem] translate-x-[-50%]">
-                     <img src="/avy_about.png" alt="" className="h-full w-full" />
-                  </div>
+            <AppearingList visible={visible} className="font-jersey10">
+               <AppearingContent className="text-[1.9em] mb-[0.5em] w-fit">
+                  <PreviousButton onClick={previousOnClick} />
                </AppearingContent>
-               <AppearingContent className="h-[20em] w-[37.15em]">
-                  <p className="text-[5em] mb-[-0.3em] tracking-[0.047em]">SALUT, JE SUIS AMIR</p>
-                  <p className="leading-[0.9em] text-[1.8em] text-justify">
-                     Je suis un développeur web qui fait aussi de l'illustration. Je suis passionné par la création de projets uniques qui allient technique et créativité.
-                     Mon objectif est de concevoir des expériences qui racontent une histoire et qui marquent ceux qui les découvrent.
-                  </p>
+               <AppearingContent className="flex items-center gap-[2em]" >
+                  <div className="relative rounded-[1em] overflow-hidden h-[30em] w-[30em]" style={{ background: textColor }}>
+                     <div className="absolute w-[30rem] left-[50%] top-[-6rem] translate-x-[-50%]">
+                        <img src="/avy_about.png" alt="" className="h-full w-full" draggable={false} />
+                     </div>
+                  </div>
+                  <div className="h-[20em] w-[37.15em]">
+                     <p className="text-[5em] mb-[-0.3em] tracking-[0.047em]">SALUT, JE SUIS AMIR</p>
+                     <p className="leading-[0.9em] text-[1.8em] text-justify">
+                        Un développeur web qui fait aussi de l'illustration. Je suis passionné par la création de projets uniques qui allient technique et créativité.
+                        Mon objectif est de concevoir des expériences qui racontent une histoire et qui marquent ceux qui les découvrent.
+                     </p>
+                  </div>
                </AppearingContent>
             </AppearingList>
          </div>}

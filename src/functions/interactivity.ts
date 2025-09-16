@@ -2,25 +2,54 @@ import { useEffect } from "react";
 import { useGlobal } from "../stores/global";
 
 export function useCursorCoordinates() {
-   const { update } = useGlobal();
+   const { update, inputMethod } = useGlobal();
 
    useEffect(() => {
-      const handleMouseMove = (event: MouseEvent) => {
-         update({
-            cursorCoordinates: {
-               x: event.clientX,
-               y: event.clientY,
+      if (inputMethod === 'cursor') {
+         const handleMouseMove = (event: MouseEvent) => {
+            update({
+               cursorCoordinates: {
+                  x: event.clientX,
+                  y: event.clientY,
+               },
+            });
+         };
+
+         window.addEventListener('mousemove', handleMouseMove);
+
+         return () => {
+            window.removeEventListener('mousemove', handleMouseMove);
+         };
+      } else if (inputMethod === 'touch') {
+         const updateTouchCoordinates = (x: number, y: number) => {
+            update({ cursorCoordinates: { x, y } });
+         };
+
+         const handleTouchMove = (event: TouchEvent) => {
+            if (event.touches.length > 0) {
+               const touch = event.touches[0];
+               updateTouchCoordinates(touch.clientX, touch.clientY);
             }
-         });
-      };
+         };
 
-      window.addEventListener("mousemove", handleMouseMove);
+         const handleTouchStart = (event: TouchEvent) => {
+            if (event.touches.length > 0) {
+               const touch = event.touches[0];
+               updateTouchCoordinates(touch.clientX, touch.clientY);
+            }
+         };
 
-      return () => {
-         window.removeEventListener("mousemove", handleMouseMove);
-      };
-   }, []);
+         window.addEventListener('touchmove', handleTouchMove);
+         window.addEventListener('touchstart', handleTouchStart);
+
+         return () => {
+            window.removeEventListener('touchmove', handleTouchMove);
+            window.removeEventListener('touchstart', handleTouchStart);
+         };
+      }
+   }, [inputMethod, update]);
 }
+
 
 export function detectInputMethod() {
    const hasFinePointer = window.matchMedia("(pointer: fine)").matches;
