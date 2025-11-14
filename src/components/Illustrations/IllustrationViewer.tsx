@@ -60,12 +60,11 @@ export default function IllustrationViewer({ visible }: { visible: boolean }) {
    }
 
    const onClickCopy = async () => {
-      if (!imageObject) return
       try {
-         await copyImageIntoClipboard(imageObject.path)
-         addNotification(global.getNotifications, global.update, <CopyIcon />, "Image copiée")
+         await navigator.clipboard.writeText(window.location.href)
+         addNotification(global.getNotifications, global.update, <CopyIcon />, "Lien copié")
       } catch (err) {
-         console.error("Failed to copy image:", err)
+         console.error("Failed to copy URL:", err)
          addNotification(global.getNotifications, global.update, <CopyIcon />, "Échec de la copie")
       }
    }

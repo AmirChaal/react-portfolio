@@ -19,14 +19,14 @@ export default function getWorksData(navigateFunction: NavigateFunction, texture
       {
          article: true,
          id: 2,
-         title: 'Seeker Assist',
+         title: 'Verse Assist',
          description:
             `Êtant un grand fan de jeu de rôle, je me suis souvent retrouvé insatisfait des outils de gestion disponibles.\n
             C'est ainsi que je me suis lancé dans le développement d'un outil qui répondrait aux besoins de mes tablées de jeu de rôle, à l'aide de Vue.js.`,
          texture: textures.avyScreenSeekerAssist,
          workClick: () => goToWorkTTRPGAssist(navigateFunction),
-         articleClick: () => { window.open('test', '_blank')?.focus() },
-         urlCode: 'ttrpg-assist'
+         articleClick: () => { window.open('verse-assist.com', '_blank')?.focus() },
+         urlCode: 'verse-assist'
       },
       {
          article: false,

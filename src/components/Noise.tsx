@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
-import { useGlobal } from "../stores/global";
-import noiseImage from '/noise.png'
+// import noiseImage from '/noise.png'
+// import noiseImage from './../../public/noise.png'
 
 export default function Noise() {
    const [translate, setTranslate] = useState({ x: 0, y: 0 })
@@ -14,7 +14,7 @@ export default function Noise() {
 
    const backgroundStyle = {
       transform: `translate(${translate.x}%, ${translate.y}%)`,
-      backgroundImage: `url(${noiseImage})`
+      backgroundImage: `url("/noise.png")`
    }
 
    return (

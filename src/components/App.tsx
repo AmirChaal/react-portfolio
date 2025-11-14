@@ -95,7 +95,7 @@ export default function App() {
    const backgroundMusicRef = useRef<HTMLAudioElement | null>(null)
    useEffect(() => {
       if (enteredApplication) {
-         backgroundMusicRef.current = new Audio('/lofi_music.mp3')
+         backgroundMusicRef.current = new Audio('/audio/lofi_music.mp3')
          backgroundMusicRef.current.loop = true
          backgroundMusicRef.current.volume = 0
          backgroundMusicRef.current.play().catch(err => {
