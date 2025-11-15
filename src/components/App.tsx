@@ -64,7 +64,7 @@ export default function App() {
    useEffect(() => {
       const validFirstParticles = ["home", "works", "about"];
       const validSecondParticles: Record<string, string[]> = {
-         works: ["illustrations", "portfolio", "ttrpg-assist"],
+         works: ["illustrations", "portfolio", "verse-assist"],
       };
 
       const firstValid = validFirstParticles.includes(firstParticle ?? "");
@@ -131,7 +131,7 @@ export default function App() {
    const showIllustrations = useDelayedVisibility(firstParticle === "works" && secondParticle === "illustrations" && loadingComplete && enteredApplication, appViewAppearanceDelay, dependencies);
    const showIllustrationViewer = useDelayedVisibility(firstParticle === "works" && secondParticle === "illustrations" && thirdParticle != null && !isNaN(parseInt(thirdParticle)) && loadingComplete && enteredApplication, appViewAppearanceDelay, dependencies);
    const showPortfolioWork = useDelayedVisibility(firstParticle === "works" && secondParticle === "portfolio" && loadingComplete && enteredApplication, appViewAppearanceDelay, dependencies);
-   const showTTRPGAssistWork = useDelayedVisibility(firstParticle === "works" && secondParticle === "ttrpg-assist" && loadingComplete && enteredApplication, appViewAppearanceDelay, dependencies);
+   const showTTRPGAssistWork = useDelayedVisibility(firstParticle === "works" && secondParticle === "verse-assist" && loadingComplete && enteredApplication, appViewAppearanceDelay, dependencies);
 
    return (
       <div className="select-none overflow-hidden" style={{ color: textColor }}>
@@ -152,7 +152,7 @@ export default function App() {
 
          {/* Work articles */}
          {worksData.filter(work => work.article).map(work => {
-            const showWork = work.urlCode === "portfolio" ? showPortfolioWork : work.urlCode === "ttrpg-assist" ? showTTRPGAssistWork : false;
+            const showWork = work.urlCode === "portfolio" ? showPortfolioWork : work.urlCode === "verse-assist" ? showTTRPGAssistWork : false;
             return <Article key={work.id} visible={showWork} title={work.title} description={work.description} buttonClick={work.articleClick} />
          })}
 

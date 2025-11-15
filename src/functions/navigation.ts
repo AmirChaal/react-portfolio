@@ -17,7 +17,7 @@ export function goToWorkPortfolio(navigateFunction: NavigateFunction) {
 }
 
 export function goToWorkTTRPGAssist(navigateFunction: NavigateFunction) {
-   navigateFunction("/works/ttrpg-assist")
+   navigateFunction("/works/verse-assist")
 }
 
 export function goToIllustrations(navigateFunction: NavigateFunction) {
