@@ -25,7 +25,7 @@ export default function getWorksData(navigateFunction: NavigateFunction, texture
             C'est ainsi que je me suis lancé dans le développement d'un outil qui répondrait aux besoins de mes tablées de jeu de rôle, à l'aide de Vue.js, Express.js et mongoDB.`,
          texture: textures.avyScreenSeekerAssist,
          workClick: () => goToWorkTTRPGAssist(navigateFunction),
-         articleClick: () => { window.open('verse-assist.com', '_blank')?.focus() },
+         articleClick: () => { window.open('https://verse-assist.com', '_blank')?.focus() },
          urlCode: 'verse-assist'
       },
       {
