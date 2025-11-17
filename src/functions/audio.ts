@@ -71,3 +71,31 @@ export class AudioPlayer {
       source.start();
    }
 }
+
+export function createAutoplayAudio(
+   src: string,
+   { loop = true, startingVolume = 1 }: { loop?: boolean, startingVolume?: number } = {}
+) {
+   const audio = new Audio(src);
+   audio.loop = loop;
+   audio.volume = startingVolume;
+
+   // Try to autoplay silently
+   audio.play().catch(() => {
+      // Browser blocked autoplay: wait for a user gesture
+      const playOnClick = () => {
+         audio.play().finally(() => {
+            window.removeEventListener("click", playOnClick);
+         });
+      };
+      window.addEventListener("click", playOnClick);
+   });
+
+   return {
+      audio: audio,
+      cleanup: () => {
+         audio.pause();
+         audio.src = "";
+      }
+   };
+}

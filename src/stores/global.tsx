@@ -101,10 +101,17 @@ export const useGlobal = create<GlobalStore>()((set, get) => {
          const { x, y } = cursorCoordinates
          const { width, height } = deviceSize
 
-         return new Vector2(
+         const unclampedNdc = new Vector2(
             (x / width) * 2 - 1,
             -((y / height) * 2 - 1)
          )
+
+         const clampedNdc = new Vector2(
+            Math.min(1, Math.max(-1, unclampedNdc.x)),
+            Math.min(1, Math.max(-1, unclampedNdc.y))
+         )
+
+         return clampedNdc
       }
    }
 })

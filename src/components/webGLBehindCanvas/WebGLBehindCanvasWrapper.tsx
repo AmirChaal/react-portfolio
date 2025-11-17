@@ -32,7 +32,7 @@ export function WebGLBehindCanvasWrapper({ visible }: { visible: boolean }) {
    }, [visible])
 
    return (
-      <Canvas id="webGL-behind-canvas" className="h-full w-full absolute!" camera={{ position: [0, 0, 5], fov: 30 }} style={{ filter: `blur(${blur}px)` }} shadows>
+      <Canvas frameloop="always" id="webGL-behind-canvas" className="h-full w-full absolute!" camera={{ position: [0, 0, 5], fov: 30 }} style={{ filter: `blur(${blur}px)` }} shadows>
          <WebGLBehindCanvas visible={visible} />
       </Canvas>
    )

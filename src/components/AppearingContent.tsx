@@ -44,7 +44,7 @@ export default function AppearingContent({
             ...wrapperProps.style,
             opacity: 0, // start hidden, GSAP animates to 1
             transform: `translateY(-${outY}em)`,
-            willChange: "opacity, transform",
+            // willChange: "opacity, transform",
             pointerEvents: "none",
          }}
       >
