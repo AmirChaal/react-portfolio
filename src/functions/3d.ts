@@ -14,7 +14,7 @@ export function getCursor3DPosition(getNDC: () => Vector2, receiverPlane: Mesh, 
    const ndc = getNDC()
    raycaster.setFromCamera(ndc, camera)
    const intersects = raycaster.intersectObject(receiverPlane, true);
-   console.log(intersects.length)
+   // console.log(intersects.length)
    if (intersects.length > 0) return intersects[0].point
    else return null
 }

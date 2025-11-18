@@ -1,11 +1,12 @@
 import { Float } from "@react-three/drei";
-import { forwardRef, useEffect, useRef, useImperativeHandle, useState } from "react";
+import { forwardRef, useEffect, useRef, useImperativeHandle, useState, useMemo } from "react";
 import { useGlobal } from "../../stores/global";
-import { Group, MeshStandardMaterial, Texture, type Mesh } from "three";
+import { Group, MeshBasicMaterial, MeshStandardMaterial, Texture, type Mesh } from "three";
 import AvyHeadModel from "./AvyHeadModel";
 import AvyHeadFace from "./AvyHeadFace";
 import { usePersistentGlobal } from "../../stores/persistentGlobal";
 import { useAvyNoise, useRobavyActiveStateHandler, useRobavyCursorFollowing } from "../../functions/robavyHead";
+import { PlaneGeometry } from "three";
 
 export default forwardRef(function AvyHead({ visible }: { visible: boolean }, ref) {
    const { getNDC, update, textures, textColor } = useGlobal();
@@ -38,7 +39,7 @@ export default forwardRef(function AvyHead({ visible }: { visible: boolean }, re
       playSoundEffects
    })
 
-   // Robavy cursor following logic
+   // Robavy rotation to follow cursor logic
    const cursorFollowerRef = useRef<Mesh>(null);
    const receiverPlaneRef = useRef<Mesh>(null);
    useRobavyCursorFollowing({
@@ -54,6 +55,13 @@ export default forwardRef(function AvyHead({ visible }: { visible: boolean }, re
       internalHeadRef
    })
 
+
+   // On Firefox, a race condition between the disposal of the geometry accross mounts/unmounts and the firefox rendering engine makes the receiverPlane
+   // invisible and prevents it from receiving raycasts. So we create and memoize the plane geometries and materiall so it is not re-created/disposed across mounts
+   const receiverGeometry = useMemo(() => new PlaneGeometry(10, 12), []);
+   const receiverMaterial = useMemo(() => new MeshBasicMaterial({ color: "blue", transparent: true, opacity: 0 }), []);
+   const robavyScreenPlaneGeometry = useMemo(() => new PlaneGeometry(1.4, 1.3), [])
+
    return (
       <>
          {/* Cursor follower */}
@@ -61,21 +69,9 @@ export default forwardRef(function AvyHead({ visible }: { visible: boolean }, re
             {/* Debug geometry if needed */}
          </mesh>
 
-         <mesh
-            ref={receiverPlaneRef}
-            position={[0, 0, -1]}
-            frustumCulled={false}
-            onUpdate={(self) => {
-               // ensures bounding data exists for raycasting
-               self.updateMatrixWorld(true);
-            }}
-         >
-            <planeGeometry args={[10, 10]} />
-            <meshBasicMaterial
-               color="white" // needs a color to guarantee initialization
-               transparent
-               opacity={0}   // fully invisible
-            />
+         <mesh ref={receiverPlaneRef} position={[0, 0, -3.5]} >
+            <primitive object={receiverGeometry} attach="geometry" />
+            <primitive object={receiverMaterial} attach="material" />
          </mesh>
 
          {/* Avy head with screen */}
@@ -83,9 +79,11 @@ export default forwardRef(function AvyHead({ visible }: { visible: boolean }, re
             <group ref={internalHeadRef} position={[-2.5, 0, -7.5]} scale={1.6}>
                <AvyHeadModel />
 
-               <mesh position={[0, -0.085, 0.64]} material={avyScreenMaterialRef.current} receiveShadow>
-                  <planeGeometry args={[1.4, 1.3]} />
+               <mesh position={[0, -0.085, 0.64]}  receiveShadow >
+                  <primitive object={robavyScreenPlaneGeometry} attach="geometry" />
+                  <primitive object={avyScreenMaterialRef.current} attach="material" />
                </mesh>
+
                <AvyHeadFace avyHeadGroup={internalHeadRef.current} visible={faceVisible} />
             </group>
          </Float>

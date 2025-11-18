@@ -1,6 +1,6 @@
-import { useEffect, useRef, useState, type ComponentPropsWithoutRef } from "react"
+import { useEffect, useMemo, useRef, useState, type ComponentPropsWithoutRef } from "react"
 import { useGlobal } from "../../stores/global"
-import { Group, Mesh, NearestFilter, Plane, Raycaster, Vector3 } from "three"
+import { Group, Mesh, MeshStandardMaterial, NearestFilter, Plane, PlaneGeometry, Raycaster, Vector3 } from "three"
 import { useFrame, useThree } from "@react-three/fiber"
 import { getCursor3DPosition, getCursor3DPositionOnPlane, getCursorAngle, getWorldPosition } from "../../functions/3d"
 
@@ -58,6 +58,23 @@ export default function AvyHeadFace({ avyHeadGroup, visible, ...wrapperProps }: 
       }
    }, [eyesOpen])
 
+   // Stable geometries and materials that aren't disposed off during mounting/dismounting.
+   // Prevents Firefox/R3F disposal race: ONE geometry instance, never recreated.
+   const facePlaneGeometry = useMemo(() => new PlaneGeometry(1, 1), [])
+   const mouthPlaneGeometry = useMemo(() => new PlaneGeometry(1, 1), [])
+
+   const leftEyeMaterial = useMemo(() => {
+      return new MeshStandardMaterial({ map: leftEyeTexture, color: textColor, transparent: true, depthWrite: false, polygonOffset: true, polygonOffsetFactor: 0, polygonOffsetUnits: -1 })
+   }, [leftEyeTexture, textColor])
+
+   const rightEyeMaterial = useMemo(() => {
+      return new MeshStandardMaterial({ map: rightEyeTexture, color: textColor, transparent: true, depthWrite: false, polygonOffset: true, polygonOffsetFactor: -1, polygonOffsetUnits: -1 })
+   }, [rightEyeTexture, textColor])
+
+   const mouthMaterial = useMemo(() => {
+      return new MeshStandardMaterial({ map: openMouthTextureRef.current, color: textColor, transparent: true, depthWrite: false, polygonOffset: true, polygonOffsetFactor: -2, polygonOffsetUnits: -1 })
+   }, [textColor])
+
    //  ==== UseFrame ====
    const raycasterRef = useRef(new Raycaster())
    useFrame((state, delta) => {
@@ -113,22 +130,28 @@ export default function AvyHeadFace({ avyHeadGroup, visible, ...wrapperProps }: 
             <meshBasicMaterial color="blue" />
          </mesh> */}
 
-         {visible && <group ref={faceGroupRef} position={[0, 0, 0.7]} {...wrapperProps}>
-            <mesh ref={leftEyeRef} position={[-0.2, 0, 0]} >
-               <planeGeometry />
-               <meshStandardMaterial map={leftEyeTexture} color={textColor} transparent={true} depthWrite={false} polygonOffset={true} polygonOffsetFactor={0} polygonOffsetUnits={-1} />
+         {visible && (<group ref={faceGroupRef} position={[0, 0, 0.7]} {...wrapperProps}>
+
+            {/* LEFT EYE */}
+            <mesh ref={leftEyeRef} position={[-0.2, 0, 0]}>
+               <primitive object={facePlaneGeometry} attach="geometry" />
+               <primitive object={leftEyeMaterial} attach="material" />
             </mesh>
 
+            {/* RIGHT EYE */}
             <mesh ref={rightEyeRef} position={[0.2, 0, 0]}>
-               <planeGeometry />
-               <meshStandardMaterial map={rightEyeTexture} color={textColor} transparent={true} depthWrite={false} polygonOffset={true} polygonOffsetFactor={-1} polygonOffsetUnits={-1} />
+               <primitive object={facePlaneGeometry} attach="geometry" />
+               <primitive object={rightEyeMaterial} attach="material" />
             </mesh>
 
+            {/* MOUTH */}
             <mesh position={[0, -0.25, 0]}>
-               <planeGeometry />
-               <meshStandardMaterial map={openMouthTextureRef.current} color={textColor} transparent={true} depthWrite={false} polygonOffset={true} polygonOffsetFactor={-2} polygonOffsetUnits={-1} />
+               <primitive object={mouthPlaneGeometry} attach="geometry" />
+               <primitive object={mouthMaterial} attach="material" />
             </mesh>
-         </group>}
+
+         </group>
+         )}
       </>
    )
 }
