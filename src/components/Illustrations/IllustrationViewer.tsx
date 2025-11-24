@@ -10,7 +10,6 @@ import DownloadIcon from "../icons/DownloadIcon"
 import CloseIcon from "../icons/CloseIcon"
 import CopyIcon from "../icons/CopyIcon"
 import { addNotification } from "../../functions/notification"
-import { copyImageIntoClipboard } from "../../functions/file"
 
 export default function IllustrationViewer({ visible }: { visible: boolean }) {
    const { thirdParticle: imageId } = useParams()

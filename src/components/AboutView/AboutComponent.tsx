@@ -3,12 +3,25 @@ import { useGlobal } from "../../stores/global";
 import AppearingContent from "../AppearingContent";
 import AppearingList from "../AppearingList";
 import PreviousButton from "../PreviousButton";
+import TextButton from "../TextButton";
+import CopyIcon from "../icons/CopyIcon";
+import { addNotification } from "../../functions/notification";
+import MailIcon from "../icons/MailIcon";
 
 export default function AboutComponent({ visible }: { visible: boolean }) {
-   const { textColor, deviceSize } = useGlobal()
+   const { textColor, deviceSize, getNotifications, update } = useGlobal()
    const navigate = useNavigate()
 
    const previousOnClick = () => navigate('/home')
+
+   const onCVClick = () => {
+      window.open('/amir_chaal_cv.pdf', "_blank", "noopener,noreferrer");
+   }
+
+   const onCopyEmailClick = async () => {
+      await navigator.clipboard.writeText('mohamedamir.chaal@gmail.com')
+      addNotification(getNotifications, update, <CopyIcon />, "Email copié")
+   }
 
    return (
       <>
@@ -46,10 +59,17 @@ export default function AboutComponent({ visible }: { visible: boolean }) {
                   </div>
                   <div className="h-[20em] w-[37.15em]">
                      <p className="text-[5em] mb-[-0.3em] tracking-[0.047em]">SALUT, JE SUIS AMIR</p>
-                     <p className="leading-[0.9em] text-[1.8em] text-justify">
+                     <p className="leading-[0.9em] text-[1.8em] text-justify mb-[1em]">
                         Un développeur web qui fait aussi de l'illustration. Je suis passionné par la création de projets uniques qui allient technique et créativité.
                         Mon objectif est de concevoir des expériences qui racontent une histoire et qui marquent ceux qui les découvrent.
                      </p>
+                     <div className="flex justify-between">
+                        <TextButton className="text-[1.8em]" onClick={onCVClick} text={"Mon CV"} />
+                        <div className="flex gap-[0.5em] items-center">
+                           <MailIcon className="h-[2em] cursor-pointer" color={textColor} onClick={onCopyEmailClick} />
+                           <p className="text-[1.8em] select-text">mohamedamir.chaal@gmail.com</p>
+                        </div>
+                     </div>
                   </div>
                </AppearingContent>
             </AppearingList>
