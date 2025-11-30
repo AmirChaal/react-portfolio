@@ -6,9 +6,9 @@ export default function StaticIconButton({ iconComponent, ...wrapperProps }: { i
    const { textColor } = useGlobal()
 
    return (
-      <div {...wrapperProps} className={"font-jersey10 flex items-center gap-[0.4em] cursor-pointer " + wrapperProps.className}>
+      <button {...wrapperProps} className={"font-jersey10 flex items-center gap-[0.4em] cursor-pointer " + wrapperProps.className}>
          {React.cloneElement(iconComponent, { className: "h-[0.9em] " + iconComponent.props.className, color: textColor })}
          <p>Retour</p>
-      </div>
+      </button>
    )
 }

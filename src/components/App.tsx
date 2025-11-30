@@ -134,7 +134,7 @@ export default function App() {
    const showTTRPGAssistWork = useDelayedVisibility(firstParticle === "works" && secondParticle === "verse-assist" && loadingComplete && enteredApplication, appViewAppearanceDelay, dependencies);
 
    return (
-      <div className="select-none overflow-hidden" style={{ color: textColor }}>
+      <div className="selection:bg-[#73bda8] overflow-hidden" style={{ color: textColor }}>
          <Background />
          <ApplicationLoading visible={showLoading} />
          <EnterApplication visible={showEnterScreen} />
