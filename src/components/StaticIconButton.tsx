@@ -2,7 +2,7 @@ import React, { type ComponentPropsWithoutRef, type ReactElement } from "react";
 import { useGlobal } from "../stores/global";
 import type { IconComponentProps } from "../types/component";
 
-export default function StaticIconButton({ iconComponent, ...wrapperProps }: { iconComponent: ReactElement<IconComponentProps> } & ComponentPropsWithoutRef<'div'>) {
+export default function StaticIconButton({ iconComponent, ...wrapperProps }: { iconComponent: ReactElement<IconComponentProps> } & ComponentPropsWithoutRef<'button'>) {
    const { textColor } = useGlobal()
 
    return (
