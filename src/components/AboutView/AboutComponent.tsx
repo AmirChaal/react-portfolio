@@ -18,6 +18,11 @@ export default function AboutComponent({ visible }: { visible: boolean }) {
 
    const desktopVisible = useMemo(() => deviceSize.width >= 1200, [deviceSize])
 
+   const aboutMeText = `
+      Un développeur web front-end qui fait aussi de l'illustration et de la 3D avec three.js. Je suis passionné par la création de projets uniques qui allient technique et créativité.
+      Mon objectif est de concevoir des expériences qui racontent une histoire et qui marquent ceux qui les découvrent.
+   `
+
    return (
       <div className="absolute top-0 left-0 h-full w-full overflow-hidden pointer-events-none">
          <div className="absolute top-0 left-0 h-full w-full flex items-center justify-center flex-col ">
@@ -35,11 +40,10 @@ export default function AboutComponent({ visible }: { visible: boolean }) {
                </AppearingContent>
                <AppearingContent className="flex-0">
                   <p className="leading-[0.9em] text-[1.5em] text-justify mb-[0.4em]">
-                     Un développeur web qui fait aussi de l'illustration. Je suis passionné par la création de projets uniques qui allient technique et créativité.
-                     Mon objectif est de concevoir des expériences qui racontent une histoire et qui marquent ceux qui les découvrent.
+                     {aboutMeText}
                   </p>
                   <TextButton className="text-[1.5em]" onClick={onCVClick} text={"Mon CV"} />
-                  <a href="mailto:mohamedamir.chaal@gmail.com" className="text-[1.5em] w-fit">mohamedamir.chaal@gmail.com</a>
+                  <a href="mailto:contact@amir-chaal.fr" className="text-[1.5em] w-fit">contact@amir-chaal.fr</a>
                </AppearingContent>
             </AppearingList>
          </div>
@@ -57,11 +61,10 @@ export default function AboutComponent({ visible }: { visible: boolean }) {
                   <div className="h-[20em] w-[37.15em]">
                      <p className="text-[5em] tracking-[0.047em] leading-[1em]">SALUT, JE SUIS AMIR</p>
                      <p className="leading-[0.9em] text-[1.8em] text-justify mb-[1em]">
-                        Un développeur web qui fait aussi de l'illustration. Je suis passionné par la création de projets uniques qui allient technique et créativité.
-                        Mon objectif est de concevoir des expériences qui racontent une histoire et qui marquent ceux qui les découvrent.
+                        {aboutMeText}
                      </p>
                      <TextButton className="text-[1.8em]" onClick={onCVClick} text={"Mon CV"} />
-                     <a href="mailto:mohamedamir.chaal@gmail.com" className="text-[1.8em] w-fit">mohamedamir.chaal@gmail.com</a>
+                     <a href="mailto:contact@amir-chaal.fr" className="text-[1.8em] w-fit">contact@amir-chaal.fr</a>
                   </div>
                </AppearingContent>
             </AppearingList>
